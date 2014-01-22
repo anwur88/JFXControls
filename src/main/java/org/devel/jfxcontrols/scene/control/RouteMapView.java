@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.devel.javafx.scene.control;
+package org.devel.jfxcontrols.scene.control;
 
 import java.net.URL;
 
@@ -16,10 +16,9 @@ import javafx.concurrent.Worker.State;
 import javafx.scene.control.Control;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.scene.web.WebViewBuilder;
 import javafx.util.Callback;
 
-import org.devel.javafx.navigation.prototype.Configuration;
+import org.devel.jfxcontrols.Configuration;
 
 import com.sun.javafx.scene.web.Debugger;
 
@@ -27,6 +26,8 @@ import com.sun.javafx.scene.web.Debugger;
  * @author stefan.illgen
  */
 public class RouteMapView extends Control {
+	
+	public static final String GOOGLEMAPS_HTML = "googleMapsJSAPI.html";
 
 	private WebView routeMapView;
 	private WebEngine webEngine;
@@ -120,7 +121,8 @@ public class RouteMapView extends Control {
 	 */
 	private void setupEngine() {
 
-		routeMapView = WebViewBuilder.create().id("routeMapView").build();
+		routeMapView = new WebView();
+		routeMapView.setId("routeMapView");
 
 		// add it to the scene graph
 		getChildren().add(routeMapView);
@@ -132,7 +134,7 @@ public class RouteMapView extends Control {
 
 		// load url into the engine
 		final URL urlGoogleMaps = getClass().getResource(
-				Configuration.GOOGLEMAPS_HTML);
+				GOOGLEMAPS_HTML);
 		webEngine.load(urlGoogleMaps.toExternalForm());
 
 		// listen for webEngine to initiate displaying of the route
@@ -171,7 +173,8 @@ public class RouteMapView extends Control {
 					public void changed(
 							ObservableValue<? extends Throwable> ov,
 							Throwable oldValue, Throwable newValue) {
-						System.err.printf(
+						if (Configuration.DEBUG)
+							System.err.printf(
 								"Exception changed, old: %s, new: %s%n",
 								oldValue, newValue);
 					}

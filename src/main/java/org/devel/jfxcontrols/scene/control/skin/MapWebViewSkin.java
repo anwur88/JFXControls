@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.devel.javafx.scene.control.skin;
+package org.devel.jfxcontrols.scene.control.skin;
 
 import javafx.scene.control.SkinBase;
 
-import org.devel.javafx.scene.control.RouteMapView;
+import org.devel.jfxcontrols.scene.control.RouteMapView;
 
 /**
  * Skin, that defines the skin with the following configrution, if no values are

@@ -18,16 +18,15 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
-import org.devel.jfxcontrols.Configuration;
-
 import com.sun.javafx.scene.web.Debugger;
 
 /**
  * @author stefan.illgen
  */
 public class RouteMapView extends Control {
-	
-	public static final String GOOGLEMAPS_HTML = "googleMapsJSAPI.html";
+
+	private static final String GOOGLEMAPS_HTML = "googleMapsJSAPI.html";
+	private static final boolean DEBUG = false;
 
 	private WebView routeMapView;
 	private WebEngine webEngine;
@@ -55,7 +54,7 @@ public class RouteMapView extends Control {
 	 * @return
 	 */
 	public StringProperty startPositionProperty() {
-		if(startPosition == null)
+		if (startPosition == null)
 			startPosition = new SimpleStringProperty();
 		return startPosition;
 	}
@@ -81,7 +80,7 @@ public class RouteMapView extends Control {
 	 * @return
 	 */
 	public StringProperty finishPositionProperty() {
-		if(finishPosition == null)
+		if (finishPosition == null)
 			finishPosition = new SimpleStringProperty();
 		return finishPosition;
 	}
@@ -101,9 +100,9 @@ public class RouteMapView extends Control {
 	public void setFinishPosition(String finishPosition) {
 		this.finishPositionProperty().set(finishPosition);
 	}
-	
+
 	// ### private API ###
-	
+
 	private void setupSkin() {
 		getStyleClass().add("route-map-view");
 	}
@@ -133,8 +132,7 @@ public class RouteMapView extends Control {
 		initializeDebugger(webEngine);
 
 		// load url into the engine
-		final URL urlGoogleMaps = getClass().getResource(
-				GOOGLEMAPS_HTML);
+		final URL urlGoogleMaps = getClass().getResource(GOOGLEMAPS_HTML);
 		webEngine.load(urlGoogleMaps.toExternalForm());
 
 		// listen for webEngine to initiate displaying of the route
@@ -160,9 +158,8 @@ public class RouteMapView extends Control {
 				new ChangeListener<Worker.State>() {
 					public void changed(ObservableValue<? extends State> ov,
 							State oldValue, State newValue) {
-						if (Configuration.DEBUG)
-							System.err.printf(
-									"State changed, old: %s, new: %s%n",
+						if (DEBUG)
+							System.err.printf("State changed, old: %s, new: %s%n",
 									oldValue, newValue);
 					}
 				});
@@ -173,10 +170,10 @@ public class RouteMapView extends Control {
 					public void changed(
 							ObservableValue<? extends Throwable> ov,
 							Throwable oldValue, Throwable newValue) {
-						if (Configuration.DEBUG)
+						if (DEBUG)
 							System.err.printf(
-								"Exception changed, old: %s, new: %s%n",
-								oldValue, newValue);
+									"Exception changed, old: %s, new: %s%n",
+									oldValue, newValue);
 					}
 				});
 
@@ -184,12 +181,12 @@ public class RouteMapView extends Control {
 
 	@SuppressWarnings("deprecation")
 	private void initializeDebugger(WebEngine webEngine) {
-		if (Configuration.DEBUG) {
+		if (DEBUG) {
 			Debugger debugger = webEngine.impl_getDebugger();
 			debugger.setMessageCallback(new Callback<String, Void>() {
 				@Override
 				public Void call(String arg0) {
-					if (Configuration.DEBUG)
+					if (DEBUG)
 						System.err.println(arg0);
 					return null;
 				}
@@ -210,21 +207,24 @@ public class RouteMapView extends Control {
 			if (newState == State.SUCCEEDED) {
 				// remove change listener
 				state.removeListener(this);
-				// bind
-				startPositionListener = new RouteListener();
-				startPosition.addListener(startPositionListener);
-				startPosition.addListener(new PositionInvalidationListener());
-				finishPositionListener = new RouteListener();
-				finishPosition.addListener(finishPositionListener);
-				finishPosition.addListener(new PositionInvalidationListener());
-				// calculate route
-				calcRoute();
+				
+				if(startPositionProperty().isBound() && finishPositionProperty().isBound()) {
+					// bind
+					startPositionListener = new RouteListener();
+					startPosition.addListener(startPositionListener);
+					startPosition.addListener(new PositionInvalidationListener());				
+					finishPositionListener = new RouteListener();
+					finishPosition.addListener(finishPositionListener);
+					finishPosition.addListener(new PositionInvalidationListener());
+					// calculate route
+					calcRoute();
+				}
 			}
 		}
 	}
 
 	class PositionInvalidationListener implements InvalidationListener {
-		
+
 		/**
 		 * 
 		 */
@@ -233,8 +233,10 @@ public class RouteMapView extends Control {
 		public void invalidated(Observable arg0) {
 			arg0.removeListener(this);
 			if (arg0 instanceof ObservableValue) {
-				((ObservableValue<String>) arg0).removeListener(startPositionListener);
-				((ObservableValue<String>) arg0).removeListener(finishPositionListener);
+				((ObservableValue<String>) arg0)
+						.removeListener(startPositionListener);
+				((ObservableValue<String>) arg0)
+						.removeListener(finishPositionListener);
 			}
 		}
 	}
@@ -245,7 +247,7 @@ public class RouteMapView extends Control {
 	 * 
 	 */
 	class RouteListener implements ChangeListener<String> {
-		
+
 		/**
 		 * 
 		 */

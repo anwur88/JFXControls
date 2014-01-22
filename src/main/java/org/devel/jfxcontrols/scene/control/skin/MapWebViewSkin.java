@@ -8,15 +8,7 @@ import javafx.scene.control.SkinBase;
 import org.devel.jfxcontrols.scene.control.RouteMapView;
 
 /**
- * Skin, that defines the skin with the following configrution, if no values are
- * set (i.e. -1):
- * 
- * <ul>
- * 	<li>.minHeight(100.0)</li>
- * 	<li>.minWidth(100.0)</li>
- * 	<li>.prefHeight(300.0)</li> 
- * 	<li>.prefWidth(640.0)</li>
- * </ul>
+ * Skin, that allows a proportion of 16:9 and defines some default values.
  * 
  * @author stefan.illgen
  * 
@@ -31,40 +23,54 @@ public class MapWebViewSkin extends SkinBase<RouteMapView> {
 	protected double computeMinWidth(double height, double topInset,
 			double rightInset, double bottomInset, double leftInset) {
 		if (height < 0) {
-			return 100;
+			return Double.MIN_VALUE;
 		} else
-			return super.computeMinWidth(height, topInset, rightInset,
-					bottomInset, leftInset);
+			return (height / 9) * 16;
 	}
 
 	@Override
 	protected double computeMinHeight(double width, double topInset,
 			double rightInset, double bottomInset, double leftInset) {
 		if (width < 0) {
-			return 100;
+			return Double.MIN_VALUE;
 		} else
-			return super.computeMinHeight(width, topInset, rightInset,
-					bottomInset, leftInset);
+			return (width / 16) * 9;
 	}
 
 	@Override
 	protected double computePrefWidth(double height, double topInset,
 			double rightInset, double bottomInset, double leftInset) {
 		if (height < 0) {
-			return 300;
+			return 320;
 		} else
-			return super.computePrefWidth(height, topInset, rightInset,
-					bottomInset, leftInset);
+			return (height / 9) * 16;
 	}
 
 	@Override
 	protected double computePrefHeight(double width, double topInset,
 			double rightInset, double bottomInset, double leftInset) {
 		if (width < 0) {
-			return 400;
+			return 180;
 		} else
-			return super.computePrefHeight(width, topInset, rightInset,
-					bottomInset, leftInset);
+			return (width / 16) * 9;
+	}
+
+	@Override
+	protected double computeMaxWidth(double height, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		if (height < 0) {
+			return Double.MAX_VALUE;
+		} else
+			return (height / 9) * 16;
+	}
+
+	@Override
+	protected double computeMaxHeight(double width, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		if (width < 0) {
+			return Double.MAX_VALUE;
+		} else
+			return (width / 16) * 9;
 	}
 
 }

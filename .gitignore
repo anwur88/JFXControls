@@ -1,6 +1,16 @@
-*.class
+# Gradle
+.gradle
+build
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# Java
+bin
+
+# Eclipse
+.settings
+/.gitignore.swp
+/.project
+/.classpath
+
+# IDEA
+/*.iml
+/.idea

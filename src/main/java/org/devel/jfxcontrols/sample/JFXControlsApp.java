@@ -4,13 +4,16 @@
 package org.devel.jfxcontrols.sample;
 
 import javafx.application.Application;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import org.devel.jfxcontrols.scene.layout.SearchRoutePane;
+import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.util.Properties;
 
 /**
+ * TODO stefan - create a tabular to show controls.
+ * 
  * @author stefan.illgen
  *
  */
@@ -24,13 +27,17 @@ public class JFXControlsApp extends Application {
 		
 		new Properties().loadProxyConf();
 		
-		SearchRoutePane srp = new SearchRoutePane();
-		Scene scene = new Scene(srp);
+		Scene scene = new Scene(getParent());
 		// scene.getStylesheets().add("/path/to/css");
 		stage.setScene(scene);
 		stage.setTitle(getClass().getName());
 
 		stage.show();
+	}
+
+	private Parent getParent() {
+//		return new SearchRoutePane();
+		return new ImageCropper();
 	}
 
 	/**

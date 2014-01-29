@@ -302,7 +302,7 @@ public class ImageCropper extends Control {
 						"*.png"),
 				new FileChooser.ExtensionFilter("png", "*.png"),
 				new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-		File imageFile = fileChooser.showOpenDialog(getScene().getWindow());
+		File imageFile = fileChooser.showSaveDialog(getScene().getWindow());
 
 		// TODO stefan - remove swing dialog
 		// if file exists, show override request
@@ -338,9 +338,7 @@ public class ImageCropper extends Control {
 
 		// TODO stefan - TargetImage ViewPort
 		bindSource2TargetImageView();
-
 		bindSourceImageSize();
-
 		bindRectangleResizes();
 
 		// TODO stefan - rectangle slider bindings

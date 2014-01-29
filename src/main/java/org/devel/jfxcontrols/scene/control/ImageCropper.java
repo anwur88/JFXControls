@@ -21,13 +21,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
@@ -63,8 +60,6 @@ public class ImageCropper extends Control {
 	private IntegerProperty targetWidth;
 	private IntegerProperty targetHeight;
 
-	private StringProperty outputText;
-
 	// necessary due to restriction for getting the path to the image
 	private StringProperty targetPath;
 
@@ -78,9 +73,6 @@ public class ImageCropper extends Control {
 
 	@FXML
 	private GridPane imageCropperView;
-
-	@FXML
-	private Label outputTextLabel;
 
 	@FXML
 	private Button saveImageButton;
@@ -98,19 +90,13 @@ public class ImageCropper extends Control {
 	private ImageView targetImageView;
 
 	@FXML
-	private ScrollPane originalPicturePane;
-
-	@FXML
-	private Slider rectangleSlider;
+	private ScrollPane sourceScrollPane;
 
 	private double referencePointX;
 	private double referencePointY;
 
 	// the image cropper pane used for loading FXML
 	private ImageCropperPane imageCropperPane;
-
-	// @FXML
-	// private TextField imageNameTextField;
 
 	/**
 	 * @param event
@@ -123,21 +109,6 @@ public class ImageCropper extends Control {
 		referencePointY = event.getY();
 	}
 
-	@FXML
-	void onZoom(final ZoomEvent event) {
-		if (event.getZoomFactor() > 1) {
-			rectangleSlider.setValue(rectangleSlider.getValue() * 1.01);
-		} else {
-			rectangleSlider.setValue(rectangleSlider.getValue() * 0.99);
-		}
-	}
-
-	// TODO stefan - What for?
-	@FXML
-	void removeFilter(final MouseEvent event) {
-		// originalPicturePane.removeEventFilter(MouseEvent.ANY, draggKiller);
-	}
-
 	/**
 	 * 
 	 * @param event
@@ -147,79 +118,31 @@ public class ImageCropper extends Control {
 	@FXML
 	void moveRectangle(final MouseEvent event) {
 
-		/**
-		 * rectangle is moving to the left edge
-		 */
-		if (cropperRectangle.getTranslateX() - (referencePointX - event.getX())
-				+ cropperRectangle.getLayoutX() < 0) {
+		// ### X axis ###
+		// offset inside cropper rectangle
+		double offsetX = referencePointX - cropperRectangle.getX();
+		// distance to translate the rectangle to
+		double translateX = cropperRectangle.getTranslateX() + event.getX()
+				- offsetX;
+		// new x position of the left upper corner for the cropper rectangle
+		double newXLeft = cropperRectangle.getX() + translateX;
+		// new x position of the downer edge for the cropper rectangle
+		double newXRight = newXLeft + cropperRectangle.getWidth();
+		if (newXLeft >= 0 && newXRight <= sourceImageView.getFitWidth())
+			cropperRectangle.setTranslateX(translateX);
 
-			cropperRectangle
-					.setTranslateX(cropperRectangle.getLayoutX() * (-1));
-
-			/**
-			 * move reference point, maximum is the left edge of the rectangle
-			 */
-			if (event.getX() > 0) {
-				referencePointX = event.getX();
-			}
-
-			/**
-			 * rectangle is moving to the right edge
-			 */
-		} else if (cropperRectangle.getTranslateX()
-				- (referencePointX - event.getX())
-				+ cropperRectangle.getLayoutX() > (sourceImageView
-				.getFitWidth() - cropperRectangle.getWidth())) {
-			cropperRectangle
-					.setTranslateX((sourceImageView.getFitWidth() - cropperRectangle
-							.getWidth()) / 2);
-
-			/**
-			 * move reference point, maximum is the right edge of the rectangle
-			 */
-			if (event.getX() < cropperRectangle.getWidth()) {
-				referencePointX = event.getX();
-			}
-
-			/**
-			 * rectangle is moving to the upper edge
-			 */
-		} else {
-			cropperRectangle.setTranslateX(cropperRectangle.getTranslateX()
-					- (referencePointX - event.getX()));
-		}
-
-		if (cropperRectangle.getTranslateY() - (referencePointY - event.getY())
-				+ cropperRectangle.getLayoutY() < 0) {
-			cropperRectangle
-					.setTranslateY(cropperRectangle.getLayoutY() * (-1));
-
-			/**
-			 * move reference point, maximum is the upper edge of the rectangle
-			 */
-			if (event.getY() > 0) {
-				referencePointY = event.getY();
-			}
-
-			/**
-			 * rectangle is moving to the lower edge
-			 */
-		} else if (cropperRectangle.getTranslateY()
-				- (referencePointY - event.getY())
-				+ cropperRectangle.getLayoutY() > (sourceImageView
-				.getFitHeight() - cropperRectangle.getHeight())) {
-
-			/**
-			 * move reference point, maximum is the lower edge of the rectangle
-			 */
-			if (event.getY() < cropperRectangle.getHeight()) {
-				referencePointY = event.getY();
-			}
-
-		} else {
-			cropperRectangle.setTranslateY(cropperRectangle.getTranslateY()
-					- (referencePointY - event.getY()));
-		}
+		// ### Y axis ###
+		// offset inside cropper rectangle
+		double offsetY = referencePointY - cropperRectangle.getY();
+		// distance to translate the rectangle to
+		double translateY = cropperRectangle.getTranslateY() + event.getY()
+				- offsetY;
+		// new y position of the upper edge for the cropper rectangle
+		double newYUp = cropperRectangle.getY() + translateY;
+		// new y position of the downer edge for the cropper rectangle
+		double newYDown = newYUp + cropperRectangle.getHeight();
+		if (newYUp >= 0 && newYDown <= sourceImageView.getFitHeight())
+			cropperRectangle.setTranslateY(translateY);
 
 	}
 
@@ -233,6 +156,10 @@ public class ImageCropper extends Control {
 	@FXML
 	void loadImage(final ActionEvent event) {
 
+		// unload old image
+		setSourceImage(null);
+		
+		// choose the name
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(TXT_choose_source_label);
 		fileChooser.getExtensionFilters().addAll(
@@ -245,8 +172,7 @@ public class ImageCropper extends Control {
 
 		// load source image
 		if (imageFile != null) {
-			LoadImageTask task = new LoadImageTask(imageFile,
-					outputTextLabel.textProperty());
+			LoadImageTask task = new LoadImageTask(imageFile);
 
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
@@ -254,33 +180,10 @@ public class ImageCropper extends Control {
 					// if load image was successful
 					if (task.getValue()) {
 						setSourceImage(task.getImage());
-						lazySliderBinding();
 					}
 				}
 			});
 			new Thread(task).start();
-		}
-
-	}
-
-	/**
-	 * {@link Slider} min and max value needs to be binded after image is set,
-	 * otherwise the {@link Slider} thumb is invisible until the mouse moves
-	 * over the thumb or the slider was clicked.
-	 */
-	private void lazySliderBinding() {
-
-		if (rectangleSlider.isDisabled()) {
-			rectangleSlider.setDisable(false);
-			// imageNameTextField.setDisable(false);
-			rectangleSlider.minProperty().bindBidirectional(
-					resizeFactorProperty());
-			// TODO stefan - What 4? Stays fix!
-//			rectangleSlider.maxProperty().bindBidirectional(
-//					rectangleSlider.maxProperty());
-			
-			cropperRectangle.setWidth(cropperRectangle.getWidth()+1);
-			cropperRectangle.setWidth(cropperRectangle.getWidth()-1);
 		}
 
 	}
@@ -314,8 +217,7 @@ public class ImageCropper extends Control {
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
 			// save target image
-			new Thread(new SaveImageTask(imageFile, getTargetImage(),
-					outputTextLabel.textProperty())).start();
+			new Thread(new SaveImageTask(imageFile, getTargetImage())).start();
 		}
 	}
 
@@ -333,90 +235,9 @@ public class ImageCropper extends Control {
 	}
 
 	private void initialize() {
-		rectangleSlider.setDisable(true);
-		// imageNameTextField.setDisable(true);
-
-		// TODO stefan - TargetImage ViewPort
 		bindSource2TargetImageView();
 		bindSourceImageSize();
-		bindRectangleResizes();
-
-		// TODO stefan - rectangle slider bindings
-
-		// rectangleSlider.valueProperty().addListener(new
-		// ChangeListener<Number>() {
-		//
-		// @Override
-		// public void changed(final ObservableValue<? extends Number> arg0,
-		// final Number arg1,
-		// final Number arg2) {
-		// adjust();
-		//
-		// }
-		// });
-		//
-		// cropperRectangle.widthProperty().bind(new DoubleBinding() {
-		// {
-		// super.bind(rectangleSlider.valueProperty(),
-		// imageView.imageProperty());
-		// }
-		//
-		// @Override
-		// protected double computeValue() {
-		// return rectangleSlider.valueProperty().get() *
-		// (ImageCropperModel.WIDTH);
-		// }
-		// });
-		//
-		// cropperRectangle.heightProperty().bind(new DoubleBinding() {
-		//
-		// {
-		// super.bind(rectangleSlider.valueProperty(),
-		// imageView.imageProperty());
-		// }
-		//
-		// @Override
-		// protected double computeValue() {
-		//
-		// return rectangleSlider.valueProperty().get() *
-		// (ImageCropperModel.HEIGHT);
-		// }
-		// });
-		//
-		// cropperRectangle.widthProperty().addListener(new
-		// ChangeListener<Number>() {
-		//
-		// @Override
-		// public void changed(final ObservableValue<? extends Number> arg0,
-		// final Number arg1,
-		// final Number arg2) {
-		// adjust();
-		// }
-		//
-		// });
-		//
-		// cropperRectangle.layoutXProperty().addListener(new
-		// ChangeListener<Number>() {
-		//
-		// @Override
-		// public void changed(final ObservableValue<? extends Number> arg0,
-		// final Number arg1,
-		// final Number arg2) {
-		// adjust();
-		// }
-		// });
-		//
-		// cropperRectangle.layoutYProperty().addListener(new
-		// ChangeListener<Number>() {
-		//
-		// @Override
-		// public void changed(final ObservableValue<? extends Number> arg0,
-		// final Number arg1,
-		// final Number arg2) {
-		// adjust();
-		// }
-		// });
-
+		bindSourceScrollMaxBounds();
 	}
 
 	private void bindSource2TargetImageView() {
@@ -427,7 +248,6 @@ public class ImageCropper extends Control {
 		// bind view port of target image view
 		targetImageView.viewportProperty().bind(
 				new ObjectBinding<Rectangle2D>() {
-
 					{
 						super.bind(cropperRectangle.widthProperty(),
 								cropperRectangle.translateXProperty(),
@@ -437,67 +257,17 @@ public class ImageCropper extends Control {
 					@Override
 					protected Rectangle2D computeValue() {
 
-						double min = rectangleSlider.getMin();
-						
-						double convertBack = 1 / rectangleSlider.getMin();
-
-						double minX = cropperTransLayoutXProperty()
-								* convertBack;
-						double minY = cropperTransLayoutYProperty()
-								* convertBack;
-						double width = cropperRectangle.getWidth()
-								* convertBack;
-						double height = cropperRectangle.getHeight()
-								* convertBack;
+						double minX = cropperRectangle.translateXProperty()
+								.add(cropperRectangle.layoutXProperty()).get();
+						double minY = cropperRectangle.translateYProperty()
+								.add(cropperRectangle.layoutYProperty()).get();
+						double width = cropperRectangle.getWidth();
+						double height = cropperRectangle.getHeight();
 
 						return new Rectangle2D(minX, minY, width, height);
 
 					}
-
-					private double cropperTransLayoutYProperty() {
-						return cropperRectangle.translateYProperty()
-								.add(cropperRectangle.layoutYProperty()).get();
-					}
-
-					private double cropperTransLayoutXProperty() {
-						return cropperRectangle.translateXProperty()
-								.add(cropperRectangle.layoutXProperty()).get();
-					}
 				});
-
-	}
-
-	/**
-     * 
-     */
-	private void bindRectangleResizes() {
-
-		// TODO stefan - ViewPort Error: Bind this initially leads to NullPointerException
-		/*
-		 * Calculate the resizeFactor for the originalImage to fit them into the
-		 * imageView the resizeFactor is also needed to recalculate the cropped
-		 * area of the image.
-		 */
-		resizeFactorProperty().bind(new DoubleBinding() {
-
-			{
-				super.bind(sourceImageProperty());
-			}
-
-			@Override
-			protected double computeValue() {
-				if (getSourceImage() == null)
-					return 0;
-				// the resizeFactor is dependent on whether the width or the
-				// height needs to be increased
-				if (getSourceImage().getWidth() / 3 > getSourceImage()
-						.getHeight() / 4) {
-					return DEFAULT_HEIGHT / getSourceImage().getHeight();
-				} else {
-					return DEFAULT_WIDTH / getSourceImage().getWidth();
-				}
-			}
-		});
 	}
 
 	/*
@@ -505,6 +275,8 @@ public class ImageCropper extends Control {
 	 */
 	private void bindSourceImageSize() {
 
+		// calculate fit height in relation to source image size and source
+		// scroll pane size
 		sourceImageView.fitHeightProperty().bind(new DoubleBinding() {
 			{
 				super.bind(sourceImageProperty());
@@ -512,21 +284,23 @@ public class ImageCropper extends Control {
 
 			@Override
 			protected double computeValue() {
-				// TODO stefan - make this a strategy ???
 				if (getSourceImage() == null)
 					return 0;
-				// increase height of the imageView if needed
-				// TODO stefan - dynamic size > remove fix values
-				if (getSourceImage().getWidth() / 3 < getSourceImage()
-						.getHeight() / 4) {
-					return getSourceImage().getHeight()
-							* (DEFAULT_WIDTH / getSourceImage().getWidth());
-				} else {
-					return DEFAULT_HEIGHT;
-				}
+
+				final double bi = getSourceImage().getWidth();
+				final double hi = getSourceImage().getHeight();
+				final double biv = sourceScrollPane.getWidth();
+				final double hiv = sourceScrollPane.getHeight();
+
+				if (hi > hiv || (hi > hiv && bi > biv))
+					return hi;
+				else
+					return hiv;
 			}
 		});
 
+		// calculate fit width in relation to source image size and source
+		// scroll pane size
 		sourceImageView.fitWidthProperty().bind(new DoubleBinding() {
 			{
 				super.bind(sourceImageProperty());
@@ -534,18 +308,64 @@ public class ImageCropper extends Control {
 
 			@Override
 			protected double computeValue() {
-				// TODO stefan - make this a strategy ???
+
 				if (getSourceImage() == null)
 					return 0;
-				// increase width of the imageView if needed
-				// TODO stefan - dynamic size > remove fix values
-				if (getSourceImage().getWidth() / 3 > getSourceImage()
-						.getHeight() / 4) {
+
+				final double bi = getSourceImage().getWidth();
+				final double hi = getSourceImage().getHeight();
+				final double biv = sourceScrollPane.getWidth();
+				final double hiv = sourceScrollPane.getHeight();
+
+				if ((hi > hiv && bi > biv) || bi > biv)
+					return bi;
+				else
+					return biv;
+			}
+		});
+	}
+
+	private void bindSourceScrollMaxBounds() {
+
+		sourceScrollPane.maxWidthProperty().bind(new DoubleBinding() {
+			{
+				super.bind(sourceImageProperty());
+			}
+
+			@Override
+			protected double computeValue() {
+				if (getSourceImage() != null) {
 					return getSourceImage().getWidth()
-							* (DEFAULT_HEIGHT / getSourceImage().getHeight());
-				} else {
-					return DEFAULT_WIDTH;
+							+ calculateVerticalDimDiff();
 				}
+				// else use computed value
+				return -1;
+			}
+
+			private double calculateVerticalDimDiff() {
+				double inset = sourceScrollPane.getWidth()
+						- sourceScrollPane.getViewportBounds().getWidth();
+				return inset;
+			}
+		});
+
+		sourceScrollPane.maxHeightProperty().bind(new DoubleBinding() {
+			{
+				super.bind(sourceImageProperty());
+			}
+
+			@Override
+			protected double computeValue() {
+				if (getSourceImage() != null)
+					return getSourceImage().getHeight()
+							+ calculateHorizontalDimDiff();
+				// else use computed value
+				return -1;
+			}
+
+			private double calculateHorizontalDimDiff() {
+				return sourceScrollPane.getBoundsInParent().getHeight()
+						- sourceScrollPane.getViewportBounds().getHeight();
 			}
 		});
 	}
@@ -576,20 +396,6 @@ public class ImageCropper extends Control {
 
 	public void setTargetHeight(int targetHeight) {
 		this.targetHeight.set(targetHeight);
-	}
-
-	public StringProperty outputTextProperty() {
-		if (outputText == null)
-			outputText = new SimpleStringProperty();
-		return outputText;
-	}
-
-	public String getOutputText() {
-		return outputText.get();
-	}
-
-	public void setOutputText(String outputText) {
-		this.outputText.set(outputText);
 	}
 
 	public String getTargetPath() {
@@ -649,7 +455,7 @@ public class ImageCropper extends Control {
 	 */
 	public DoubleProperty resizeFactorProperty() {
 		if (resizeFactor == null)
-			resizeFactor = new SimpleDoubleProperty();
+			resizeFactor = new SimpleDoubleProperty(0.2754820936639118);
 		return resizeFactor;
 	}
 

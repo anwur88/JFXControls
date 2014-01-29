@@ -7,10 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 
 import org.apache.commons.io.FilenameUtils;
@@ -26,17 +23,8 @@ public class LoadImageTask extends Task<Boolean> {
 	private File imageFile;
 	private Image image;
 
-	public LoadImageTask(final File imageFile, final StringProperty output) {
+	public LoadImageTask(File imageFile) {
 		this.imageFile = imageFile;
-		output.bind(messageProperty());
-		setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				// TODO stefan - unbind the property after the fade out was
-				// successful
-				// output.unbind();
-			}
-		});
 	}
 
 	@Override

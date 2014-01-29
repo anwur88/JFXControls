@@ -158,7 +158,7 @@ public class ImageCropper extends Control {
 
 		// unload old image
 		setSourceImage(null);
-		
+
 		// choose the name
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(TXT_choose_source_label);
@@ -285,17 +285,8 @@ public class ImageCropper extends Control {
 			@Override
 			protected double computeValue() {
 				if (getSourceImage() == null)
-					return 0;
-
-				final double bi = getSourceImage().getWidth();
-				final double hi = getSourceImage().getHeight();
-				final double biv = sourceScrollPane.getWidth();
-				final double hiv = sourceScrollPane.getHeight();
-
-				if (hi > hiv || (hi > hiv && bi > biv))
-					return hi;
-				else
-					return hiv;
+					return 0;				
+				return getSourceImage().getHeight();
 			}
 		});
 
@@ -308,19 +299,9 @@ public class ImageCropper extends Control {
 
 			@Override
 			protected double computeValue() {
-
 				if (getSourceImage() == null)
-					return 0;
-
-				final double bi = getSourceImage().getWidth();
-				final double hi = getSourceImage().getHeight();
-				final double biv = sourceScrollPane.getWidth();
-				final double hiv = sourceScrollPane.getHeight();
-
-				if ((hi > hiv && bi > biv) || bi > biv)
-					return bi;
-				else
-					return biv;
+					return 0;				
+				return getSourceImage().getWidth();
 			}
 		});
 	}
@@ -329,36 +310,46 @@ public class ImageCropper extends Control {
 
 		sourceScrollPane.maxWidthProperty().bind(new DoubleBinding() {
 			{
-				super.bind(sourceImageProperty());
+				super.bind(sourceImageProperty(),
+						cropperRectangle.widthProperty());
 			}
 
 			@Override
 			protected double computeValue() {
 				if (getSourceImage() != null) {
-					return getSourceImage().getWidth()
-							+ calculateVerticalDimDiff();
+					double siWidth = getSourceImage().getWidth();
+					double cropperWidth = cropperRectangle.getWidth();
+					if (siWidth >= cropperWidth)
+						return siWidth + calculateVerticalDimDiff();
+					else
+						return cropperWidth + calculateVerticalDimDiff();
 				}
 				// else use computed value
 				return -1;
 			}
 
 			private double calculateVerticalDimDiff() {
-				double inset = sourceScrollPane.getWidth()
+				return sourceScrollPane.getWidth()
 						- sourceScrollPane.getViewportBounds().getWidth();
-				return inset;
 			}
 		});
 
 		sourceScrollPane.maxHeightProperty().bind(new DoubleBinding() {
 			{
-				super.bind(sourceImageProperty());
+				super.bind(sourceImageProperty(),
+						cropperRectangle.heightProperty());
 			}
 
 			@Override
 			protected double computeValue() {
-				if (getSourceImage() != null)
-					return getSourceImage().getHeight()
-							+ calculateHorizontalDimDiff();
+				if (getSourceImage() != null) {
+					double siHeight = getSourceImage().getHeight();
+					double cropperHeight = cropperRectangle.getHeight();
+					if (siHeight >= cropperHeight)
+						return siHeight + calculateHorizontalDimDiff();
+					else
+						return cropperHeight + calculateHorizontalDimDiff();
+				}
 				// else use computed value
 				return -1;
 			}

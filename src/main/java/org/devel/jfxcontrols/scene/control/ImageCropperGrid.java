@@ -34,7 +34,7 @@ import javax.swing.JOptionPane;
 
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
 import org.devel.jfxcontrols.concurrent.SaveImageTask;
-import org.devel.jfxcontrols.scene.layout.ImageCropperPane;
+import org.devel.jfxcontrols.scene.layout.ImageCropperGridPane;
 
 /**
  * TODO stefan - separate concerns > build sub controls
@@ -42,7 +42,7 @@ import org.devel.jfxcontrols.scene.layout.ImageCropperPane;
  * @author stefan.illgen
  * 
  */
-public class ImageCropper extends Control {
+public class ImageCropperGrid extends Control {
 
 	private static final String TXT_save_target_override_title = "Warning";
 	private static final String TXT_save_target_override_question = "Die Datei existiert bereits. Überschreiben?";
@@ -98,7 +98,7 @@ public class ImageCropper extends Control {
 	private double referencePointY;
 
 	// the image cropper pane used for loading FXML
-	private ImageCropperPane imageCropperPane;
+	private ImageCropperGridPane imageCropperPane;
 
 	/**
 	 * @param event
@@ -228,10 +228,10 @@ public class ImageCropper extends Control {
 	/**
 	 * 
 	 */
-	public ImageCropper() {
+	public ImageCropperGrid() {
 		setupSkin();
 		// add ImageCropperPane
-		imageCropperPane = new ImageCropperPane(this);
+		imageCropperPane = new ImageCropperGridPane(this);
 		getChildren().add(imageCropperPane);
 		initialize();
 	}

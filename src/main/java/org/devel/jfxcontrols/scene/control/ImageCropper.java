@@ -37,6 +37,8 @@ import org.devel.jfxcontrols.concurrent.SaveImageTask;
 import org.devel.jfxcontrols.scene.layout.ImageCropperPane;
 
 /**
+ * TODO stefan - separate concerns > build sub controls
+ * 
  * @author stefan.illgen
  * 
  */

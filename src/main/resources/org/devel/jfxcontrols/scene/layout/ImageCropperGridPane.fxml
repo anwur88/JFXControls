@@ -41,7 +41,9 @@
 			</children>
 		</HBox>
 
-		<ImageCropperScrollPane fx:id="sourceScrollPane" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
+		<!--  -->
+
+		<ImageCropperScrollPane fx:id="imageCropperScrollPane" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
 			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
 
 <!-- 		<ScrollPane fx:id="sourceScrollPane" minHeight="135.0" -->

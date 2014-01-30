@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.net.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
+<fx:root type="javafx.scene.control.ScrollPane" minHeight="135.0" minWidth="102.0" 
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 
-<fx:root type="ScrollPane" minHeight="135.0"
-		minWidth="102.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<!-- should be defined outside the scroll pane -->
+	<!-- GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" 
+		GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" -->
 
-<!-- should be defined outside the scroll pane -->
-<!-- GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
-		GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" -->
 
-	<ScrollPane fx:id="sourceScrollPane" minHeight="135.0"
-		minWidth="102.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-		
-		<content>
-			<StackPane fx:id="imageStackPane" alignment="TOP_LEFT">
-				<children>
-					<ImageView fx:id="sourceImageView" fitHeight="266.0"
-						fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-					<Rectangle fx:id="cropperRectangle" fill="#ffffff80"
-						height="133.3333333" onMouseDragged="#moveRectangle"
-						onMousePressed="#setReferencePoint" width="100"
-						StackPane.alignment="TOP_LEFT">
-						<stroke>
-							<Color blue="0.8666666746139526" green="0.8666666746139526"
-								red="0.8666666746139526" />
-						</stroke>
-					</Rectangle>
-				</children>
-			</StackPane>
-		</content>
-		
-	</ScrollPane>
+	<!-- <ScrollPane fx:id="sourceScrollPane" minHeight="264.0" minWidth="200.0" 
+		xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" -->
+	<!-- > -->
+	<!-- fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperScrollPane" -->
 
-<!-- </fx:root> -->
+	<content>
+		<StackPane fx:id="imageStackPane" alignment="TOP_LEFT">
+			<children>
+				<ImageView fx:id="sourceImageView" fitHeight="266.0"
+					fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+				<Rectangle fx:id="cropperRectangle" fill="#ffffff80"
+					height="133.3333333" onMouseDragged="#moveRectangle"
+					onMousePressed="#setReferencePoint" width="100"
+					StackPane.alignment="TOP_LEFT">
+					<stroke>
+						<Color blue="0.8666666746139526" green="0.8666666746139526"
+							red="0.8666666746139526" />
+					</stroke>
+				</Rectangle>
+			</children>
+		</StackPane>
+	</content>
 
+	<!-- </ScrollPane> -->
+
+</fx:root>

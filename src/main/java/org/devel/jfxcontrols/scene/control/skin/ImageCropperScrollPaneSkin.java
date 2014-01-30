@@ -5,15 +5,15 @@ package org.devel.jfxcontrols.scene.control.skin;
 
 import org.devel.jfxcontrols.scene.control.ImageCropperScrollPane;
 
-import javafx.scene.control.SkinBase;
+import com.sun.javafx.scene.control.skin.ScrollPaneSkin;
 
 /**
  * @author stefan.illgen
  *
  */
-public class ImageCropperScrollPaneSkin extends SkinBase<ImageCropperScrollPane> {
+public class ImageCropperScrollPaneSkin extends ScrollPaneSkin {
 
-	protected ImageCropperScrollPaneSkin(ImageCropperScrollPane control) {
+	public ImageCropperScrollPaneSkin(ImageCropperScrollPane control) {
 		super(control);
 	}
 

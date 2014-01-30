@@ -463,7 +463,7 @@ public class ImageCropperGrid extends Control {
 	// ### private API ###
 
 	private void setupSkin() {
-		getStyleClass().add("image-cropper");
+		getStyleClass().add("image-cropper-grid");
 	}
 
 	/**

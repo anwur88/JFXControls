@@ -14,55 +14,83 @@
 	vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 
 
-<!-- <GridPane fx:id="imageCropperView" hgap="10.0" minHeight="200.0" prefHeight="1000.0" prefWidth="1000.0" style="-fx-background-color: white;" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperGrid"> -->
+	<!-- <GridPane fx:id="imageCropperView" hgap="10.0" minHeight="200.0" prefHeight="1000.0" 
+		prefWidth="1000.0" style="-fx-background-color: white;" vgap="10.0" xmlns="http://javafx.com/javafx/8" 
+		xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperGrid"> -->
 
 	<children>
-		<Button alignment="CENTER" layoutX="151.0" layoutY="23.0" mnemonicParsing="false" onAction="#loadImage" text="Load Image" GridPane.rowIndex="2" />
-		<Button fx:id="saveImageButton" layoutX="170.0" layoutY="379.0" mnemonicParsing="false" onAction="#saveImage" text="Save Image" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-		<HBox alignment="CENTER" maxHeight="155.0" maxWidth="122.0" minHeight="155.0" minWidth="122.0" style="-fx-border-color: lightgrey; -fx-background-color: #fefefe;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+		<Button alignment="CENTER" layoutX="151.0" layoutY="23.0"
+			mnemonicParsing="false" onAction="#loadImage" text="Load Image"
+			GridPane.rowIndex="2" />
+		<Button fx:id="saveImageButton" layoutX="170.0" layoutY="379.0"
+			mnemonicParsing="false" onAction="#saveImage" text="Save Image"
+			GridPane.columnIndex="1" GridPane.rowIndex="2" />
+		<HBox alignment="CENTER" maxHeight="155.0" maxWidth="122.0"
+			minHeight="155.0" minWidth="122.0"
+			style="-fx-border-color: lightgrey; -fx-background-color: #fefefe;"
+			GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
+			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
 			<padding>
 				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 			</padding>
 			<children>
-				<ImageView fx:id="targetImageView" fitHeight="133.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" style="" styleClass="scroll-pane" HBox.hgrow="NEVER" />
+				<ImageView fx:id="targetImageView" fitHeight="133.0"
+					fitWidth="100.0" pickOnBounds="true" preserveRatio="true" style=""
+					styleClass="scroll-pane" HBox.hgrow="NEVER" />
 			</children>
 		</HBox>
-		<ScrollPane fx:id="sourceScrollPane" minHeight="135.0" minWidth="102.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+
+
+		<ScrollPane fx:id="sourceScrollPane" minHeight="135.0"
+			minWidth="102.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
+			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
 			<content>
 				<StackPane fx:id="imageStackPane" alignment="TOP_LEFT">
 					<children>
-						<ImageView fx:id="sourceImageView" fitHeight="266.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-						<Rectangle fx:id="cropperRectangle" fill="#ffffff80" height="133.3333333" onMouseDragged="#moveRectangle" onMousePressed="#setReferencePoint" width="100" StackPane.alignment="TOP_LEFT">
-<stroke>
-<Color blue="0.8666666746139526" green="0.8666666746139526" red="0.8666666746139526" />
-</stroke></Rectangle>
+						<ImageView fx:id="sourceImageView" fitHeight="266.0"
+							fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+						<Rectangle fx:id="cropperRectangle" fill="#ffffff80"
+							height="133.3333333" onMouseDragged="#moveRectangle"
+							onMousePressed="#setReferencePoint" width="100"
+							StackPane.alignment="TOP_LEFT">
+							<stroke>
+								<Color blue="0.8666666746139526" green="0.8666666746139526"
+									red="0.8666666746139526" />
+							</stroke>
+						</Rectangle>
 					</children>
 				</StackPane>
 			</content>
 		</ScrollPane>
-		<!-- <Label fx:id="outputTextLabel" alignment="CENTER" contentDisplay="CENTER" 
-			text="" textAlignment="CENTER" textFill="#1400ff" GridPane.columnSpan="2" 
-			GridPane.rowIndex="3" /> -->
-		<Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-weight: bold;" text="Source" textAlignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-		<Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-weight: bold;" text="Target" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+		
+		
+		<Label alignment="CENTER" contentDisplay="CENTER"
+			style="-fx-font-weight: bold;" text="Source" textAlignment="CENTER"
+			GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER" xmlns="http://javafx.com/javafx/8"
+			xmlns:fx="http://javafx.com/fxml/1" />
+		<Label alignment="CENTER" contentDisplay="CENTER"
+			style="-fx-font-weight: bold;" text="Target" textAlignment="CENTER"
+			GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER"
+			xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 	</children>
 	<stylesheets>
 		<URL value="@../control/image-cropper.css" />
 	</stylesheets>
 	<columnConstraints>
 		<ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
-		<ColumnConstraints halignment="CENTER" hgrow="NEVER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+		<ColumnConstraints halignment="CENTER" hgrow="NEVER"
+			xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 	</columnConstraints>
 	<rowConstraints>
-		<RowConstraints valignment="CENTER" vgrow="NEVER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+		<RowConstraints valignment="CENTER" vgrow="NEVER"
+			xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 		<RowConstraints valignment="CENTER" vgrow="NEVER" />
-		<RowConstraints minHeight="10.0" prefHeight="30.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-		<!-- <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" 
-			xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" /> -->
+		<RowConstraints minHeight="10.0" prefHeight="30.0"
+			xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 	</rowConstraints>
 	<padding>
 		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 	</padding>
 
-<!-- 	</GridPane> -->
+	<!-- </GridPane> -->
 </fx:root>

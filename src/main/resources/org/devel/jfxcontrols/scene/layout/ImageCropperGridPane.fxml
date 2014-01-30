@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
+<?import org.devel.jfxcontrols.scene.control.ImageCropperScrollPane?>
 
 <fx:root type="GridPane" fx:id="imageCropperView" hgap="10.0"
 	minHeight="250.0" minWidth="360.0" style="-fx-background-color: white;"
@@ -40,28 +41,30 @@
 			</children>
 		</HBox>
 
+		<ImageCropperScrollPane fx:id="sourceScrollPane" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
+			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
 
-		<ScrollPane fx:id="sourceScrollPane" minHeight="135.0"
-			minWidth="102.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
-			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-			<content>
-				<StackPane fx:id="imageStackPane" alignment="TOP_LEFT">
-					<children>
-						<ImageView fx:id="sourceImageView" fitHeight="266.0"
-							fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-						<Rectangle fx:id="cropperRectangle" fill="#ffffff80"
-							height="133.3333333" onMouseDragged="#moveRectangle"
-							onMousePressed="#setReferencePoint" width="100"
-							StackPane.alignment="TOP_LEFT">
-							<stroke>
-								<Color blue="0.8666666746139526" green="0.8666666746139526"
-									red="0.8666666746139526" />
-							</stroke>
-						</Rectangle>
-					</children>
-				</StackPane>
-			</content>
-		</ScrollPane>
+<!-- 		<ScrollPane fx:id="sourceScrollPane" minHeight="135.0" -->
+<!-- 			minWidth="102.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" -->
+<!-- 			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS"> -->
+<!-- 			<content> -->
+<!-- 				<StackPane fx:id="imageStackPane" alignment="TOP_LEFT"> -->
+<!-- 					<children> -->
+<!-- 						<ImageView fx:id="sourceImageView" fitHeight="266.0" -->
+<!-- 							fitWidth="200.0" pickOnBounds="true" preserveRatio="true" /> -->
+<!-- 						<Rectangle fx:id="cropperRectangle" fill="#ffffff80" -->
+<!-- 							height="133.3333333" onMouseDragged="#moveRectangle" -->
+<!-- 							onMousePressed="#setReferencePoint" width="100" -->
+<!-- 							StackPane.alignment="TOP_LEFT"> -->
+<!-- 							<stroke> -->
+<!-- 								<Color blue="0.8666666746139526" green="0.8666666746139526" -->
+<!-- 									red="0.8666666746139526" /> -->
+<!-- 							</stroke> -->
+<!-- 						</Rectangle> -->
+<!-- 					</children> -->
+<!-- 				</StackPane> -->
+<!-- 			</content> -->
+<!-- 		</ScrollPane> -->
 		
 		
 		<Label alignment="CENTER" contentDisplay="CENTER"

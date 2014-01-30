@@ -18,7 +18,10 @@ import javafx.scene.layout.GridPane;
 public class ImageCropperGridPane extends GridPane {
 
 	public ImageCropperGridPane(final ImageCropperGrid imageCropper) {
-		
+		loadFXML(imageCropper);
+	}
+
+	private void loadFXML(final ImageCropperGrid imageCropper) {
 		// load FXML
 		URL url = getClass().getResource("ImageCropperGridPane.fxml");
 		FXMLLoader fxmlLoader = new FXMLLoader(url);

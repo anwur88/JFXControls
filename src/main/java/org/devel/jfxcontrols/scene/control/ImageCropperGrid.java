@@ -71,29 +71,37 @@ public class ImageCropperGrid extends Control {
 	// factor 4 translating source cropper rectangle size 2 target view port
 	private DoubleProperty resizeFactor;
 
-	// ############ Controller API ##############
-
+	// ############ Controller APIs ##############
+	
+	// ### ImageCropperGridPane ###
+	
 	@FXML
 	private GridPane imageCropperView;
-
+	
+	// ### ImageCropperScrollPane ###
+	
 	@FXML
-	private Button saveImageButton;
-
+	private ScrollPane sourceScrollPane;
+	
 	@FXML
 	private StackPane imageStackPane;
 
 	@FXML
 	private ImageView sourceImageView;
-
+	
 	@FXML
 	private Rectangle cropperRectangle;
 
+	// ### TargetImageView ###
+	
 	@FXML
 	private ImageView targetImageView;
 
 	@FXML
-	private ScrollPane sourceScrollPane;
+	private Button saveImageButton;
 
+	
+	
 	private double referencePointX;
 	private double referencePointY;
 

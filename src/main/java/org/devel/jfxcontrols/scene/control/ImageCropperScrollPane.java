@@ -242,7 +242,6 @@ public class ImageCropperScrollPane extends ScrollPane implements Initializable 
 
 	private void loadFXML() {
 
-		// load FXML
 		URL url = getClass().getResource("ImageCropperScrollPane.fxml");
 		FXMLLoader fxmlLoader = new FXMLLoader(url);
 
@@ -251,7 +250,6 @@ public class ImageCropperScrollPane extends ScrollPane implements Initializable 
 
 		try {
 			fxmlLoader.load();
-			layout();
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}

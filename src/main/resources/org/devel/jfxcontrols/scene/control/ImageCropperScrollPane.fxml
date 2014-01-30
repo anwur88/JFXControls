@@ -7,19 +7,11 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
-<fx:root type="javafx.scene.control.ScrollPane" minHeight="135.0" minWidth="102.0" 
+<fx:root type="javafx.scene.control.ScrollPane" minHeight="137" minWidth="103.0"
 	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 
-	<!-- should be defined outside the scroll pane -->
-	<!-- GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" 
-		GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" -->
-
-
 	<!-- <ScrollPane fx:id="sourceScrollPane" minHeight="264.0" minWidth="200.0" 
-		xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" -->
-	<!-- > -->
-	<!-- fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperScrollPane" -->
-
+		xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"> -->
 	<content>
 		<StackPane fx:id="imageStackPane" alignment="TOP_LEFT">
 			<children>
@@ -37,7 +29,6 @@
 			</children>
 		</StackPane>
 	</content>
-
 	<!-- </ScrollPane> -->
 
 </fx:root>

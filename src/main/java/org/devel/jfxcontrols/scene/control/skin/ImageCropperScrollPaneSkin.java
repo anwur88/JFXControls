@@ -17,4 +17,22 @@ public class ImageCropperScrollPaneSkin extends ScrollPaneSkin {
 		super(control);
 	}
 
+	@Override
+	protected double computeMinWidth(double height, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		
+		return super.computeMinWidth(height, topInset, rightInset, bottomInset,
+				leftInset);
+	}
+
+	@Override
+	protected double computeMinHeight(double width, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		
+		return super.computeMinHeight(width, topInset, rightInset, bottomInset,
+				leftInset);
+	}
+	
+	
+
 }

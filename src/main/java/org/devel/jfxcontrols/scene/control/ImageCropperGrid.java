@@ -8,7 +8,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,14 +23,16 @@ import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 
 import javax.swing.JOptionPane;
 
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
 import org.devel.jfxcontrols.concurrent.SaveImageTask;
+import org.devel.jfxcontrols.scene.image.SourceImageView;
 import org.devel.jfxcontrols.scene.layout.ImageCropperGridPane;
+import org.devel.jfxcontrols.scene.shape.CropperRectangle;
 
 /**
  * TODO stefan - separate concerns > build sub controls
@@ -41,15 +46,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 	private static final String TXT_save_target_override_question = "Die Datei existiert bereits. Überschreiben?";
 	private static final String TXT_choose_source_label = "Quelle";
 	private static final String TXT_choose_target_label = "Ziel";
-
-	/**
-	 * the required width for the target picture.
-	 */
-	public static final int DEFAULT_WIDTH = 150;
-	/**
-	 * the required height for the target picture.
-	 */
-	public static final int DEFAULT_HEIGHT = 200;
 
 	// // size properties for the target image to be set via CSS
 	// private IntegerProperty targetWidth;
@@ -74,7 +70,19 @@ public class ImageCropperGrid extends Control implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		DoubleProperty fitHeightProperty = sourceImageView.fitHeightProperty();
+
+		// imageCropperScrollPane.maxHeightObservablesProperty().add(cropperRectangle.heightProperty());
+		// imageCropperScrollPane.maxHeightObservablesProperty().add(sourceImageView.fitHeightProperty());
+		// imageCropperScrollPane.maxWidthObservablesProperty().add(cropperRectangle.widthProperty());
+		// imageCropperScrollPane.maxWidthObservablesProperty().add(sourceImageView.fitWidthProperty());
+
+		sourceImageView.initialize(location, resources);
+		cropperRectangle.initialize(location, resources);
+		imageCropperScrollPane.initialize(location, resources);
 		bind();
+
 	}
 
 	// ############ Controller APIs ##############
@@ -87,12 +95,19 @@ public class ImageCropperGrid extends Control implements Initializable {
 	// the image cropper pane used for loading FXML
 	private ImageCropperGridPane imageCropperPane;
 
-	// ### ImageCropperScrollPane ###
+	@FXML
+	private StackPane test;
 
 	@FXML
 	private ImageCropperScrollPane imageCropperScrollPane;
 
 	// ### TargetImageView ###
+
+	@FXML
+	private SourceImageView sourceImageView;
+
+	@FXML
+	private CropperRectangle cropperRectangle;
 
 	@FXML
 	private ImageView targetImageView;
@@ -110,10 +125,10 @@ public class ImageCropperGrid extends Control implements Initializable {
 	@FXML
 	void loadImage(final ActionEvent event) {
 
-		imageCropperScrollPane.layout();
+		// imageCropperScrollPane.layout();
 
 		// reset image cropper
-		imageCropperScrollPane.reset();
+		reset();
 
 		// choose the name
 		FileChooser fileChooser = new FileChooser();
@@ -135,7 +150,7 @@ public class ImageCropperGrid extends Control implements Initializable {
 				public void handle(WorkerStateEvent event) {
 					// if load image was successful
 					if (task.getValue()) {
-						imageCropperScrollPane.setSourceImage(task.getImage());
+						sourceImageView.setImage(task.getImage());
 					}
 				}
 			});
@@ -178,21 +193,14 @@ public class ImageCropperGrid extends Control implements Initializable {
 	}
 
 	private void bind() {
-		bindSource2TargetImageView();
-	}
-
-	private void bindSource2TargetImageView() {
 
 		// bind image properties
-		targetImageProperty()
-				.bind(imageCropperScrollPane.sourceImageProperty());
+		targetImageProperty().bind(sourceImageView.imageProperty());
 
 		// bind view port of target image view
 		targetImageView.viewportProperty().bind(
 				new ObjectBinding<Rectangle2D>() {
 					{
-						Rectangle cropperRectangle = imageCropperScrollPane
-								.getCropperRectangle();
 						super.bind(cropperRectangle.widthProperty(),
 								cropperRectangle.translateXProperty(),
 								cropperRectangle.translateYProperty());
@@ -200,9 +208,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 
 					@Override
 					protected Rectangle2D computeValue() {
-
-						Rectangle cropperRectangle = imageCropperScrollPane
-								.getCropperRectangle();
 
 						double minX = cropperRectangle.translateXProperty()
 								.add(cropperRectangle.layoutXProperty()).get();
@@ -215,6 +220,90 @@ public class ImageCropperGrid extends Control implements Initializable {
 
 					}
 				});
+
+		// bind image cropper scroll pane width'n'height
+
+		sourceImageView.imageProperty().addListener(
+				new ChangeListener<Image>() {
+
+					@Override
+					public void changed(
+							ObservableValue<? extends Image> observable,
+							Image oldValue, Image newValue) {
+						
+						if(observable == null)
+							sourceImageView.imageProperty().removeListener(this);
+
+						if(newValue != null) {
+							// width
+							imageCropperScrollPane.maxWidthObservablesProperty().clear();
+							imageCropperScrollPane.maxWidthObservablesProperty().add(cropperRectangle.widthProperty());
+							imageCropperScrollPane.maxWidthObservablesProperty().add(sourceImageView.fitWidthProperty());
+							// height
+							imageCropperScrollPane.maxHeightObservablesProperty().clear();
+							imageCropperScrollPane.maxHeightObservablesProperty().add(cropperRectangle.heightProperty());
+							imageCropperScrollPane.maxHeightObservablesProperty().add(sourceImageView.fitHeightProperty());
+						}
+
+					}
+				});
+
+		// ### does not work > think that low level bindings aren't allowed for ListBindings ###
+//		
+//		Bindings.bindContent(
+//				imageCropperScrollPane.maxWidthObservablesProperty(),
+//				new ListBinding<ReadOnlyDoubleProperty>() {
+//					{
+//						super.bind(sourceImageView.imageProperty());
+//						// ,
+//						// cropperRectangle.widthProperty()
+//
+//					}
+//
+//					@Override
+//					protected ObservableList<ReadOnlyDoubleProperty> computeValue() {
+//
+//						ObservableList<ReadOnlyDoubleProperty> result = FXCollections
+//								.observableArrayList(new ArrayList<ReadOnlyDoubleProperty>() {
+//									private static final long serialVersionUID = -1049640758537268871L;
+//									{
+//										add(cropperRectangle.widthProperty());
+//									}
+//								});
+//
+//						if (sourceImageView.imageProperty().get() != null)
+//							result.add(sourceImageView.getImage()
+//									.widthProperty());
+//						return result;
+//					}
+//				});
+//
+//		Bindings.bindContent(
+//				imageCropperScrollPane.maxHeightObservablesProperty(),
+//				new ListBinding<ReadOnlyDoubleProperty>() {
+//					{
+//						super.bind(sourceImageView.imageProperty());
+//						// ,
+//						// cropperRectangle.heightProperty()
+//					}
+//
+//					@Override
+//					protected ObservableList<ReadOnlyDoubleProperty> computeValue() {
+//
+//						ObservableList<ReadOnlyDoubleProperty> result = FXCollections
+//								.observableArrayList(new ArrayList<ReadOnlyDoubleProperty>() {
+//									private static final long serialVersionUID = 7172416090874066799L;
+//									{
+//										add(cropperRectangle.heightProperty());
+//									}
+//								});
+//
+//						if (sourceImageView.imageProperty().get() != null)
+//							result.add(sourceImageView.getImage()
+//									.heightProperty());
+//						return result;
+//					}
+//				});
 	}
 
 	public ObjectProperty<Image> targetImageProperty() {
@@ -241,6 +330,11 @@ public class ImageCropperGrid extends Control implements Initializable {
 	@Override
 	protected String getUserAgentStylesheet() {
 		return getClass().getResource("image-cropper.css").toExternalForm();
+	}
+
+	private void reset() {
+		sourceImageView.reset();
+		cropperRectangle.reset();
 	}
 
 	// ### some more possible properties ###

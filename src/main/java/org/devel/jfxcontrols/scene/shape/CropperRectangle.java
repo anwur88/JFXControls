@@ -28,8 +28,10 @@ public class CropperRectangle extends Rectangle implements Initializable {
 	public static final double DEFAULT_REF_Y = 0;
 
 	// reference points of mouse pressed location
-	private DoubleProperty referencePointX;
+	private DoubleProperty refX;
 	private DoubleProperty refY;
+	// maximum points for moving the rectangle (this is at least the size of the
+	// rectangle > so this means the right downer edge)
 	private DoubleProperty maxX;
 	private DoubleProperty maxY;
 
@@ -47,45 +49,51 @@ public class CropperRectangle extends Rectangle implements Initializable {
 				});
 
 		// rectangle moved
-		addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+		addEventHandler(MouseEvent.MOUSE_DRAGGED,
+				new EventHandler<MouseEvent>() {
 
-			@Override
-			public void handle(MouseEvent event) {
+					@Override
+					public void handle(MouseEvent event) {
 
-				// ### X axis ###
-				// offset inside cropperRectangle
-				double offsetX = getRefX() - getX();
-				// distance to translate the rectangle to
-				double translateX = getTranslateX() + event.getX() - offsetX;
-				// new x position of the left upper corner for the
-				// cropperRectangle
-				double newXLeft = getX() + translateX;
-				// new x position of the downer edge for the cropperRectangle
-				double newXRight = newXLeft + getWidth();
-				if (newXLeft >= 0 && newXRight <= getMaxX())
-					setTranslateX(translateX);
+						// ### X axis ###
+						// offset inside cropperRectangle
+						double offsetX = getRefX() - getX();
+						// distance to translate the rectangle to
+						double translateX = getTranslateX() + event.getX()
+								- offsetX;
+						// new x position of the left upper corner for the
+						// cropperRectangle
+						double newXLeft = getX() + translateX;
+						// new x position of the downer edge for the
+						// cropperRectangle
+						double newXRight = newXLeft + getWidth();
+						if (newXLeft >= 0 && newXRight <= getMaxX())
+							setTranslateX(translateX);
 
-				// ### Y axis ###
-				// offset inside cropperRectangle
-				double offsetY = getRefY() - getY();
-				// distance to translate the rectangle to
-				double translateY = getTranslateY() + event.getY() - offsetY;
-				// new y position of the upper edge for the cropperRectangle
-				double newYUp = getY() + translateY;
-				// new y position of the downer edge for the cropperRectangle
-				double newYDown = newYUp + getHeight();
-				if (newYUp >= 0 && newYDown <= getMaxY())
-					setTranslateY(translateY);
+						// ### Y axis ###
+						// offset inside cropperRectangle
+						double offsetY = getRefY() - getY();
+						// distance to translate the rectangle to
+						double translateY = getTranslateY() + event.getY()
+								- offsetY;
+						// new y position of the upper edge for the
+						// cropperRectangle
+						double newYUp = getY() + translateY;
+						// new y position of the downer edge for the
+						// cropperRectangle
+						double newYDown = newYUp + getHeight();
+						if (newYUp >= 0 && newYDown <= getMaxY())
+							setTranslateY(translateY);
 
-			}
-		});
+					}
+				});
 
 	}
 
 	public DoubleProperty refXProperty() {
-		if (referencePointX == null)
-			referencePointX = new SimpleDoubleProperty(DEFAULT_REF_X);
-		return referencePointX;
+		if (refX == null)
+			refX = new SimpleDoubleProperty(DEFAULT_REF_X);
+		return refX;
 	}
 
 	public double getRefX() {
@@ -117,7 +125,7 @@ public class CropperRectangle extends Rectangle implements Initializable {
 	}
 
 	public double getMaxX() {
-		return  maxXProperty().get();
+		return maxXProperty().get();
 	}
 
 	public void setMaxX(double maxX) {

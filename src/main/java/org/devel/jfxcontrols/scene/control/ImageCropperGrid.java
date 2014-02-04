@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,16 +46,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 	private static final String TXT_choose_source_label = "Quelle";
 	private static final String TXT_choose_target_label = "Ziel";
 
-	// // size properties for the target image to be set via CSS
-	// private IntegerProperty targetWidth;
-	// private IntegerProperty targetHeight;
-	//
-	// // necessary due to restriction for getting the path to the image
-	// private StringProperty targetPath;
-	//
-	// // factor 4 translating source cropper rectangle size 2 target view port
-	// private DoubleProperty resizeFactor;
-
 	/**
 	 * 
 	 */
@@ -71,13 +60,8 @@ public class ImageCropperGrid extends Control implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		DoubleProperty fitHeightProperty = sourceImageView.fitHeightProperty();
-
-		// imageCropperScrollPane.maxHeightObservablesProperty().add(cropperRectangle.heightProperty());
-		// imageCropperScrollPane.maxHeightObservablesProperty().add(sourceImageView.fitHeightProperty());
-		// imageCropperScrollPane.maxWidthObservablesProperty().add(cropperRectangle.widthProperty());
-		// imageCropperScrollPane.maxWidthObservablesProperty().add(sourceImageView.fitWidthProperty());
-
+		// TODO stefan - set cropper rectangle here (?)
+		sourceImageView.setCropperRectangle(cropperRectangle);
 		sourceImageView.initialize(location, resources);
 		cropperRectangle.initialize(location, resources);
 		imageCropperScrollPane.initialize(location, resources);
@@ -86,8 +70,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 	}
 
 	// ############ Controller APIs ##############
-
-	// ### ImageCropperGridPane ###
 
 	@FXML
 	private GridPane imageCropperView;
@@ -101,8 +83,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 	@FXML
 	private ImageCropperScrollPane imageCropperScrollPane;
 
-	// ### TargetImageView ###
-
 	@FXML
 	private SourceImageView sourceImageView;
 
@@ -115,19 +95,9 @@ public class ImageCropperGrid extends Control implements Initializable {
 	@FXML
 	private Button saveImageButton;
 
-	/**
-	 * method calls an dialog to choose an image from the drive and sets them to
-	 * the ImageCropperModel.
-	 * 
-	 * @param event
-	 *            is unused in this method
-	 */
 	@FXML
 	void loadImage(final ActionEvent event) {
 
-		// imageCropperScrollPane.layout();
-
-		// reset image cropper
 		reset();
 
 		// choose the name
@@ -230,80 +200,35 @@ public class ImageCropperGrid extends Control implements Initializable {
 					public void changed(
 							ObservableValue<? extends Image> observable,
 							Image oldValue, Image newValue) {
-						
-						if(observable == null)
-							sourceImageView.imageProperty().removeListener(this);
 
-						if(newValue != null) {
+						if (observable == null)
+							sourceImageView.imageProperty()
+									.removeListener(this);
+
+						if (newValue != null) {
 							// width
-							imageCropperScrollPane.maxWidthObservablesProperty().clear();
-							imageCropperScrollPane.maxWidthObservablesProperty().add(cropperRectangle.widthProperty());
-							imageCropperScrollPane.maxWidthObservablesProperty().add(sourceImageView.fitWidthProperty());
+							imageCropperScrollPane
+									.maxWidthObservablesProperty().clear();
+							imageCropperScrollPane
+									.maxWidthObservablesProperty().add(
+											cropperRectangle.widthProperty());
+							imageCropperScrollPane
+									.maxWidthObservablesProperty().add(
+											sourceImageView.fitWidthProperty());
 							// height
-							imageCropperScrollPane.maxHeightObservablesProperty().clear();
-							imageCropperScrollPane.maxHeightObservablesProperty().add(cropperRectangle.heightProperty());
-							imageCropperScrollPane.maxHeightObservablesProperty().add(sourceImageView.fitHeightProperty());
+							imageCropperScrollPane
+									.maxHeightObservablesProperty().clear();
+							imageCropperScrollPane
+									.maxHeightObservablesProperty().add(
+											cropperRectangle.heightProperty());
+							imageCropperScrollPane
+									.maxHeightObservablesProperty()
+									.add(sourceImageView.fitHeightProperty());
 						}
 
 					}
 				});
-
-		// ### does not work > think that low level bindings aren't allowed for ListBindings ###
-//		
-//		Bindings.bindContent(
-//				imageCropperScrollPane.maxWidthObservablesProperty(),
-//				new ListBinding<ReadOnlyDoubleProperty>() {
-//					{
-//						super.bind(sourceImageView.imageProperty());
-//						// ,
-//						// cropperRectangle.widthProperty()
-//
-//					}
-//
-//					@Override
-//					protected ObservableList<ReadOnlyDoubleProperty> computeValue() {
-//
-//						ObservableList<ReadOnlyDoubleProperty> result = FXCollections
-//								.observableArrayList(new ArrayList<ReadOnlyDoubleProperty>() {
-//									private static final long serialVersionUID = -1049640758537268871L;
-//									{
-//										add(cropperRectangle.widthProperty());
-//									}
-//								});
-//
-//						if (sourceImageView.imageProperty().get() != null)
-//							result.add(sourceImageView.getImage()
-//									.widthProperty());
-//						return result;
-//					}
-//				});
-//
-//		Bindings.bindContent(
-//				imageCropperScrollPane.maxHeightObservablesProperty(),
-//				new ListBinding<ReadOnlyDoubleProperty>() {
-//					{
-//						super.bind(sourceImageView.imageProperty());
-//						// ,
-//						// cropperRectangle.heightProperty()
-//					}
-//
-//					@Override
-//					protected ObservableList<ReadOnlyDoubleProperty> computeValue() {
-//
-//						ObservableList<ReadOnlyDoubleProperty> result = FXCollections
-//								.observableArrayList(new ArrayList<ReadOnlyDoubleProperty>() {
-//									private static final long serialVersionUID = 7172416090874066799L;
-//									{
-//										add(cropperRectangle.heightProperty());
-//									}
-//								});
-//
-//						if (sourceImageView.imageProperty().get() != null)
-//							result.add(sourceImageView.getImage()
-//									.heightProperty());
-//						return result;
-//					}
-//				});
+		
 	}
 
 	public ObjectProperty<Image> targetImageProperty() {
@@ -336,68 +261,5 @@ public class ImageCropperGrid extends Control implements Initializable {
 		sourceImageView.reset();
 		cropperRectangle.reset();
 	}
-
-	// ### some more possible properties ###
-
-	// public IntegerProperty targetWidthProperty() {
-	// if (targetWidth == null)
-	// targetWidth = new SimpleIntegerProperty(DEFAULT_WIDTH);
-	// return targetWidth;
-	// }
-	//
-	// public int getTargetWidth() {
-	// return targetWidth.get();
-	// }
-	//
-	// public void setTargetWidth(int targetWidth) {
-	// this.targetWidth.set(targetWidth);
-	// }
-	//
-	// public IntegerProperty targetHeightProperty() {
-	// if (targetHeight == null)
-	// targetHeight = new SimpleIntegerProperty(DEFAULT_HEIGHT);
-	// return targetHeight;
-	// }
-	//
-	// public int getTargetHeight() {
-	// return targetHeight.get();
-	// }
-	//
-	// public void setTargetHeight(int targetHeight) {
-	// this.targetHeight.set(targetHeight);
-	// }
-	//
-	// public String getTargetPath() {
-	// return targetPath.get();
-	// }
-	//
-	// public StringProperty targetPathProperty() {
-	// if (targetPath == null)
-	// targetPath = new SimpleStringProperty();
-	// return targetPath;
-	// }
-	//
-	// public void setTargetPath(String targetPath) {
-	// this.targetPath.set(targetPath);
-	// }
-
-	// /**
-	// * Every source image has its resize factor.
-	// *
-	// * @return
-	// */
-	// public DoubleProperty resizeFactorProperty() {
-	// if (resizeFactor == null)
-	// resizeFactor = new SimpleDoubleProperty(0.2754820936639118);
-	// return resizeFactor;
-	// }
-	//
-	// public double getResizeFactor() {
-	// return resizeFactor.get();
-	// }
-	//
-	// public void setResizeFactor(double resizeFactor) {
-	// this.resizeFactor.set(resizeFactor);
-	// }
 
 }

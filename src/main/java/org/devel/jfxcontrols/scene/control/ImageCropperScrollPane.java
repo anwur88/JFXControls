@@ -76,7 +76,8 @@ public class ImageCropperScrollPane extends ScrollPane implements Initializable 
 			@Override
 			protected double computeValue() {
 				if (checkObservables(maxWidthObservablesProperty())) {
-					return getMaxValue(maxWidthObservablesProperty());
+					return getMaxValue(maxWidthObservablesProperty()) + 
+							calculateHorizontalDimDiff();
 				}
 				// else use computed value
 				return -1;
@@ -92,13 +93,25 @@ public class ImageCropperScrollPane extends ScrollPane implements Initializable 
 			@Override
 			protected double computeValue() {
 				if (checkObservables(maxHeightObservablesProperty())) {
-					return getMaxValue(maxHeightObservablesProperty());
+					return getMaxValue(maxHeightObservablesProperty()) +
+							calculateVerticalDimDiff();
 				}
 				// else use computed value
 				return -1;
 			}
 		});
 
+	}
+	
+	private double calculateVerticalDimDiff() {
+		return getWidth()
+				- getViewportBounds().getWidth();
+	}
+	
+	private double calculateHorizontalDimDiff() {
+		return getBoundsInParent().getHeight()
+				- getViewportBounds()
+						.getHeight();
 	}
 
 	private boolean checkObservables(Observable... observables) {

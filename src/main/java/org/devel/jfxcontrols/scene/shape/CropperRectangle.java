@@ -3,13 +3,9 @@
  */
 package org.devel.jfxcontrols.scene.shape;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -20,10 +16,7 @@ import javafx.scene.shape.Rectangle;
  * @author stefan.illgen
  * 
  */
-public class CropperRectangle extends Rectangle implements Initializable {
-
-	public static final double DEFAULT_REF_X = 0.0;
-	public static final double DEFAULT_REF_Y = 0.0;
+public class CropperRectangle extends Rectangle {
 
 	// reference points of mouse pressed location
 	private DoubleProperty refX;
@@ -33,8 +26,7 @@ public class CropperRectangle extends Rectangle implements Initializable {
 	private DoubleProperty maxX;
 	private DoubleProperty maxY;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public void initialize() {
 
 		// mouse pressed
 		addEventHandler(MouseEvent.MOUSE_PRESSED,
@@ -90,7 +82,7 @@ public class CropperRectangle extends Rectangle implements Initializable {
 
 	public DoubleProperty refXProperty() {
 		if (refX == null)
-			refX = new SimpleDoubleProperty(DEFAULT_REF_X);
+			refX = new SimpleDoubleProperty(0.0);
 		return refX;
 	}
 
@@ -104,7 +96,7 @@ public class CropperRectangle extends Rectangle implements Initializable {
 
 	public DoubleProperty refYProperty() {
 		if (refY == null)
-			refY = new SimpleDoubleProperty(DEFAULT_REF_Y);
+			refY = new SimpleDoubleProperty(0.0);
 		return refY;
 	}
 
@@ -145,7 +137,6 @@ public class CropperRectangle extends Rectangle implements Initializable {
 	}
 
 	public void reset() {
-		// TODO stefan - solve via bindings
 		setTranslateX(0.0);
 		setTranslateY(0.0);
 	}

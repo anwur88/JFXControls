@@ -7,7 +7,8 @@ apply from: "javafx.plugin"
 
 compileJava.options.encoding = 'UTF-8'
 //sourceCompatibility = 1.8
-if (!System.getProperty("java.version").matches(/^(1\.)?8.*/)) { //FIXME not the best way, but cloudbees is on an old version of gradle
+if (!System.getProperty("java.version").matches(/^(1\.)?8.*/)) { 
+	//FIXME not the best way, but cloudbees is on an old version of gradle
     throw new GradleException("Java 8 required, ${System.getProperty("java.version")} found")
 }
 
@@ -26,8 +27,6 @@ repositories {
 // Bugfix for "failed to read class file" bug when using gradle with Java 8 ea.
 // See: http://forums.gradle.org/gradle/topics/1_7_rc_1_fails_to_read_classfile_for_test_when_using_java_8_0_ea_b99
 test.scanForTestClasses = false
-
-
 
 dependencies {
 	

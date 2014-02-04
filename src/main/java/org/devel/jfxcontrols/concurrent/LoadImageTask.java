@@ -33,15 +33,7 @@ public class LoadImageTask extends Task<Boolean> {
 		updateMessage("");
 		try {
 			image = new Image(new FileInputStream(imageFile));
-
-			// TODO stefan - must the image size be restricted like that?
-			// if (image.getWidth() < WIDTH || image.getHeight() < HEIGHT) {
-			// updateMessage("Bild ist zu klein. Minimum sind 200*150 Pixel.");
-			// return false;
-			// }
-
 			updateMessage(TXT_load_image_success);
-
 			return true;
 
 		} catch (IOException e) {

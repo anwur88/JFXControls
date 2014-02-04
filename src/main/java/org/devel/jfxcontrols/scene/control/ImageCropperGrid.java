@@ -25,24 +25,22 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 
-import javax.swing.JOptionPane;
-
+import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
-import org.devel.jfxcontrols.concurrent.SaveImageTask;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
 import org.devel.jfxcontrols.scene.layout.ImageCropperGridPane;
 import org.devel.jfxcontrols.scene.shape.CropperRectangle;
 
 /**
- * TODO stefan - separate concerns > build sub controls
+ * 
  * 
  * @author stefan.illgen
  * 
  */
 public class ImageCropperGrid extends Control implements Initializable {
 
-	private static final String TXT_save_target_override_title = "Warning";
-	private static final String TXT_save_target_override_question = "Die Datei existiert bereits. Überschreiben?";
+	private static final String TXT_SAVE_TARGET_OVERRIDE_TITLE = "Warning";
+	private static final String TXT_SAVE_TARGET_OVERRIDE_QUESTION = "Die Datei existiert bereits. Überschreiben?";
 	private static final String TXT_choose_source_label = "Quelle";
 	private static final String TXT_choose_target_label = "Ziel";
 
@@ -59,13 +57,10 @@ public class ImageCropperGrid extends Control implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		// TODO stefan - set cropper rectangle here (?)
 		sourceImageView.setCropperRectangle(cropperRectangle);
-		sourceImageView.initialize(location, resources);
-		cropperRectangle.initialize(location, resources);
+		sourceImageView.initialize();
+		cropperRectangle.initialize();
 		bind();
-
 	}
 
 	// ############ Controller APIs ##############
@@ -147,18 +142,23 @@ public class ImageCropperGrid extends Control implements Initializable {
 				new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
 		File imageFile = fileChooser.showSaveDialog(getScene().getWindow());
 
-		// TODO stefan - remove swing dialog
-		// if file exists, show override request
-		if (imageFile != null
-				&& imageFile.exists()
-				&& JOptionPane.showConfirmDialog(null,
-						TXT_save_target_override_question,
-						TXT_save_target_override_title,
-						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		Thread cropSaveThread = new Thread(new CropWriteImageTask(imageFile,
+				getTargetImage(), cropperRectangle.getX(),
+				cropperRectangle.getY(), cropperRectangle.getWidth(),
+				cropperRectangle.getHeight()));
 
-			// save target image
-			new Thread(new SaveImageTask(imageFile, getTargetImage())).start();
-		}
+		if (imageFile != null) 
+			cropSaveThread.start();
+//			// if file exists, show override request
+//			if (imageFile.exists())
+//				// TODO stefan - remove swing dialog (create a custom control)
+//				if (!(JOptionPane.showConfirmDialog(null,
+//						TXT_SAVE_TARGET_OVERRIDE_QUESTION,
+//						TXT_SAVE_TARGET_OVERRIDE_TITLE,
+//						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION))
+//					return;
+
+			
 	}
 
 	private void bind() {
@@ -191,7 +191,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 				});
 
 		// bind image cropper scroll pane width'n'height
-
 		sourceImageView.imageProperty().addListener(
 				new ChangeListener<Image>() {
 
@@ -227,7 +226,7 @@ public class ImageCropperGrid extends Control implements Initializable {
 
 					}
 				});
-		
+
 	}
 
 	public ObjectProperty<Image> targetImageProperty() {
@@ -242,7 +241,7 @@ public class ImageCropperGrid extends Control implements Initializable {
 		targetImageView.imageProperty().set(targetImage);
 	}
 
-	// ### private API ###
+	// ### Skinning ###
 
 	private void setupSkin() {
 		getStyleClass().add("image-cropper-grid");

@@ -22,10 +22,8 @@ import javafx.scene.shape.Rectangle;
  */
 public class CropperRectangle extends Rectangle implements Initializable {
 
-	public static final double DEFAULT_WIDTH = 100;
-	public static final double DEFAULT_HEIGHT = 133;
-	public static final double DEFAULT_REF_X = 0;
-	public static final double DEFAULT_REF_Y = 0;
+	public static final double DEFAULT_REF_X = 0.0;
+	public static final double DEFAULT_REF_Y = 0.0;
 
 	// reference points of mouse pressed location
 	private DoubleProperty refX;
@@ -120,7 +118,7 @@ public class CropperRectangle extends Rectangle implements Initializable {
 
 	public DoubleProperty maxXProperty() {
 		if (maxX == null)
-			maxX = new SimpleDoubleProperty(DEFAULT_WIDTH);
+			maxX = new SimpleDoubleProperty(getWidth());
 		return maxX;
 	}
 
@@ -134,7 +132,7 @@ public class CropperRectangle extends Rectangle implements Initializable {
 
 	public DoubleProperty maxYProperty() {
 		if (maxY == null)
-			maxY = new SimpleDoubleProperty(DEFAULT_HEIGHT);
+			maxY = new SimpleDoubleProperty(getHeight());
 		return maxY;
 	}
 

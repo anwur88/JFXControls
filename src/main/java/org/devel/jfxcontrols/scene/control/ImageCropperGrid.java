@@ -64,7 +64,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 		sourceImageView.setCropperRectangle(cropperRectangle);
 		sourceImageView.initialize(location, resources);
 		cropperRectangle.initialize(location, resources);
-		imageCropperScrollPane.initialize(location, resources);
 		bind();
 
 	}

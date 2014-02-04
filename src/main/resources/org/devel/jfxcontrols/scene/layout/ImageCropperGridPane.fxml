@@ -43,8 +43,6 @@
 			</children>
 		</HBox>
 
-		<!-- -->
-
 		<ImageCropperScrollPane fx:id="imageCropperScrollPane"
 			GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS"
 			GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS"
@@ -68,29 +66,6 @@
 
 		</ImageCropperScrollPane>
 
-		<!-- <ScrollPane fx:id="sourceScrollPane" minHeight="135.0" -->
-		<!-- minWidth="102.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" -->
-		<!-- GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS"> -->
-		<!-- <content> -->
-		<!-- <StackPane fx:id="imageStackPane" alignment="TOP_LEFT"> -->
-		<!-- <children> -->
-		<!-- <ImageView fx:id="sourceImageView" fitHeight="266.0" -->
-		<!-- fitWidth="200.0" pickOnBounds="true" preserveRatio="true" /> -->
-		<!-- <Rectangle fx:id="cropperRectangle" fill="#ffffff80" -->
-		<!-- height="133.3333333" onMouseDragged="#moveRectangle" -->
-		<!-- onMousePressed="#setReferencePoint" width="100" -->
-		<!-- StackPane.alignment="TOP_LEFT"> -->
-		<!-- <stroke> -->
-		<!-- <Color blue="0.8666666746139526" green="0.8666666746139526" -->
-		<!-- red="0.8666666746139526" /> -->
-		<!-- </stroke> -->
-		<!-- </Rectangle> -->
-		<!-- </children> -->
-		<!-- </StackPane> -->
-		<!-- </content> -->
-		<!-- </ScrollPane> -->
-
-
 		<Label alignment="CENTER" contentDisplay="CENTER"
 			style="-fx-font-weight: bold;" text="Source" textAlignment="CENTER"
 			GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER" xmlns="http://javafx.com/javafx/8"
@@ -99,6 +74,7 @@
 			style="-fx-font-weight: bold;" text="Target" textAlignment="CENTER"
 			GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER"
 			xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+			
 	</children>
 	<stylesheets>
 		<URL value="@../control/image-cropper.css" />

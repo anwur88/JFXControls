@@ -39,8 +39,6 @@ import org.devel.jfxcontrols.scene.shape.CropperRectangle;
  */
 public class ImageCropperGrid extends Control implements Initializable {
 
-	private static final String TXT_SAVE_TARGET_OVERRIDE_TITLE = "Warning";
-	private static final String TXT_SAVE_TARGET_OVERRIDE_QUESTION = "Die Datei existiert bereits. Überschreiben?";
 	private static final String TXT_choose_source_label = "Quelle";
 	private static final String TXT_choose_target_label = "Ziel";
 
@@ -106,8 +104,16 @@ public class ImageCropperGrid extends Control implements Initializable {
 		File imageFile = fileChooser.showOpenDialog(getScene().getWindow());
 
 		// load source image
-		if (imageFile != null) {
-			LoadImageTask task = new LoadImageTask(imageFile);
+		loadSourceImage(imageFile);
+	}
+
+	/**
+	 * 
+	 * @param image
+	 */
+	public void loadSourceImage(File image) {
+		if (image != null) {
+			LoadImageTask task = new LoadImageTask(image);
 
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
@@ -120,7 +126,6 @@ public class ImageCropperGrid extends Control implements Initializable {
 			});
 			new Thread(task).start();
 		}
-
 	}
 
 	/**
@@ -142,23 +147,21 @@ public class ImageCropperGrid extends Control implements Initializable {
 				new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
 		File imageFile = fileChooser.showSaveDialog(getScene().getWindow());
 
-		Thread cropSaveThread = new Thread(new CropWriteImageTask(imageFile,
+		saveImage(imageFile);
+	}
+
+	/**
+	 * 
+	 * @param image
+	 */
+	public void saveImage(File image) {
+		Thread cropSaveThread = new Thread(new CropWriteImageTask(image,
 				getTargetImage(), cropperRectangle.getX(),
 				cropperRectangle.getY(), cropperRectangle.getWidth(),
 				cropperRectangle.getHeight()));
 
-		if (imageFile != null) 
+		if (image != null) 
 			cropSaveThread.start();
-//			// if file exists, show override request
-//			if (imageFile.exists())
-//				// TODO stefan - remove swing dialog (create a custom control)
-//				if (!(JOptionPane.showConfirmDialog(null,
-//						TXT_SAVE_TARGET_OVERRIDE_QUESTION,
-//						TXT_SAVE_TARGET_OVERRIDE_TITLE,
-//						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION))
-//					return;
-
-			
 	}
 
 	private void bind() {
@@ -227,6 +230,18 @@ public class ImageCropperGrid extends Control implements Initializable {
 					}
 				});
 
+	}
+	
+	public ObjectProperty<Image> sourceImageProperty() {
+		return sourceImageView.imageProperty();
+	}
+
+	public Image getSourcemage() {
+		return sourceImageView.imageProperty().get();
+	}
+
+	public void setSourceImage(Image sourceImage) {
+		sourceImageView.imageProperty().set(sourceImage);
 	}
 
 	public ObjectProperty<Image> targetImageProperty() {

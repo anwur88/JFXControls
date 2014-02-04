@@ -22,7 +22,7 @@
 		xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperGrid"> -->
 
 	<children>
-		<Button alignment="CENTER" layoutX="151.0" layoutY="23.0"
+		<Button fx:id="loadImageButton" alignment="CENTER" layoutX="151.0" layoutY="23.0"
 			mnemonicParsing="false" onAction="#loadImage" text="Load Image"
 			GridPane.rowIndex="2" />
 		<Button fx:id="saveImageButton" layoutX="170.0" layoutY="379.0"

@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import org.devel.jfxcontrols.scene.control.ImageCropperGrid;
+import org.devel.jfxcontrols.scene.layout.ImageCropperGridPane;
 import org.devel.jfxcontrols.util.Properties;
 
 /**
@@ -37,7 +37,7 @@ public class JFXControlsApp extends Application {
 
 	private Parent getParent() {
 //		return new SearchRoutePane();
-		return new ImageCropperGrid();
+		return new ImageCropperGridPane();
 	}
 
 	/**

@@ -6,7 +6,7 @@ package org.devel.jfxcontrols.scene.layout;
 import java.io.IOException;
 import java.net.URL;
 
-import org.devel.jfxcontrols.scene.control.ImageCropperGrid;
+import org.devel.jfxcontrols.scene.control.ImageCropperGridPaneController;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
@@ -17,17 +17,17 @@ import javafx.scene.layout.GridPane;
  */
 public class ImageCropperGridPane extends GridPane {
 
-	public ImageCropperGridPane(final ImageCropperGrid imageCropper) {
-		loadFXML(imageCropper);
+	public ImageCropperGridPane() {		
+		loadFXML();
 	}
 
-	private void loadFXML(final ImageCropperGrid imageCropper) {
-		// load FXML
+	private void loadFXML() {
+		
 		URL url = getClass().getResource("ImageCropperGridPane.fxml");
 		FXMLLoader fxmlLoader = new FXMLLoader(url);
 
 		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(imageCropper);
+		fxmlLoader.setController(new ImageCropperGridPaneController());
 
 		try {
 			fxmlLoader.load();

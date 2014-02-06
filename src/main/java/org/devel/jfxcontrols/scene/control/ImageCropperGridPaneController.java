@@ -18,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -28,7 +27,6 @@ import javafx.stage.FileChooser;
 import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
-import org.devel.jfxcontrols.scene.layout.ImageCropperGridPane;
 import org.devel.jfxcontrols.scene.shape.CropperRectangle;
 
 /**
@@ -37,20 +35,13 @@ import org.devel.jfxcontrols.scene.shape.CropperRectangle;
  * @author stefan.illgen
  * 
  */
-public class ImageCropperGrid extends Control implements Initializable {
+public class ImageCropperGridPaneController implements Initializable {
 
 	private static final String TXT_choose_source_label = "Quelle";
 	private static final String TXT_choose_target_label = "Ziel";
 
-	/**
-	 * 
-	 */
-	public ImageCropperGrid() {
-		setupSkin();
+	public ImageCropperGridPaneController() {
 
-		// add ImageCropperPane
-		imageCropperPane = new ImageCropperGridPane(this);
-		getChildren().add(imageCropperPane);
 	}
 
 	@Override
@@ -67,7 +58,7 @@ public class ImageCropperGrid extends Control implements Initializable {
 	private GridPane imageCropperView;
 
 	// the image cropper pane used for loading FXML
-	private ImageCropperGridPane imageCropperPane;
+	// private ImageCropperGridPane imageCropperPane;
 
 	@FXML
 	private StackPane test;
@@ -101,7 +92,8 @@ public class ImageCropperGrid extends Control implements Initializable {
 				new FileChooser.ExtensionFilter("png", "*.png"),
 				new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
 
-		File imageFile = fileChooser.showOpenDialog(getScene().getWindow());
+		File imageFile = fileChooser.showOpenDialog(imageCropperView.getScene()
+				.getWindow());
 
 		// load source image
 		loadSourceImage(imageFile);
@@ -145,7 +137,8 @@ public class ImageCropperGrid extends Control implements Initializable {
 						"*.png"),
 				new FileChooser.ExtensionFilter("png", "*.png"),
 				new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-		File imageFile = fileChooser.showSaveDialog(getScene().getWindow());
+		File imageFile = fileChooser.showSaveDialog(imageCropperView.getScene()
+				.getWindow());
 
 		saveImage(imageFile);
 	}
@@ -160,7 +153,7 @@ public class ImageCropperGrid extends Control implements Initializable {
 				cropperRectangle.getY(), cropperRectangle.getWidth(),
 				cropperRectangle.getHeight()));
 
-		if (image != null) 
+		if (image != null)
 			cropSaveThread.start();
 	}
 
@@ -231,7 +224,7 @@ public class ImageCropperGrid extends Control implements Initializable {
 				});
 
 	}
-	
+
 	public ObjectProperty<Image> sourceImageProperty() {
 		return sourceImageView.imageProperty();
 	}
@@ -258,17 +251,17 @@ public class ImageCropperGrid extends Control implements Initializable {
 
 	// ### Skinning ###
 
-	private void setupSkin() {
-		getStyleClass().add("image-cropper-grid");
-	}
-
-	/**
-	 * Integrate skin.
-	 */
-	@Override
-	protected String getUserAgentStylesheet() {
-		return getClass().getResource("image-cropper.css").toExternalForm();
-	}
+	// private void setupSkin() {
+	// getStyleClass().add("image-cropper-grid");
+	// }
+	//
+	// /**
+	// * Integrate skin.
+	// */
+	// @Override
+	// protected String getUserAgentStylesheet() {
+	// return getClass().getResource("image-cropper.css").toExternalForm();
+	// }
 
 	private void reset() {
 		sourceImageView.reset();

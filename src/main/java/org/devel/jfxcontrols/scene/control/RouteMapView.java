@@ -23,6 +23,7 @@ import com.sun.javafx.scene.web.Debugger;
 /**
  * @author stefan.illgen
  */
+@SuppressWarnings("restriction")
 public class RouteMapView extends Control {
 
 	private static final String GOOGLEMAPS_HTML = "googleMapsJSAPI.html";
@@ -179,7 +180,7 @@ public class RouteMapView extends Control {
 
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation"})
 	private void initializeDebugger(WebEngine webEngine) {
 		if (DEBUG) {
 			Debugger debugger = webEngine.impl_getDebugger();

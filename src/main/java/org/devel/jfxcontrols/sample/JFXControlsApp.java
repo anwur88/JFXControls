@@ -37,8 +37,6 @@ public class JFXControlsApp extends Application {
 
 	private Parent getParent() {
 //		return new SearchRoutePane();
-//		return new ImageCropperGridPane();
-//		return new ImageCropperOld();
 //		return new Aggregator();
 		return new ImageCropper();
 	}

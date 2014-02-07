@@ -93,6 +93,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 	private void createNodes() {
 
 		imageCropperGridPane = new GridPane();
+		imageCropperGridPane.setId("imageCropperGridPane");
 		imageCropperGridPane.setHgap(GRID_GAP);
 		imageCropperGridPane.setVgap(GRID_GAP);
 		imageCropperGridPane.setStyle("-fx-background-color: white;");
@@ -153,12 +154,14 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 		imageCropperStackPane.setAlignment(Pos.TOP_LEFT);
 
 		sourceImageView = new SourceImageView();
+		sourceImageView.setId("sourceImageView");
 		sourceImageView.setPickOnBounds(true);
 		sourceImageView.setPreserveRatio(true);
 		sourceImageView.setFitHeight(SOURCE_IMAGE_HEIGHT);
 		sourceImageView.setFitWidth(SOURCE_IMAGE_WIDTH);
 
 		cropperRectangle = new CropperRectangle();
+		cropperRectangle.setId("cropperRectangle");
 		cropperRectangle.setFill(CROPPER_COLOR);
 		cropperRectangle.setHeight(CROPPER_HEIGHT);
 		cropperRectangle.setWidth(CROPPER_WIDTH);

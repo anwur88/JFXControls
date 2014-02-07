@@ -23,11 +23,6 @@ public class AggregatorSkin extends SkinBase<Aggregator> {
 		getSkinnable().requestLayout();
 	}
 	
-	/**
-	 * TODO stefan - What 4 getControl()?
-	 * 
-	 * @return
-	 */
 	public Aggregator getControl() {
 		return getSkinnable();
 	}
@@ -46,7 +41,6 @@ public class AggregatorSkin extends SkinBase<Aggregator> {
 			double contentWidth, double contentHeight) {
 		super.layoutChildren(contentX, contentY, contentWidth, contentHeight);
 		
-//		layoutInArea(aggregatedButton, 0, 0, aggregatedButton.getWidth(), aggregatedButton.getHeight(), Control.USE_PREF_SIZE, HPos.LEFT, VPos.TOP);
 		layoutInArea(aggregatedButton, 0, 0, contentWidth, contentHeight, Control.USE_PREF_SIZE, HPos.LEFT, VPos.TOP);
 	}
 

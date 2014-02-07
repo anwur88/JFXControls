@@ -38,6 +38,17 @@ public class ImageCropperScrollPane extends ScrollPane {
 		super();
 		setupSkin();
 	}
+	
+	private void setupSkin() {
+		getStyleClass().add("image-cropper-scroll-pane");
+	}
+	
+	@Override
+	protected String getUserAgentStylesheet() {
+		return getClass().getResource(
+				"/org/devel/jfxcontrols/scene/control/"
+						+ getClass().getSimpleName() + ".css").toExternalForm();
+	}
 
 	public ObservableList<ReadOnlyDoubleProperty> maxWidthObservablesProperty() {
 		if (maxWidthObservables == null)
@@ -51,15 +62,6 @@ public class ImageCropperScrollPane extends ScrollPane {
 			maxHeightObservables = FXCollections
 					.observableArrayList(new ArrayList<ReadOnlyDoubleProperty>());
 		return maxHeightObservables;
-	}
-
-	private void setupSkin() {
-		getStyleClass().add("image-cropper-scroll-pane");
-	}
-
-	@Override
-	protected String getUserAgentStylesheet() {
-		return getClass().getResource("image-cropper.css").toExternalForm();
 	}
 
 }

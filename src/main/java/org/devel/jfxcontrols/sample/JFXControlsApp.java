@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import org.devel.jfxcontrols.scene.control.Aggregator;
 import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.util.Properties;
 
@@ -38,7 +39,8 @@ public class JFXControlsApp extends Application {
 	private Parent getParent() {
 //		return new SearchRoutePane();
 //		return new ImageCropperGridPane();
-		return new ImageCropper();
+//		return new ImageCropper();
+		return new Aggregator();
 	}
 
 	/**

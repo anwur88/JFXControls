@@ -63,13 +63,13 @@ public class CropWriteImageTask extends Task<Boolean> {
 		updateMessage("");
 
 		// crop
-		PixelReader reader = image.getPixelReader();
-		WritableImage croppedImage = new WritableImage(reader, x, y, width,
+		WritableImage croppedImage = new WritableImage(image.getPixelReader(), x, y, width,
 				height);
 
 		// write
 		try {
 			String ext = FilenameUtils.getExtension(imageFile.toURI().getPath());
+			// TODO stefan - Remove Swing Deps 4 Writing Image 2 File
 			// fix bad jpg color conversions
 			if(ext.equals("jpg") || ext.equals("jpeg"))
 				croppedImage = fixBadJPEG(croppedImage);

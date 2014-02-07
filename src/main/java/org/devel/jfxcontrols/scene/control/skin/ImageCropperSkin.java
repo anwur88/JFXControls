@@ -18,6 +18,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.image.Image;
@@ -81,23 +82,22 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 		super(control);
 		createNodes();
 		initialize();
+		getSkinnable().requestLayout();
 	}
 
 	// ### private API ###
 
 	private void createNodes() {
 
-		// create children nodes
-
-		imageCropperView = new ImageCropperGridPane();
+		imageCropperView = new GridPane();
 		imageCropperView.setHgap(10.0);
 		imageCropperView.setVgap(10.0);
 		imageCropperView.setMinHeight(250.0);
 		imageCropperView.setMinWidth(360.0);
 		imageCropperView.setStyle("-fx-background-color: white;");
-		this.getChildren().addAll(imageCropperView);
+//		this.getChildren().addAll(imageCropperView);
 
-		imageCropperView.getStylesheets().add("@../control/image-cropper.css");
+		imageCropperView.getStylesheets().add(getStylesheet());
 		imageCropperView.getColumnConstraints().addAll(
 				new ColumnConstraints(Region.USE_COMPUTED_SIZE,
 						Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE,
@@ -205,7 +205,8 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 		cropperRectangle.setHeight(133.33333);
 		cropperRectangle.setWidth(100.0);
 		StackPane.setAlignment(cropperRectangle, Pos.TOP_LEFT);
-		cropperRectangle.setStroke(new Color(0.8666666746139526, 0.8666666746139526, 0.8666666746139526, 1.0));
+		cropperRectangle.setStroke(new Color(0.8666666746139526,
+				0.8666666746139526, 0.8666666746139526, 1.0));
 
 		imageCropperStackPane.getChildren().addAll(sourceImageView,
 				cropperRectangle);
@@ -228,13 +229,22 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 		targetLabel.setTextAlignment(TextAlignment.CENTER);
 		GridPane.setHgrow(targetLabel, Priority.ALWAYS);
 		GridPane.setVgrow(targetLabel, Priority.ALWAYS);
-		imageCropperView.add(targetLabel, 0, 0);
-
-		//
+		imageCropperView.add(targetLabel, 1, 0);
+		
+		
+		this.getChildren().addAll(imageCropperView);
 
 	}
 
+	private String getStylesheet() {
+		return getClass().getResource("../image-cropper.css").toExternalForm();
+	}
+
 	private void initialize() {
+		// TODO stefan - Set SubControl Property Test
+		getSkinnable().setSourceImageView(sourceImageView);
+		getSkinnable().setTargetImageView(targetImageView);
+		// TODO stefan - SubControl Initialization > Better move to SubControl?
 		sourceImageView.setCropperRectangle(cropperRectangle);
 		sourceImageView.initialize();
 		cropperRectangle.initialize();
@@ -244,7 +254,8 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 	private void bind() {
 
 		// bind image properties
-		getSkinnable().targetImageProperty().bind(sourceImageView.imageProperty());
+		getSkinnable().targetImageProperty().bind(
+				sourceImageView.imageProperty());
 
 		// bind view port of target image view
 		targetImageView.viewportProperty().bind(
@@ -339,4 +350,100 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 			cropSaveThread.start();
 	}
 
+	@Override
+	protected void layoutChildren(double contentX, double contentY,
+			double contentWidth, double contentHeight) {
+
+		super.layoutChildren(contentX, contentY, contentWidth, contentHeight);
+
+		// Insets insets = getSkinnable().getInsets();
+		// double x = insets.getLeft();
+		// double y = insets.getTop();
+		// double textfieldHeight = contentHeight;
+		// double buttonWidth = textField.prefHeight(-1);
+		// Insets buttonInsets = btnDown.getInsets();
+		// double textfieldWidth =
+		// this.getSkinnable().getWidth()-insets.getLeft()-insets.getRight() -
+		// buttonWidth - buttonInsets.getLeft() - buttonInsets.getRight();
+		// layoutInArea(textField, x, y, textfieldWidth, textfieldHeight,
+		// Control.USE_PREF_SIZE, HPos.LEFT, VPos.TOP);
+		// layoutInArea(btnUp, x+textfieldWidth+buttonInsets.getLeft(), y,
+		// buttonWidth, textfieldHeight/2, Control.USE_PREF_SIZE, HPos.LEFT,
+		// VPos.TOP);
+		// layoutInArea(btnDown, x+textfieldWidth+buttonInsets.getLeft(),
+		// y+textfieldHeight/2, buttonWidth, textfieldHeight/2,
+		// Control.USE_PREF_SIZE, HPos.LEFT, VPos.TOP);
+
+		// calculate insets
+		Insets insets = getSkinnable().getInsets();
+		double x = insets.getLeft();
+		double y = insets.getTop();
+		
+		// TODO stefan - Layout Calculation: Don't use fixed sizing (@see createNodes())
+		// 1st use only ImageCropperGridPane, because there layout has already been defined
+
+//		double imageCropperWidth = contentWidth;
+		double imageCropperWidth = imageCropperView.getWidth();		
+//		double imageCropperHeight = contentHeight;
+		double imageCropperHeight = imageCropperView.getHeight();
+
+		
+		// layout children in area
+//		layoutInArea(imageCropperView, x, y, imageCropperWidth, imageCropperHeight, Control.USE_PREF_SIZE, insets, HPos.LEFT, VPos.TOP);
+
+	}
+
+	@Override
+	protected double computePrefWidth(double height, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		super.computePrefWidth(height, topInset, rightInset,
+				bottomInset, leftInset);
+		
+		double prefWidth = getSkinnable().getInsets().getLeft()
+				+ imageCropperView.prefWidth(height)
+				+ getSkinnable().getInsets().getRight();
+		
+		return prefWidth;
+	}
+
+	@Override
+	protected double computePrefHeight(double width, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		super.computePrefHeight(width, topInset, rightInset,
+				bottomInset, leftInset);
+		
+		double prefWidth = getSkinnable().getInsets().getTop()
+				+ imageCropperView.prefHeight(width)
+				+ getSkinnable().getInsets().getBottom();
+		
+		return prefWidth;
+	}
+
+	@Override
+	protected double computeMinWidth(double height, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		
+		super.computeMinWidth(height, topInset, rightInset, bottomInset,
+				leftInset);
+		
+		double minWidth = getSkinnable().getInsets().getLeft()
+				+ imageCropperView.minWidth(height)
+				+ getSkinnable().getInsets().getRight();
+		
+		return minWidth;
+	}
+
+	@Override
+	protected double computeMinHeight(double width, double topInset,
+			double rightInset, double bottomInset, double leftInset) {
+		super.computeMinHeight(width, topInset, rightInset, bottomInset,
+				leftInset);
+		
+		double minHeight = getSkinnable().getInsets().getTop()
+				+ imageCropperView.minHeight(width)
+				+ getSkinnable().getInsets().getBottom();
+		
+		return minHeight;
+	}	
+	
 }

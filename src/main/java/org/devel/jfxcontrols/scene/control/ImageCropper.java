@@ -3,13 +3,13 @@
  */
 package org.devel.jfxcontrols.scene.control;
 
-import org.devel.jfxcontrols.scene.image.SourceImageView;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import org.devel.jfxcontrols.scene.image.SourceImageView;
 
 /**
  * @author stefan.illgen
@@ -61,8 +61,8 @@ public class ImageCropper extends Control {
 		targetImageViewProperty().set(targetImageView);
 	}
 
-	public ObjectProperty<ImageView> getTargetImageView() {
-		return targetImageViewProperty();
+	public ImageView getTargetImageView() {
+		return targetImageViewProperty().get();
 	}
 	
 	public ObjectProperty<Image> sourceImageProperty() {

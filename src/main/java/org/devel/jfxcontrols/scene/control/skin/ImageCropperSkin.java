@@ -21,6 +21,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -35,6 +36,7 @@ import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
 import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.scene.control.ImageCropperScrollPane;
+import org.devel.jfxcontrols.scene.image.SourceImageView;
 import org.devel.jfxcontrols.scene.shape.CropperRectangle;
 
 /**
@@ -42,7 +44,7 @@ import org.devel.jfxcontrols.scene.shape.CropperRectangle;
  * 
  */
 public class ImageCropperSkin extends SkinBase<ImageCropper> {
-
+	
 	// TODO stefan - import from i18n
 	private static final String SOURCE_CHOOSE_LABEL = "Choose Source File";
 	private static final String TARGET_CHOOSE_LABEL = "Choose Target File";
@@ -60,11 +62,20 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 	private static final double TARGET_IMAGE_HEIGHT = 133.0;
 	private static final double TARGET_HBOX_WIDTH = 122.0;
 	private static final double TARGET_HBOX_HEIGHT = 155.0;
+	
+	private static final double GRID_PADDING = 10.0;
+	private static final double GRID_GAP = 10.0;
+	
+	private static final Color CROPPER_COLOR = new Color(1.0, 1.0, 1.0, 0.5);
+	private static final Color CROPPER_STROKE_COLOR = new Color(0.8666666746139526,
+			0.8666666746139526, 0.8666666746139526, 1.0);
+	private static final double CROPPER_WIDTH = 100.0;
+	private static final double CROPPER_HEIGHT = 133.33333;
 
 	public ImageCropperSkin(ImageCropper control) {
 		super(control);
 		createNodes();
-		initialize();
+		bind();
 		getSkinnable().requestLayout();
 	}
 
@@ -76,14 +87,14 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 	private ImageCropperScrollPane imageCropperScrollPane;
 	private StackPane imageCropperStackPane;
 	private CropperRectangle cropperRectangle;
+	private SourceImageView sourceImageView;
+	private ImageView targetImageView;
 
 	private void createNodes() {
 
 		imageCropperGridPane = new GridPane();
-		imageCropperGridPane.setHgap(10.0);
-		imageCropperGridPane.setVgap(10.0);
-		// imageCropperGridPane.setMinHeight(250.0);
-		// imageCropperGridPane.setMinWidth(360.0);
+		imageCropperGridPane.setHgap(GRID_GAP);
+		imageCropperGridPane.setVgap(GRID_GAP);
 		imageCropperGridPane.setStyle("-fx-background-color: white;");
 		this.getChildren().addAll(imageCropperGridPane);
 
@@ -94,7 +105,8 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 				new ColumnConstraints(Region.USE_COMPUTED_SIZE,
 						Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE,
 						Priority.NEVER, HPos.CENTER, true));
-		imageCropperGridPane.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
+		imageCropperGridPane.setPadding(new Insets(GRID_PADDING, GRID_PADDING,
+				GRID_PADDING, GRID_PADDING));
 
 		// label row
 
@@ -130,21 +142,21 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 		imageCropperStackPane = new StackPane();
 		imageCropperStackPane.setAlignment(Pos.TOP_LEFT);
 
-		getSkinnable().getSourceImageView().setPickOnBounds(true);
-		getSkinnable().getSourceImageView().setPreserveRatio(true);
-		getSkinnable().getSourceImageView().setFitHeight(SOURCE_IMAGE_HEIGHT);
-		getSkinnable().getSourceImageView().setFitWidth(SOURCE_IMAGE_WIDTH);
+		sourceImageView = new SourceImageView();
+		sourceImageView.setPickOnBounds(true);
+		sourceImageView.setPreserveRatio(true);
+		sourceImageView.setFitHeight(SOURCE_IMAGE_HEIGHT);
+		sourceImageView.setFitWidth(SOURCE_IMAGE_WIDTH);
 
 		cropperRectangle = new CropperRectangle();
-		cropperRectangle.setFill(new Color(1.0, 1.0, 1.0, 0.5));
-		cropperRectangle.setHeight(133.33333);
-		cropperRectangle.setWidth(100.0);
+		cropperRectangle.setFill(CROPPER_COLOR);
+		cropperRectangle.setHeight(CROPPER_HEIGHT);
+		cropperRectangle.setWidth(CROPPER_WIDTH);
 		StackPane.setAlignment(cropperRectangle, Pos.TOP_LEFT);
-		cropperRectangle.setStroke(new Color(0.8666666746139526,
-				0.8666666746139526, 0.8666666746139526, 1.0));
+		cropperRectangle.setStroke(CROPPER_STROKE_COLOR);
 
-		imageCropperStackPane.getChildren().addAll(
-				getSkinnable().getSourceImageView(), cropperRectangle);
+		imageCropperStackPane.getChildren().addAll(sourceImageView,
+				cropperRectangle);
 
 		imageCropperScrollPane.setContent(imageCropperStackPane);
 
@@ -161,13 +173,14 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 		targetHBox.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
 		imageCropperGridPane.add(targetHBox, 1, 1);
 
-		getSkinnable().getTargetImageView().setFitHeight(TARGET_IMAGE_HEIGHT);
-		getSkinnable().getTargetImageView().setFitWidth(TARGET_IMAGE_WIDTH);
-		getSkinnable().getTargetImageView().setPickOnBounds(true);
-		getSkinnable().getTargetImageView().setPreserveRatio(true);
-		GridPane.setHgrow(getSkinnable().getTargetImageView(), Priority.NEVER);
-		GridPane.setVgrow(getSkinnable().getTargetImageView(), Priority.NEVER);
-		targetHBox.getChildren().add(getSkinnable().getTargetImageView());
+		targetImageView = new ImageView();
+		targetImageView.setFitHeight(TARGET_IMAGE_HEIGHT);
+		targetImageView.setFitWidth(TARGET_IMAGE_WIDTH);
+		targetImageView.setPickOnBounds(true);
+		targetImageView.setPreserveRatio(true);
+		GridPane.setHgrow(targetImageView, Priority.NEVER);
+		GridPane.setVgrow(targetImageView, Priority.NEVER);
+		targetHBox.getChildren().add(targetImageView);
 
 		// button row
 
@@ -225,26 +238,37 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 
 	}
 
-	private void initialize() {
-		// TODO stefan - SubControl Initialization > Better move to SubControl?
-		getSkinnable().getSourceImageView().setCropperRectangle(
-				cropperRectangle);
-		getSkinnable().getSourceImageView().initialize();
-		cropperRectangle.initialize();
-		bind();
-	}
-
 	private void bind() {
 
+		// ### external / public / skinnable bindings ###
+
+		getSkinnable().sourceImageProperty().bindBidirectional(
+				sourceImageView.imageProperty());
+		getSkinnable().targetImageProperty().bindBidirectional(
+				targetImageView.imageProperty());
+		
+		getSkinnable().cropperFillColorProperty().bindBidirectional(cropperRectangle.fillProperty());
+		getSkinnable().cropperStrokeColorProperty().bindBidirectional(cropperRectangle.strokeProperty());
+		getSkinnable().cropperWidthProperty().bindBidirectional(cropperRectangle.widthProperty());
+		getSkinnable().cropperHeightProperty().bindBidirectional(cropperRectangle.heightProperty());
+
+		// ### internal initialization ###
+
+		sourceImageView.setCropperRectangle(cropperRectangle);
+		sourceImageView.initialize();
+		cropperRectangle.initialize();
+
+		// ### internal bindings ###
+
 		// bind image properties
-		getSkinnable().targetImageProperty().bind(
-				getSkinnable().sourceImageProperty());
+		targetImageView.imageProperty().bind(sourceImageView.imageProperty());
 
 		// bind view port of target image view
-		getSkinnable().getTargetImageView().viewportProperty()
-				.bind(new ObjectBinding<Rectangle2D>() {
+		targetImageView.viewportProperty().bind(
+				new ObjectBinding<Rectangle2D>() {
 					{
 						super.bind(cropperRectangle.widthProperty(),
+								cropperRectangle.heightProperty(),
 								cropperRectangle.translateXProperty(),
 								cropperRectangle.translateYProperty());
 					}
@@ -265,7 +289,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 				});
 
 		// bind image cropper scroll pane width'n'height
-		getSkinnable().sourceImageProperty().addListener(
+		sourceImageView.imageProperty().addListener(
 				new ChangeListener<Image>() {
 
 					@Override
@@ -274,7 +298,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 							Image oldValue, Image newValue) {
 
 						if (observable == null)
-							getSkinnable().sourceImageProperty()
+							sourceImageView.imageProperty()
 									.removeListener(this);
 
 						if (newValue != null) {
@@ -286,7 +310,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 											cropperRectangle.widthProperty());
 							imageCropperScrollPane
 									.maxWidthObservablesProperty().add(
-											getSkinnable().getSourceImageView().fitWidthProperty());
+											sourceImageView.fitWidthProperty());
 							// height
 							imageCropperScrollPane
 									.maxHeightObservablesProperty().clear();
@@ -295,7 +319,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 											cropperRectangle.heightProperty());
 							imageCropperScrollPane
 									.maxHeightObservablesProperty()
-									.add(getSkinnable().getSourceImageView().fitHeightProperty());
+									.add(sourceImageView.fitHeightProperty());
 						}
 
 					}
@@ -304,7 +328,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 	}
 
 	private void reset() {
-		getSkinnable().getSourceImageView().reset();
+		sourceImageView.reset();
 		cropperRectangle.reset();
 	}
 
@@ -316,7 +340,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 				public void handle(WorkerStateEvent event) {
 					// if load image was successful
 					if (task.getValue()) {
-						getSkinnable().getSourceImageView().setImage(task.getImage());
+						sourceImageView.setImage(task.getImage());
 					}
 				}
 			});
@@ -326,9 +350,10 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 
 	private void saveImage(File image) {
 		Thread cropSaveThread = new Thread(new CropWriteImageTask(image,
-				getSkinnable().getTargetImage(), cropperRectangle.getX(),
-				cropperRectangle.getY(), cropperRectangle.getWidth(),
+				targetImageView.getImage(), cropperRectangle.getTranslateX(),
+				cropperRectangle.getTranslateY(), cropperRectangle.getWidth(),
 				cropperRectangle.getHeight()));
+
 		if (image != null)
 			cropSaveThread.start();
 	}

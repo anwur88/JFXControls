@@ -10,7 +10,6 @@ import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
 import javax.imageio.ImageIO;

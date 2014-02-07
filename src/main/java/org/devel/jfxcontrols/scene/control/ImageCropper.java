@@ -3,13 +3,13 @@
  */
 package org.devel.jfxcontrols.scene.control;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import org.devel.jfxcontrols.scene.image.SourceImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 /**
  * @author stefan.illgen
@@ -17,8 +17,14 @@ import org.devel.jfxcontrols.scene.image.SourceImageView;
  */
 public class ImageCropper extends Control {
 
-	private ObjectProperty<ImageView> targetImageView;
-	private ObjectProperty<SourceImageView> sourceImageView;
+	// source n target image properties
+	private ObjectProperty<Image> sourceImage;
+	private ObjectProperty<Image> targetImage;
+	// cropper properties
+	private ObjectProperty<Paint> cropperFillColor;
+	private ObjectProperty<Paint> cropperStrokeColor;
+	private DoubleProperty cropperWidth;
+	private DoubleProperty cropperHeight;
 
 	public ImageCropper() {
 		super();
@@ -33,61 +39,88 @@ public class ImageCropper extends Control {
 						+ getClass().getSimpleName() + ".css").toExternalForm();
 	}
 	
-	public ObjectProperty<SourceImageView> sourceImageViewProperty() {
-		if (sourceImageView == null)
-			sourceImageView = new SimpleObjectProperty<SourceImageView>(
-					new SourceImageView()) {
-			};
-		return sourceImageView;
-	}
-
-	public void setSourceImageView(SourceImageView sourceImageView) {
-		sourceImageViewProperty().set(sourceImageView);
-	}
+//	private ImageCropperSkin getMySkin() {
+//		return (ImageCropperSkin) super.getSkin();
+//	}
 	
-	public SourceImageView getSourceImageView() {
-		return sourceImageViewProperty().get();
-	}
-	
-	public ObjectProperty<ImageView> targetImageViewProperty() {
-		if (targetImageView == null)
-			targetImageView = new SimpleObjectProperty<ImageView>(
-					new ImageView()) {
-			};
-		return targetImageView;
-	}
-
-	public void setTargetImageView(ImageView targetImageView) {
-		targetImageViewProperty().set(targetImageView);
-	}
-
-	public ImageView getTargetImageView() {
-		return targetImageViewProperty().get();
-	}
+	// source n target image properties
 	
 	public ObjectProperty<Image> sourceImageProperty() {
-		return sourceImageViewProperty().get().imageProperty();
+		if(sourceImage == null)
+			sourceImage = new SimpleObjectProperty<Image>();
+		return sourceImage;
 	}
 
-	public Image getSourcemage() {
-		return sourceImageViewProperty().get().imageProperty().get();
+	public Image getSourceImage() {
+		return sourceImageProperty().get();
 	}
 
 	public void setSourceImage(Image sourceImage) {
-		sourceImageViewProperty().get().imageProperty().set(sourceImage);
+		sourceImageProperty().set(sourceImage);
 	}
 
 	public ObjectProperty<Image> targetImageProperty() {
-		return targetImageViewProperty().get().imageProperty();
+		if(targetImage == null)
+			targetImage = new SimpleObjectProperty<Image>();
+		return targetImage;
 	}
 
 	public Image getTargetImage() {
-		return targetImageViewProperty().get().imageProperty().get();
+		return targetImageProperty().get();
 	}
 
 	public void setTargetImage(Image targetImage) {
-		targetImageViewProperty().get().imageProperty().set(targetImage);
+		targetImageProperty().set(targetImage);
+	}
+	
+	// cropper properties
+	
+	public ObjectProperty<Paint> cropperFillColorProperty() {
+		return cropperFillColor;
 	}
 
+	public Paint getCropperFillColor() {
+		return cropperFillColor.get();
+	}
+	
+	public void setCropperFillColor(Paint cropperColor) {
+		this.cropperFillColor.set(cropperColor);
+	}
 
+	public ObjectProperty<Paint> cropperStrokeColorProperty() {
+		return cropperStrokeColor;
+	}
+
+	public Paint getCropperStrokeColor() {
+		return cropperStrokeColor.get();
+	}
+	
+	public void setCropperStrokeColor(Color cropperStrokeColor) {
+		this.cropperStrokeColor.set(cropperStrokeColor);
+	}
+
+	public DoubleProperty cropperWidthProperty() {
+		return cropperWidth;
+	}
+
+	public double getCropperWidth() {
+		return cropperWidth.get();
+	}
+	
+	public void setCropperWidth(double cropperWidth) {
+		this.cropperWidth.set(cropperWidth);
+	}
+
+	public DoubleProperty cropperHeightProperty() {
+		return cropperHeight;
+	}
+
+	public double getCropperHeight() {
+		return cropperHeight.get();
+	}
+	
+	public void setCropperHeight(double cropperHeight) {
+		this.cropperHeight.set(cropperHeight);
+	}
+	
 }

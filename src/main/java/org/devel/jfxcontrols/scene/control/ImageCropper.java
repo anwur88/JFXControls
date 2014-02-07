@@ -5,6 +5,7 @@ package org.devel.jfxcontrols.scene.control;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
@@ -76,6 +77,8 @@ public class ImageCropper extends Control {
 	// cropper properties
 	
 	public ObjectProperty<Paint> cropperFillColorProperty() {
+		if(cropperFillColor == null)
+			cropperFillColor = new SimpleObjectProperty<Paint>();
 		return cropperFillColor;
 	}
 
@@ -88,6 +91,8 @@ public class ImageCropper extends Control {
 	}
 
 	public ObjectProperty<Paint> cropperStrokeColorProperty() {
+		if(cropperStrokeColor == null)
+			cropperStrokeColor = new SimpleObjectProperty<Paint>();
 		return cropperStrokeColor;
 	}
 
@@ -100,6 +105,8 @@ public class ImageCropper extends Control {
 	}
 
 	public DoubleProperty cropperWidthProperty() {
+		if(cropperWidth == null)
+			cropperWidth = new SimpleDoubleProperty();
 		return cropperWidth;
 	}
 
@@ -112,6 +119,8 @@ public class ImageCropper extends Control {
 	}
 
 	public DoubleProperty cropperHeightProperty() {
+		if(cropperHeight == null)
+			cropperHeight = new SimpleDoubleProperty();
 		return cropperHeight;
 	}
 

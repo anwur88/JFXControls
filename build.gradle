@@ -6,7 +6,7 @@ apply plugin: "eclipse"
 apply from: "javafx.plugin"
 
 version = '0.1-SNAPSHOT'
-developer = 'Stefan Illgen'
+//developer = 'Stefan Illgen'
 mainClassName = 'org.devel.jfxcontrols.sample.JFXControlsApp'
 manifest.mainAttributes("Main-Class" : mainClassName)
 

@@ -2,9 +2,11 @@ package org.devel.jfxcontrols.scene.layout;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -17,12 +19,12 @@ import org.devel.jfxcontrols.scene.control.RouteMapView;
  * @author stefan.illgen
  * 
  */
-public class SearchRoutePane extends AnchorPane {
+public class SearchRoutePane extends AnchorPane implements Initializable {
 	
 	/**
 	 * 
 	 */
-	private static final String DEFAULT_START_POSITION = "51.02681 13.70878 ";
+	private static final String DEFAULT_START_POSITION = "51.02681 13.70878";
 	
 	/**
 	 * 
@@ -62,7 +64,12 @@ public class SearchRoutePane extends AnchorPane {
 	public SearchRoutePane(String startPosition, String finishPosition) {
 		loadFXML();
 		setupDefaultPosition(startPosition, finishPosition);
-		bind();
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		routeMapView.startPositionProperty().bindBidirectional(startTf.textProperty());
+		routeMapView.finishPositionProperty().bindBidirectional(finishTf.textProperty());
 	}
 
 	private void setupDefaultPosition(String startPosition,
@@ -73,7 +80,7 @@ public class SearchRoutePane extends AnchorPane {
 
 	private void loadFXML() {
 
-		URL url = getClass().getResource("SearchRoutePane.fxml");
+		URL url = getClass().getResource(getClass().getSimpleName() + ".fxml");
 		FXMLLoader fxmlLoader = new FXMLLoader(url);
 
 		fxmlLoader.setRoot(this);
@@ -85,11 +92,6 @@ public class SearchRoutePane extends AnchorPane {
 			throw new RuntimeException(exception);
 		}
 
-	}
-	
-	private void bind() {		
-		routeMapView.startPositionProperty().bind(startTf.textProperty());
-		routeMapView.finishPositionProperty().bind(finishTf.textProperty());		
 	}
 
 }

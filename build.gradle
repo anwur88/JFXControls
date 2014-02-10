@@ -5,16 +5,9 @@ apply plugin: "application"
 apply plugin: "eclipse"
 apply from: "javafx.plugin"
 
-compileJava.options.encoding = 'UTF-8'
-//sourceCompatibility = 1.8
-if (!System.getProperty("java.version").matches(/^(1\.)?8.*/)) { 
-	//FIXME not the best way, but cloudbees is on an old version of gradle
-    throw new GradleException("Java 8 required, ${System.getProperty("java.version")} found")
-}
-
 version = '0.1-SNAPSHOT'
-
-mainClassName = "org.devel.jfxcontrols.sample.JFXControlsApp"
+developer = 'Stefan Illgen'
+mainClassName = 'org.devel.jfxcontrols.sample.JFXControlsApp'
 manifest.mainAttributes("Main-Class" : mainClassName)
 
 repositories {
@@ -24,32 +17,30 @@ repositories {
     }
 }
 
-// Bugfix for "failed to read class file" bug when using gradle with Java 8 ea.
-// See: http://forums.gradle.org/gradle/topics/1_7_rc_1_fails_to_read_classfile_for_test_when_using_java_8_0_ea_b99
-
 dependencies {
-	
-//    	compile "org.open-dolphin:dolphin-client-javafx:0.8"
-//    	compile "org.open-dolphin:dolphin-client:0.8"
-//    	compile "com.aquafx-project:aquafx:0.1"
-//    	compile "org.jfxtras:jfxtras-labs:8.0-r1-SNAPSHOT"
-	compile "commons-io:commons-io:2.4"
-	
+	compile "commons-io:commons-io:2.4"	
 	testCompile "org.loadui:testFx:3.0.0"
 	testCompile "junit:junit:4.11"
-
 }
 
-test {
-	scanForTestClasses = false
-	include 'org/devel/jfxcontrols/AllTests.class'
-    //exclude '**/*$*' //fixed 
+compileJava.options.encoding = 'UTF-8'
+//sourceCompatibility = 1.8
+// Bugfix for "failed to read class file" bug when using gradle with Java 8 ea.
+// See: http://forums.gradle.org/gradle/topics/1_7_rc_1_fails_to_read_classfile_for_test_when_using_java_8_0_ea_b99
+if (!System.getProperty("java.version").matches(/^(1\.)?8.*/)) { 
+	//FIXME not the best way, but cloudbees is on an old version of gradle
+    throw new GradleException("Java 8 required, ${System.getProperty("java.version")} found")
 }
-	
+
 tasks.withType(Compile) {
 	options.encoding = 'UTF-8'
 }
 
+test {
+	scanForTestClasses = false
+	include 'org/devel/jfxcontrols/AllTests.class' 
+}
+	
 javafx {
     mainClass = mainClassName
 }

@@ -29,6 +29,7 @@ import org.loadui.testfx.GuiTest;
 import org.loadui.testfx.utils.TestUtils;
 
 /**
+ * 
  * @author stefan.illgen
  * 
  */
@@ -72,11 +73,12 @@ public class ImageCropperTest extends GuiTest {
 		find("#imageCropperGridPane", root);
 
 		// Actions
-
+		
 		// load image
 		// Button loadImageButton = find("#loadImageButton", root);
 		// click(loadImageButton, MouseButton.PRIMARY);
-		// workaround without using buttons
+		// workaround without using buttons 
+		//TODO stefan - How 2 test dialogs in sub stages?
 		loadSourceImage(_createImageFile("/org/devel/jfxcontrols/sample/img/goerl_aliced_500.jpg"));
 		verifyThat(sourceImageView, notNullValue());
 
@@ -88,10 +90,7 @@ public class ImageCropperTest extends GuiTest {
 		verifyThat(cropperRectangle.getTranslateY(), is(10.0));
 
 		// save image
-//		File targetFile = _getNonExistingImageFile("/org/devel/jfxcontrols/sample/img/goerl_aliced_500_target.jpg");
-		File targetFile = new File(FileUtils.getUserDirectoryPath().concat("//"+"goerl_aliced_500_target.jpg"));
-		System.err.println(targetFile.getPath());
-		
+		File targetFile = new File(FileUtils.getUserDirectoryPath().concat("//"+"goerl_aliced_500_target.jpg"));		
 		saveImage(targetFile);
 		verifyThat(targetFile.exists(), is(true));
 
@@ -108,20 +107,6 @@ public class ImageCropperTest extends GuiTest {
 		return result;
 	}
 	
-//	private File _getNonExistingImageFile(String path) {
-//		File result = null;
-//		try {
-//			URI baseURI = getClass().getResource("/").toURI();
-//			String fullPath = baseURI.toString().concat(path.substring(1));
-//			URI fullURI = new URI(fullPath);
-//			System.err.println("Write URI: " + fullURI);
-//			result = new File(fullURI);
-//		} catch (URISyntaxException e) {
-//			e.printStackTrace();
-//		}
-//		return result;
-//	}
-
 	private File _createImageFile(String path) {
 		File result = _getExistingImageFile(path);
 		return (result != null && result.exists()) ? result : null;

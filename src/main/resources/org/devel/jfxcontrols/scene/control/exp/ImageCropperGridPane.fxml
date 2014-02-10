@@ -19,7 +19,7 @@ minHeight="250.0" minWidth="360.0" style="-fx-background-color: white;"
 
 	<!-- <GridPane fx:id="imageCropperView" hgap="10.0" minHeight="200.0" prefHeight="1000.0" 
 		prefWidth="1000.0" style="-fx-background-color: white;" vgap="10.0" xmlns="http://javafx.com/javafx/8" 
-		xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperGridPaneController"> -->
+		xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.devel.jfxcontrols.scene.control.ImageCropperGridPaneFXMLController"> -->
 
 	<children>
 		<!-- layoutX="151.0" layoutY="23.0" -->

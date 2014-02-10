@@ -17,6 +17,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 
+import org.apache.commons.io.FileUtils;
 import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
@@ -39,6 +40,10 @@ public class ImageCropperTest extends GuiTest {
 	private boolean saveFinished;
 
 	// private ImageCropperSkin skin;
+	
+	public ImageCropperTest() {
+		super();
+	}
 
 	@Override
 	protected Parent getRootNode() {
@@ -50,13 +55,18 @@ public class ImageCropperTest extends GuiTest {
 	@Before
 	public void setup() {
 		new Properties().loadProxyConf();
+		try {
+			super.setupStage();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}		
 	}
 
 	/**
 	 * Does not cover setting correct view port on target property
 	 */
 	@Test
-	public void imageCropTest() {
+	public void imageCroppingCheck() {
 
 		// Pre
 		find("#imageCropperGridPane", root);
@@ -72,13 +82,16 @@ public class ImageCropperTest extends GuiTest {
 
 		// crop (move rectangle by dragging)
 		cropperRectangle = find("#cropperRectangle");
-		drag(cropperRectangle, MouseButton.PRIMARY).by(10, 10);
+		drag(cropperRectangle, MouseButton.PRIMARY).by(10, 10).drop();
 		// verify new position of cropper rectangle
 		verifyThat(cropperRectangle.getTranslateX(), is(10.0));
 		verifyThat(cropperRectangle.getTranslateY(), is(10.0));
 
 		// save image
-		File targetFile = _getNonExistingImageFile("/org/devel/jfxcontrols/sample/img/goerl_aliced_500_target.jpg");
+//		File targetFile = _getNonExistingImageFile("/org/devel/jfxcontrols/sample/img/goerl_aliced_500_target.jpg");
+		File targetFile = new File(FileUtils.getUserDirectoryPath().concat("//"+"goerl_aliced_500_target.jpg"));
+		System.err.println(targetFile.getPath());
+		
 		saveImage(targetFile);
 		verifyThat(targetFile.exists(), is(true));
 
@@ -95,18 +108,19 @@ public class ImageCropperTest extends GuiTest {
 		return result;
 	}
 	
-	private File _getNonExistingImageFile(String path) {
-		File result = null;
-		try {
-			URI baseURI = getClass().getResource("/").toURI();
-			String fullPath = baseURI.toString().concat(path.substring(1));
-			URI fullURI = new URI(fullPath);
-			result = new File(fullURI);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+//	private File _getNonExistingImageFile(String path) {
+//		File result = null;
+//		try {
+//			URI baseURI = getClass().getResource("/").toURI();
+//			String fullPath = baseURI.toString().concat(path.substring(1));
+//			URI fullURI = new URI(fullPath);
+//			System.err.println("Write URI: " + fullURI);
+//			result = new File(fullURI);
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
 
 	private File _createImageFile(String path) {
 		File result = _getExistingImageFile(path);

@@ -26,7 +26,6 @@ repositories {
 
 // Bugfix for "failed to read class file" bug when using gradle with Java 8 ea.
 // See: http://forums.gradle.org/gradle/topics/1_7_rc_1_fails_to_read_classfile_for_test_when_using_java_8_0_ea_b99
-test.scanForTestClasses = false
 
 dependencies {
 	
@@ -41,6 +40,12 @@ dependencies {
 
 }
 
+test {
+	scanForTestClasses = false
+	include 'org/devel/jfxcontrols/AllTests.class'
+    //exclude '**/*$*' //fixed 
+}
+	
 tasks.withType(Compile) {
 	options.encoding = 'UTF-8'
 }

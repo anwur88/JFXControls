@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.scene.layout;
+package org.devel.jfxcontrols.scene.layout.exp;
 
 import java.io.IOException;
 import java.net.URL;
 
-import org.devel.jfxcontrols.scene.control.ImageCropperGridPaneController;
+import org.devel.jfxcontrols.scene.control.exp.ImageCropperGridPaneFXMLController;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
@@ -30,7 +30,7 @@ public class ImageCropperGridPane extends GridPane {
 		FXMLLoader fxmlLoader = new FXMLLoader(url);
 
 		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(new ImageCropperGridPaneController());
+		fxmlLoader.setController(new ImageCropperGridPaneFXMLController());
 
 		try {
 			fxmlLoader.load();

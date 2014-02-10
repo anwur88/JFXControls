@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.scene.control;
+package org.devel.jfxcontrols.scene.control.exp;
 
 import java.io.File;
 import java.net.URL;
@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 
 import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
 import org.devel.jfxcontrols.concurrent.LoadImageTask;
+import org.devel.jfxcontrols.scene.control.ImageCropperScrollPane;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
 import org.devel.jfxcontrols.scene.shape.CropperRectangle;
 
@@ -35,12 +36,12 @@ import org.devel.jfxcontrols.scene.shape.CropperRectangle;
  * @author stefan.illgen
  * 
  */
-public class ImageCropperGridPaneController implements Initializable {
+public class ImageCropperGridPaneFXMLController implements Initializable {
 
 	private static final String TXT_choose_source_label = "Quelle";
 	private static final String TXT_choose_target_label = "Ziel";
 
-	public ImageCropperGridPaneController() {
+	public ImageCropperGridPaneFXMLController() {
 
 	}
 

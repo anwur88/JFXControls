@@ -15,5 +15,6 @@ bin
 /*.iml
 /.idea
 
-# ScreenShots TextFX
+# Misc
 /*.png
+/*.log

@@ -1,7 +1,7 @@
 JFXControls
 ===========
 
-##Show Case Controls
+##Show Case Controls (UI Patterns)
 
 <img src="src/site/screenshots/110214.png" alt="Screenshot (11.02.14)" />
 
@@ -12,10 +12,32 @@ JFXControls
 [TODO: Doc | Refactor]
 
 ###MasterDetailsView
-[TODO: Impl]
+* common UI pattern (but also on model layer)
+  * master (1:n) detail relation <=> data model (tables)
+  * customer 1 : n contract
+* vertical OR horizontal mode
+* User Experience / Usability Aspects
+  * "efficient user experience by allowing the user to stay in the same screen while navigating between items"
+  * "see more information for a master list"
+* Use Cases: 
+  * thumbnail (1) : larger image, download url (n)
+  * menu (1) : files, directories, paths (n)
+    * i.e. file browser, audio player, contact browser
+  * customer (1) : username, address, contracts (n)
+  * Tracking the masters selection via properties (<code>IObservableValue</code>)
+
+
+####JFace
+
+
 
 ###TreeTableView
 [TODO: Impl]
+
+###Further Ideas
+* Validator and Decorators (see <a href="http://www.vogella.com/tutorials/EclipseDataBinding/article.html#jfacedb_masterdetail">JFace</a>, <a href="http://www.jidesoft.com/blog/2013/06/06/jidefx-beta-release/">JideFX</a>)
+* UI Patterns for WebApps: Search/Results, Spreadsheet, Wizard, Interactive Model (see <a href="http://designingwebinterfaces.com/designing-web-interfaces-12-screen-patterns">Principles and Patterns for Rich Interaction</a>)
+* Horizontale Layouts (Java 8)
 
 ##Common Tasks
 

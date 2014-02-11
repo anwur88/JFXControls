@@ -11,40 +11,40 @@ JFXControls
 * further tools of your like
 
 ###Behind a Proxy?
-If you're behind a proxy server: There is an <pre>application.conf</pre> provided under the following path:
+If you're behind a proxy server: There is an <code>application.conf</code> provided under the following path:
 
-<pre><code>
+<pre>
 JFXControls/src/main/resources/org/devel/jfxcontrols/conf/application.conf
-</code></pre>
+</pre>
 
 Please customize this depending on your needs.
 
 ###Eclipsify the Project
 
-<pre><code>
+<pre>
 .. $ gradle eclipse
-</code></pre>
+</pre>
 
 No you're ready 4 import! Remembers me on SBT a bit :D
 
 ###Testing
 And once again pretty simple:
 
-<pre><code>
+<pre>
 .. $ gradle test
-</code></pre>
+</pre>
 
 
 
 ###Build a native client
 Just run the following commands havin' a gradle distribution on your env path.
 
-<pre><code>
+<pre>
 .. $ gradle install
 .. $ gradle assemble
-</code></pre>
+</pre>
 
-After running the <pre>SUCCESSFULL BUILD</pre> you'll find the following bundles inside the freshly created <pre>build</pre> directory:
+After running the <pre>SUCCESSFULL BUILD</pre> you'll find the following bundles inside the freshly created <code>build</code> directory:
 
 * executable JAR
 * native client 4 windows and linux os

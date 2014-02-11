@@ -29,7 +29,7 @@ import javafx.util.Callback;
 
 import org.devel.jfxcontrols.resource.ImageRegistry;
 import org.devel.jfxcontrols.resource.Images;
-import org.devel.jfxcontrols.scene.layout.SearchRoutePane;
+import org.devel.jfxcontrols.scene.layout.Router;
 
 /**
  * @author stefan.illgen
@@ -112,9 +112,9 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 		// return new Aggregator();
 		// return new ImageCropper()
 
-		ReflectiveTreeItem<SearchRoutePane> mapViewMenuItem = new ReflectiveTreeItem<SearchRoutePane>(
+		ReflectiveTreeItem<Router> mapViewMenuItem = new ReflectiveTreeItem<Router>(
 				"Map View", ImageRegistry.getImageView(Images.LOGO_16),
-				SearchRoutePane.class);
+				Router.class);
 		result.add(mapViewMenuItem);
 
 		result.add(new TreeItem<String>("Image Cropper", ImageRegistry

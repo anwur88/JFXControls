@@ -24,7 +24,7 @@
 					</image>
 				</ImageView>
 				<Text fx:id="logoText" strokeType="OUTSIDE" strokeWidth="0.0"
-					text="JFXControls Samples" HBox.hgrow="NEVER">
+					text="JFXControls" HBox.hgrow="NEVER">
 					<font>
 						<Font name="Verdana" size="36.0" />
 					</font>
@@ -64,7 +64,7 @@
 									</content>
 								</TitledPane>
 								<TitledPane fx:id="scTitledPane" expanded="false"
-									text="Source Code">
+									text="Source Code (FXML)">
 									<content>
 										<AnchorPane minHeight="0.0" minWidth="0.0"
 											prefHeight="180.0" prefWidth="200.0">

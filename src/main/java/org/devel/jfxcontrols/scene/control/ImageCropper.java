@@ -7,6 +7,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -31,6 +32,11 @@ public class ImageCropper extends Control {
 		super();
 		setStyle(null);
 		getStyleClass().add("image-cropper");
+	}
+	
+	public ImageCropper(Node... children) {
+		this();
+		getChildren().addAll(children);
 	}
 
 	@Override

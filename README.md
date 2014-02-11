@@ -10,6 +10,8 @@ JFXControls
 * some IDE - I'm using eclipse kepler..
 * further tools of your like
 
+Pretty soon I'm also going 2 introduce ScalaFX.
+
 ###Behind a Proxy?
 If you're behind a proxy server: There is an <code>application.conf</code> provided under the following path:
 

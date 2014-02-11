@@ -1,6 +1,22 @@
 JFXControls
 ===========
 
+##Show Case Controls
+
+<img src="src/site/screenshots/110214.png" alt="Screenshot (11.02.14)" />
+
+###Router (JFXMaps)
+[TODO: Doc | Refactor]
+
+###ImageCropper
+[TODO: Doc | Refactor]
+
+###MasterDetailsView
+[TODO: Impl]
+
+###TreeTableView
+[TODO: Impl]
+
 ##Common Tasks
 
 ###System Prerequisites
@@ -51,19 +67,3 @@ After running the <code>SUCCESSFULL BUILD</code> you'll find the following bundl
 * executable JAR
 * native client 4 windows and linux os
 * all required classpath libs to run the sample application
-
-##Show Case Controls
-
-<img src="src/site/screenshots/110214.png" alt="Screenshot (11.02.14)" />
-
-###Router (JFXMaps)
-[TODO: Doc | Refactor]
-
-###ImageCropper
-[TODO: Doc | Refactor]
-
-###MasterDetailsView
-[TODO: Impl]
-
-###TreeTableView
-[TODO: Impl]

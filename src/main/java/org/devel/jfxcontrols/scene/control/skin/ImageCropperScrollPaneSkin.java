@@ -14,7 +14,6 @@ import com.sun.javafx.scene.control.skin.ScrollPaneSkin;
  * @author stefan.illgen
  * 
  */
-@SuppressWarnings("restriction")
 public class ImageCropperScrollPaneSkin extends ScrollPaneSkin {
 
 	public ImageCropperScrollPaneSkin(ImageCropperScrollPane scrollpane) {

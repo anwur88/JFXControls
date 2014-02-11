@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,13 +21,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 
 import org.devel.jfxcontrols.resource.ImageRegistry;
 import org.devel.jfxcontrols.resource.Images;
+import org.devel.jfxcontrols.scene.control.Aggregator;
+import org.devel.jfxcontrols.scene.control.ImageCropper;
+import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
 import org.devel.jfxcontrols.scene.layout.Router;
 
 /**
@@ -66,6 +66,7 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// root
@@ -74,73 +75,43 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 		masterTreeView.setRoot(root);
 		root.getChildren().addAll(getAllControls());
 
-		// m2d: selection binding
-		masterTreeView
-				.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
+		// master 2 details: selection binding
+		masterTreeView.setCellFactory(treeView -> {
+			// on click on the master
+			final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
+			treeCell.setOnMouseClicked(event -> {
+				// get tree item and load details view with created
+				// grounding
+				try {
+					TreeItem<String> item = ((TreeCell<String>) event
+							.getSource()).getTreeItem();
+					loadDetails(((ReflectableTreeItem<? extends Node>) item)
+							.createGround());
+				} catch (InstantiationException | IllegalAccessException
+						| ClassCastException e) {
+					e.printStackTrace();
+				}
+			});
 
-					@Override
-					public TreeCell<String> call(TreeView<String> tv) {
-
-						final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
-						treeCell.setOnMouseClicked(new EventHandler<MouseEvent>() {
-							@SuppressWarnings("unchecked")
-							@Override
-							public void handle(MouseEvent event) {
-								TreeItem<String> item = ((TreeCell<String>) event
-										.getSource()).getTreeItem();
-								if (item instanceof ReflectiveTreeItem) {
-									try {
-										loadDetails(((ReflectiveTreeItem<? extends Node>) item)
-												.createGround());
-									} catch (InstantiationException | IllegalAccessException e) {
-										e.printStackTrace();
-									}
-								}
-							}
-						});
-
-						return treeCell;
-					}
-				});
+			return treeCell;
+		});
 
 	}
 
 	private List<TreeItem<String>> getAllControls() {
-
-		List<TreeItem<String>> result = new ArrayList<TreeItem<String>>();
-
-		// return new Aggregator();
-		// return new ImageCropper()
-
-		ReflectiveTreeItem<Router> mapViewMenuItem = new ReflectiveTreeItem<Router>(
-				"Map View", ImageRegistry.getImageView(Images.LOGO_16),
-				Router.class);
-		result.add(mapViewMenuItem);
-
-		result.add(new TreeItem<String>("Image Cropper", ImageRegistry
-				.getImageView(Images.LOGO_16)));
-		result.add(new TreeItem<String>("Button Aggregator", ImageRegistry
-				.getImageView(Images.LOGO_16)));
-
-		return result;
+		return new ArrayList<TreeItem<String>>() {
+			private static final long serialVersionUID = -9213576968159746189L;
+			{
+				add(createTreeItem(Router.class));
+				add(createTreeItem(ImageCropper.class));
+				add(createTreeItem(Aggregator.class));
+			}
+		};
 	}
 
-	public class ReflectiveTreeItem<T extends Node> extends TreeItem<String> {
-
-		private Class<T> ground;
-
-		public ReflectiveTreeItem(String value, Node graphic, Class<T> clazz) {
-			super(value, graphic);
-			this.ground = clazz;
-		}
-
-		public Class<T> getGroundClass() {
-			return ground;
-		}
-		
-		public T createGround() throws InstantiationException, IllegalAccessException {
-			return ground.newInstance();
-		}
+	private <T extends Node> TreeItem<String> createTreeItem(Class<T> clazz) {
+		return new ReflectableTreeItem<T>(clazz.getSimpleName(),
+				ImageRegistry.getImageView(Images.LOGO_16), clazz);
 	}
 
 	private void loadFXML() {

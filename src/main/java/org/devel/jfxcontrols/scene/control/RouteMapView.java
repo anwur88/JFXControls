@@ -3,6 +3,8 @@
  */
 package org.devel.jfxcontrols.scene.control;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -25,6 +27,7 @@ import org.devel.jfxcontrols.scene.control.skin.RouteMapViewSkin;
 /**
  * @author stefan.illgen
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class RouteMapView extends Control {
 
 	private static final String DEFAULT_STYLE_CLASS = "route-map-view";
@@ -40,8 +43,8 @@ public class RouteMapView extends Control {
 
 	private StringProperty startPosition;
 	private StringProperty finishPosition;
-	private RouteListener startPositionListener;
-	private RouteListener finishPositionListener;
+
+	private Map<ObservableValue, ChangeListener> cls = new HashMap<ObservableValue, ChangeListener>();
 
 	public RouteMapView() {
 		super();
@@ -122,13 +125,9 @@ public class RouteMapView extends Control {
 	}
 
 	private void initialize() {
-
 		routeWebView = new WebView();
 		routeWebView.setId("routeMapView");
 		getChildren().add(routeWebView);
-
-		// setupThreadPool();
-		// loadEngine();
 	}
 
 	public void setupThreadPool() {
@@ -164,15 +163,20 @@ public class RouteMapView extends Control {
 
 		WebEngineLoader webEngineLoader = new WebEngineLoader(webEngine,
 				getClass().getResource(GOOGLEMAPS_HTML));
+		
 		webEngineLoader.setOnSucceeded(wse -> {
 			if (wse.getEventType().equals(
 					WorkerStateEvent.WORKER_STATE_SUCCEEDED)) {
 				// bind
-				startPositionListener = new RouteListener();
-				startPosition.addListener(startPositionListener);
-				finishPositionListener = new RouteListener();
-				finishPosition.addListener(finishPositionListener);
-				// calculate route
+				cls.put(startPosition, (ov, newV, oldV) -> {
+					computeRoute(BATCH_DELAY, TimeUnit.SECONDS);
+				});
+				startPosition.addListener(cls.get(startPosition));
+				cls.put(finishPosition, (ov, newV, oldV) -> {
+					computeRoute(BATCH_DELAY, TimeUnit.SECONDS);
+				});
+				finishPosition.addListener(cls.get(finishPosition));
+				// initial
 				computeRoute();
 			}
 		});
@@ -204,27 +208,6 @@ public class RouteMapView extends Control {
 				activeTask.cancel(true);
 		}
 
-	}
-
-	/**
-	 * 
-	 * @author stefan.illgen
-	 * 
-	 */
-	class RouteListener implements ChangeListener<String> {
-
-		@Override
-		public void changed(ObservableValue<? extends String> arg0,
-				String arg1, String arg2) {
-
-			if (arg0.getValue() == null) {
-				arg0.removeListener(this);
-				return;
-			}
-
-			if (!arg2.trim().isEmpty())
-				computeRoute(BATCH_DELAY, TimeUnit.SECONDS);
-		}
 	}
 
 }

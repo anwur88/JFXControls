@@ -18,11 +18,11 @@ import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 
 import org.apache.commons.io.FileUtils;
-import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
-import org.devel.jfxcontrols.concurrent.LoadImageTask;
+import org.devel.jfxcontrols.concurrent.ImageLoader;
+import org.devel.jfxcontrols.concurrent.ImageWriter;
+import org.devel.jfxcontrols.conf.Properties;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
 import org.devel.jfxcontrols.scene.shape.CropperRectangle;
-import org.devel.jfxcontrols.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 import org.loadui.testfx.GuiTest;
@@ -55,7 +55,7 @@ public class ImageCropperTest extends GuiTest {
 
 	@Before
 	public void setup() {
-		new Properties().loadProxyConf();
+		new Properties().load();
 		try {
 			super.setupStage();
 		} catch (Throwable e) {
@@ -84,7 +84,11 @@ public class ImageCropperTest extends GuiTest {
 
 		// crop (move rectangle by dragging)
 		cropperRectangle = find("#cropperRectangle");
-		drag(cropperRectangle, MouseButton.PRIMARY).by(10, 10).drop();
+		double x = cropperRectangle.getX();
+		double layoutX = cropperRectangle.getLayoutX();
+		double translateX = cropperRectangle.getTranslateX();
+		double refX = cropperRectangle.getRefX();
+		drag(cropperRectangle, MouseButton.PRIMARY).by(10, 10);
 		// verify new position of cropper rectangle
 		verifyThat(cropperRectangle.getTranslateX(), is(10.0));
 		verifyThat(cropperRectangle.getTranslateY(), is(10.0));
@@ -115,7 +119,7 @@ public class ImageCropperTest extends GuiTest {
 	private void loadSourceImage(File image) {
 		if (image != null) {
 
-			LoadImageTask task = new LoadImageTask(image);
+			ImageLoader task = new ImageLoader(image);
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent event) {
@@ -142,7 +146,7 @@ public class ImageCropperTest extends GuiTest {
 
 			saveFinished = false;
 			
-			CropWriteImageTask task = new CropWriteImageTask(image,
+			ImageWriter task = new ImageWriter(image,
 					root.getTargetImage(), cropperRectangle.getTranslateX(),
 					cropperRectangle.getTranslateY(),
 					cropperRectangle.getWidth(), cropperRectangle.getHeight());

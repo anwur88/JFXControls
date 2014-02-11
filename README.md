@@ -5,9 +5,9 @@ JFXControls
 
 ###System Prerequisites
 * Java 8
-* Gradle
+* Gradle 1.10
 * Git
-* some IDE - I'm still using eclipse..
+* some IDE - I'm using eclipse kepler..
 * further tools of your like
 
 ###Behind a Proxy?
@@ -34,7 +34,7 @@ And once again pretty simple:
 .. $ gradle test
 </pre>
 
-
+By the way, this project uses TestFX 3.0.0 to run automated UI tests on well suited controls ;)
 
 ###Build a native client
 Just run the following commands havin' a gradle distribution on your env path.

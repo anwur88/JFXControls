@@ -35,7 +35,7 @@ JFXControls
 
 ####Existing Approaches
 
-#####JFace Forms API (MasterDetailsBlock)
+#####JFace Forms API (MasterDetailsBlock) <a href="http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Fforms_master_details.htm">[cite]</a>
 Master/Details is a pattern used throughout the UI world. It consists of a list or a tree ('master') and a set of properties ('details') driven by the selection in the master. Eclipse Forms provide the implementation of the pattern as a useful building block with the following properties:
 
 * While details part is created, master part factory method is abstract and must be implemented by the subclass
@@ -48,7 +48,9 @@ The idea of master/details block is to create a tree or a table section that fir
 * Contribute actions to the form tool bar (consumes upper-right portion of the form in the title area)
 * Register details pages, one for each distinct input that can arrive from the master part
 
-
+#####JavaFX
+* <a href="http://stackoverflow.com/questions/11633472/master-details-with-treeview">StackOverFlow: Bidirectional Bindings (master <=> detail) in a TreeView</a>
+* <a href="http://tiwulfx.panemu.com/download/">TiwulFX has already such a thing implemented</a>
 
 ###TreeTableView
 [TODO: Impl]

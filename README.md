@@ -28,10 +28,18 @@ JFXControls
   * Tracking the masters selection via properties (<code>IObservableValue</code>)
 * features
   * vertical | horizontal mode
+  * change relative ratio using a SplitPane
   * master (1:n) detail relation
-    * typically a list or a tree ('master') and a set of properties ('details') driven by the selection in the master
-
-
+  * master part
+    * typically a list or a tree
+    * master part gets abstract 2 enable the user of this class to implement a custom viewer
+    * JFace: Master part must be created and at least one details page should be registered
+  * details part
+    * set of properties driven by the selection in the master > REBIND on selection change
+    * details part tries to load a page registered to handle the selected object(s)
+    * page shows the details of the selected object(s) and allows users to edit them
+      * detail properties gets binded bidirectional to enable editing of detail with immediate reflection 2 the master part
+    * JFace: "Details pages can be registered statically using 'registerPage' or dynamically through the use of 'IDetailsPageProvider' in case where different pages need to be shown for objects of the same type depending on their state."
 
 ####Existing Approaches
 

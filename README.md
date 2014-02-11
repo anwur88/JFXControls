@@ -4,7 +4,7 @@ JFXControls
 ##Common Tasks
 
 ###System Prerequisites
-* Java 8
+* Java 8 (EA)
 * Gradle 1.10
 * Git
 * some IDE - I'm using eclipse kepler..

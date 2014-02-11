@@ -10,9 +10,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import org.devel.jfxcontrols.conf.Properties;
 import org.devel.jfxcontrols.resource.ImageRegistry;
-import org.devel.jfxcontrols.scene.control.ImageCropper;
-import org.devel.jfxcontrols.util.Properties;
 
 /**
  * TODO stefan - create a tabular to show controls.
@@ -42,16 +41,21 @@ public class JFXControlsApp extends Application {
 	}
 
 	private void setup(Stage stage) {
-		// proxy
-		new Properties().loadProxyConf();
+		
+		// conf
+		Properties.init();
+		
 		// image registry
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
 				if (event.getEventType().equals(
 						WindowEvent.WINDOW_CLOSE_REQUEST)
-						&& event.getTarget().equals(stage))
-					ImageRegistry.instance().dispose();
+						&& event.getTarget().equals(stage)) {
+					stage.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, this);
+					ImageRegistry.instance().dispose();					
+				}
+					
 			}
 		});
 	}

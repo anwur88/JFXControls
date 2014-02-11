@@ -20,7 +20,7 @@ import org.apache.commons.io.FilenameUtils;
  * @author stefan.illgen
  * 
  */
-public class CropWriteImageTask extends Task<Boolean> {
+public class ImageWriter extends Task<Boolean> {
 
 	private static final String SAVE_IMAGE_SUCCESS_MSG = " erfolgreich gespeichert.";
 	private static final String SAVE_IMAGE_ERROR_MSG = "Fehler beim Speichern von ";
@@ -31,7 +31,7 @@ public class CropWriteImageTask extends Task<Boolean> {
 	private int width;
 	private int height;
 
-	public CropWriteImageTask(final File imageFile, final Image image, int x,
+	public ImageWriter(final File imageFile, final Image image, int x,
 			int y, int width, int height) {
 		this.imageFile = imageFile;
 		this.image = image;
@@ -51,7 +51,7 @@ public class CropWriteImageTask extends Task<Boolean> {
 	 * @param width2
 	 * @param height
 	 */
-	public CropWriteImageTask(File imageFile, Image image, double x2,
+	public ImageWriter(File imageFile, Image image, double x2,
 			double y2, double width2, double height) {
 		this(imageFile, image, (int) x2, (int) y2, (int) width2, (int) height);
 	}

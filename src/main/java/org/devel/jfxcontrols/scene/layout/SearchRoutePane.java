@@ -20,12 +20,12 @@ import org.devel.jfxcontrols.scene.control.RouteMapView;
  * 
  */
 public class SearchRoutePane extends AnchorPane implements Initializable {
-	
+
 	/**
 	 * 
 	 */
 	private static final String DEFAULT_START_POSITION = "51.02681 13.70878";
-	
+
 	/**
 	 * 
 	 */
@@ -48,7 +48,7 @@ public class SearchRoutePane extends AnchorPane implements Initializable {
 
 	@FXML
 	private TextField startTf;
-	
+
 	/**
 	 * 
 	 */
@@ -65,11 +65,21 @@ public class SearchRoutePane extends AnchorPane implements Initializable {
 		loadFXML();
 		setupDefaultPosition(startPosition, finishPosition);
 	}
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		routeMapView.startPositionProperty().bindBidirectional(startTf.textProperty());
-		routeMapView.finishPositionProperty().bindBidirectional(finishTf.textProperty());
+
+		searchBtn.setOnMouseReleased(e -> {
+			routeMapView.computeRoute();
+		});
+		
+		routeMapView.setupThreadPool();
+		routeMapView.loadEngine();
+		
+		routeMapView.startPositionProperty().bindBidirectional(
+				startTf.textProperty());
+		routeMapView.finishPositionProperty().bindBidirectional(
+				finishTf.textProperty());
 	}
 
 	private void setupDefaultPosition(String startPosition,

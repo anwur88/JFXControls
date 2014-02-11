@@ -13,9 +13,9 @@ import org.devel.jfxcontrols.scene.control.RouteMapView;
  * @author stefan.illgen
  * 
  */
-public class MapWebViewSkin extends SkinBase<RouteMapView> {
+public class RouteMapViewSkin extends SkinBase<RouteMapView> {
 
-	public MapWebViewSkin(RouteMapView control) {
+	public RouteMapViewSkin(RouteMapView control) {
 		super(control);
 	}
 

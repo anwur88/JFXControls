@@ -24,8 +24,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 
-import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
-import org.devel.jfxcontrols.concurrent.LoadImageTask;
+import org.devel.jfxcontrols.concurrent.ImageWriter;
+import org.devel.jfxcontrols.concurrent.ImageLoader;
 import org.devel.jfxcontrols.scene.control.ImageCropperScrollPane;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
 import org.devel.jfxcontrols.scene.shape.CropperRectangle;
@@ -106,7 +106,7 @@ public class ImageCropperGridPaneFXMLController implements Initializable {
 	 */
 	public void loadSourceImage(File image) {
 		if (image != null) {
-			LoadImageTask task = new LoadImageTask(image);
+			ImageLoader task = new ImageLoader(image);
 
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
@@ -149,7 +149,7 @@ public class ImageCropperGridPaneFXMLController implements Initializable {
 	 * @param image
 	 */
 	public void saveImage(File image) {
-		Thread cropSaveThread = new Thread(new CropWriteImageTask(image,
+		Thread cropSaveThread = new Thread(new ImageWriter(image,
 				getTargetImage(), cropperRectangle.getX(),
 				cropperRectangle.getY(), cropperRectangle.getWidth(),
 				cropperRectangle.getHeight()));

@@ -89,9 +89,12 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 								TreeItem<String> item = ((TreeCell<String>) event
 										.getSource()).getTreeItem();
 								if (item instanceof ReflectiveTreeItem) {
-									Node ground = ((ReflectiveTreeItem<? extends Node>) item)
-											.getGround();
-									loadDetails(ground);
+									try {
+										loadDetails(((ReflectiveTreeItem<? extends Node>) item)
+												.createGround());
+									} catch (InstantiationException | IllegalAccessException e) {
+										e.printStackTrace();
+									}
 								}
 							}
 						});
@@ -111,7 +114,7 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 
 		ReflectiveTreeItem<SearchRoutePane> mapViewMenuItem = new ReflectiveTreeItem<SearchRoutePane>(
 				"Map View", ImageRegistry.getImageView(Images.LOGO_16),
-				new SearchRoutePane());
+				SearchRoutePane.class);
 		result.add(mapViewMenuItem);
 
 		result.add(new TreeItem<String>("Image Cropper", ImageRegistry
@@ -124,15 +127,19 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 
 	public class ReflectiveTreeItem<T extends Node> extends TreeItem<String> {
 
-		private T ground;
+		private Class<T> ground;
 
-		public ReflectiveTreeItem(String value, Node graphic, T ground) {
+		public ReflectiveTreeItem(String value, Node graphic, Class<T> clazz) {
 			super(value, graphic);
-			this.ground = ground;
+			this.ground = clazz;
 		}
 
-		public T getGround() {
+		public Class<T> getGroundClass() {
 			return ground;
+		}
+		
+		public T createGround() throws InstantiationException, IllegalAccessException {
+			return ground.newInstance();
 		}
 	}
 

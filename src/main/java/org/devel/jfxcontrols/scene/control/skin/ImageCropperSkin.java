@@ -32,8 +32,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 
-import org.devel.jfxcontrols.concurrent.CropWriteImageTask;
-import org.devel.jfxcontrols.concurrent.LoadImageTask;
+import org.devel.jfxcontrols.concurrent.ImageWriter;
+import org.devel.jfxcontrols.concurrent.ImageLoader;
 import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.scene.control.ImageCropperScrollPane;
 import org.devel.jfxcontrols.scene.image.SourceImageView;
@@ -351,7 +351,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 
 	private void loadSourceImage(File image) {
 		if (image != null) {
-			LoadImageTask task = new LoadImageTask(image);
+			ImageLoader task = new ImageLoader(image);
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent event) {
@@ -366,7 +366,7 @@ public class ImageCropperSkin extends SkinBase<ImageCropper> {
 	}
 
 	private void saveImage(File image) {
-		Thread cropSaveThread = new Thread(new CropWriteImageTask(image,
+		Thread cropSaveThread = new Thread(new ImageWriter(image,
 				targetImageView.getImage(), cropperRectangle.getTranslateX(),
 				cropperRectangle.getTranslateY(), cropperRectangle.getWidth(),
 				cropperRectangle.getHeight()));

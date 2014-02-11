@@ -16,14 +16,14 @@ import org.apache.commons.io.FilenameUtils;
  * @author stefan.illgen
  * 
  */
-public class LoadImageTask extends Task<Boolean> {
+public class ImageLoader extends Task<Boolean> {
 
 	private static final String TXT_load_image_error_0 = "Fehler beim Speichern von ";
 	private static final String TXT_load_image_success = "Image was successfully loaded";
 	private File imageFile;
 	private Image image;
 
-	public LoadImageTask(File imageFile) {
+	public ImageLoader(File imageFile) {
 		this.imageFile = imageFile;
 	}
 

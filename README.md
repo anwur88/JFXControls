@@ -44,7 +44,7 @@ Just run the following commands havin' a gradle distribution on your env path.
 .. $ gradle assemble
 </pre>
 
-After running the <pre>SUCCESSFULL BUILD</pre> you'll find the following bundles inside the freshly created <code>build</code> directory:
+After running the <code>SUCCESSFULL BUILD</code> you'll find the following bundles inside the freshly created <code>build</code> directory:
 
 * executable JAR
 * native client 4 windows and linux os

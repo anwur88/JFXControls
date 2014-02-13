@@ -14,25 +14,21 @@ import org.devel.jfxcontrols.conf.Properties;
 import org.devel.jfxcontrols.resource.ImageRegistry;
 
 /**
- * TODO stefan - create a tabular to show controls.
  * 
  * @author stefan.illgen
  * 
  */
 public class JFXControlsApp extends Application {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javafx.application.Application#start(javafx.stage.Stage)
-	 */
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 
 		setup(stage);
 
 		Scene scene = new Scene(getParent());
-		// scene.getStylesheets().add("/path/to/css");
+		scene.getStylesheets().add(
+				getClass().getResource(".").toExternalForm()
+						+ getClass().getSimpleName() + ".css");
 		stage.setScene(scene);
 		stage.setTitle(getClass().getName());
 
@@ -41,10 +37,10 @@ public class JFXControlsApp extends Application {
 	}
 
 	private void setup(Stage stage) {
-		
+
 		// conf
 		Properties.init();
-		
+
 		// image registry
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -52,10 +48,11 @@ public class JFXControlsApp extends Application {
 				if (event.getEventType().equals(
 						WindowEvent.WINDOW_CLOSE_REQUEST)
 						&& event.getTarget().equals(stage)) {
-					stage.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, this);
-					ImageRegistry.instance().dispose();					
+					stage.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+							this);
+					ImageRegistry.instance().dispose();
 				}
-					
+
 			}
 		});
 	}

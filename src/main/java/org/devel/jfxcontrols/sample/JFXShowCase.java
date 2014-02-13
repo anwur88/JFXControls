@@ -27,9 +27,12 @@ import javafx.scene.text.Text;
 import org.devel.jfxcontrols.resource.ImageRegistry;
 import org.devel.jfxcontrols.resource.Images;
 import org.devel.jfxcontrols.scene.control.Aggregator;
+import org.devel.jfxcontrols.scene.control.CircleCheckBox;
+import org.devel.jfxcontrols.scene.control.CircleCheckBoxSkin;
 import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
 import org.devel.jfxcontrols.scene.layout.Router;
+
 
 /**
  * @author stefan.illgen
@@ -83,10 +86,13 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 				// get tree item and load details view with created
 				// grounding
 				try {
-					TreeItem<String> item = ((TreeCell<String>) event
+					ReflectableTreeItem<? extends Node> item = (ReflectableTreeItem<? extends Node>) ((TreeCell<String>) event
 							.getSource()).getTreeItem();
-					loadDetails(((ReflectableTreeItem<? extends Node>) item)
-							.createGround());
+					
+					if(item.getGroundClass() == CircleCheckBox.class)
+						loadDetails(createCircleCheckBox());
+					else
+						loadDetails(item.createGround());
 				} catch (InstantiationException | IllegalAccessException
 						| ClassCastException e) {
 					e.printStackTrace();
@@ -105,6 +111,7 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 				add(createTreeItem(Router.class));
 				add(createTreeItem(ImageCropper.class));
 				add(createTreeItem(Aggregator.class));
+				add(createTreeItem(CircleCheckBox.class));
 			}
 		};
 	}
@@ -156,6 +163,15 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 		// code = e.getMessage();
 		// }
 		// scTextArea.setText(code);
+	}
+	
+	private CircleCheckBox createCircleCheckBox() {
+		
+		CircleCheckBox ccb = new CircleCheckBox();
+		// set at runtime
+		ccb.setSkin(new CircleCheckBoxSkin(ccb));
+		
+		return ccb;
 	}
 
 }

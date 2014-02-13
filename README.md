@@ -6,12 +6,36 @@ JFXControls
 <img src="src/site/screenshots/110214.png" alt="Screenshot (11.02.14)" />
 
 ###Router (JFXMaps)
-[TODO: Doc | Refactor]
+<img src="src/site/screenshots/router_scrot.PNG" alt="Screenshot (12.02.14)" />
+* navigation from origin to destination
+* string properties 4 source and target position
+* integration of Google's Maps Javascript API
+* customization of WebView and aggregation of the result inside a custom control to be imported into the SceneBuilder
+* batch property changes within a delay of 3 seconds using executor services on tasks
+
+####Refactorings
+* inherit directly from WebView
+* move AL into Skin
 
 ###ImageCropper
-[TODO: Doc | Refactor]
+<img src="src/site/screenshots/imagecropper_scrot.PNG" alt="Screenshot (12.02.14)" />
+* intent: load, crop and save images via moving a cropper rectangle
+* properties: 
+  * source + target image
+  * cropper height + width
+  * cropper fill + stroke color
+* custom control whose skin aggregates standard components as well as further custom components (source and target image view)
+  * source image view
+  * target image view
+
+
+####Refactorings
+* Import 2 SceneBuilder: Enable visualization of subcontrols after the import
+* replace StackPane inside ScrollPane + remove ImageCropperScrollPane multiple children bounds bindings (exchenge skins)
+* JPG rgb correction
 
 ###MasterDetailsView
+<img src="src/site/screenshots/masterdetails_scrot.PNG" alt="Screenshot (12.02.14)" />
 * Intent: master (1:n) detail relation
 * common UI Pattern
   * characterization: a little architectural but mostly a perceptual pattern related to usability aspects
@@ -62,11 +86,15 @@ The idea of master/details block is to create a tree or a table section that fir
 
 ###TreeTableView
 [TODO: Impl]
+<img src="src/site/screenshots/ttv_scrot.PNG" alt="Screenshot (12.02.14)" />
+
 
 ###Further Ideas
 * Validator and Decorators (see <a href="http://www.vogella.com/tutorials/EclipseDataBinding/article.html#jfacedb_masterdetail">JFace</a>, <a href="http://www.jidesoft.com/blog/2013/06/06/jidefx-beta-release/">JideFX</a>)
 * UI Patterns for WebApps: Search/Results, Spreadsheet, Wizard, Interactive Model (see <a href="http://designingwebinterfaces.com/designing-web-interfaces-12-screen-patterns">Principles and Patterns for Rich Interaction</a>)
 * Horizontale Layouts (Java 8)
+* Keyboard Navigation (check also <a href="https://wiki.openjdk.java.net/display/OpenJFX/User+Experience+Specifications">User Experience Specifications</a>)
+* Tooltipp sytling of a control via CSS
 
 ##Common Tasks
 

@@ -16,10 +16,16 @@ import javafx.scene.control.ScrollPane;
 
 /**
  * This class represents a scroll pane whose maximum bounds depend on the
- * maximum of certain width and height properties encapsulated via the
+ * maximum of a list of width / height properties. This is a useful if the
+ * scroll pane depends on multiple sizes of its children.
+ * 
+ * The width and height properties gets encapsulated via the
  * {@link #maxWidthObservablesProperty()} and the
- * {@link #maxHeightObservablesProperty()}. The calculation for maximum properties takes the
- * maximum value of each list (@see {@link ImageCropperScrollPaneSkin}).
+ * {@link #maxHeightObservablesProperty()}. The calculation for maximum
+ * properties takes the maximum value of each list (@see
+ * {@link ImageCropperScrollPaneSkin}).
+ * 
+ * UseCase:
  * 
  * @author stefan.illgen
  * 
@@ -38,11 +44,11 @@ public class ImageCropperScrollPane extends ScrollPane {
 		super();
 		setupSkin();
 	}
-	
+
 	private void setupSkin() {
 		getStyleClass().add("image-cropper-scroll-pane");
 	}
-	
+
 	@Override
 	protected String getUserAgentStylesheet() {
 		return getClass().getResource(

@@ -6,15 +6,23 @@
 /* } */
 
 /* Solution 2: Adapt CSS to hide background of box */
-.check-box > .box {
+.circle-check-box > .box {
 	-fx-background-color: transparent;
 }
 
-.check-box:focused > .box {
+.circle-check-box:focused > .box {
     -fx-background-color: transparent;
 }
 
-.check-box > .box > .circle {
+.circle-check-box > .box > .circle {
 	-fx-fill: radial-gradient(focus-angle 315deg, focus-distance 25%, center 50% 50%, radius 100%, white, lightgray);
 	-fx-stroke: lightgrey;
+}
+
+.rotatable-check-box > .box {
+	
+}
+
+.rotatable-check-box:focused > .box {
+
 }

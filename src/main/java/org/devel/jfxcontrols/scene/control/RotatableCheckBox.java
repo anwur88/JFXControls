@@ -1,25 +1,28 @@
+/**
+ * 
+ */
 package org.devel.jfxcontrols.scene.control;
 
 import javafx.scene.control.CheckBox;
 
 /**
- * 
  * @author stefan.illgen
- * 
+ *
  */
-public class CircleCheckBox extends CheckBox {
+public class RotatableCheckBox extends CheckBox {
 
-	private static final String DEFAULT_STYLE_CLASS = "circle-check-box";
-
-	public CircleCheckBox() {
+	private static final String DEFAULT_STYLE_CLASS = "rotatable-check-box";
+	
+	public RotatableCheckBox() {
 		super();
 		setSth();
 	}
 
-	public CircleCheckBox(String text) {
+	public RotatableCheckBox(String text) {
 		super(text);
 		setSth();
 	}
+	
 
 	private void setSth() {
 		/*
@@ -28,5 +31,4 @@ public class CircleCheckBox extends CheckBox {
 		 */
 		getStyleClass().addAll(DEFAULT_STYLE_CLASS);
 	}
-
 }

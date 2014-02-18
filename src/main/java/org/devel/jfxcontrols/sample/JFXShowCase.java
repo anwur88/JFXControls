@@ -31,8 +31,9 @@ import org.devel.jfxcontrols.scene.control.CircleCheckBox;
 import org.devel.jfxcontrols.scene.control.CircleCheckBoxSkin;
 import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
+import org.devel.jfxcontrols.scene.control.RotatableCheckBox;
+import org.devel.jfxcontrols.scene.control.skin.RotatableCheckBoxSkin;
 import org.devel.jfxcontrols.scene.layout.Router;
-
 
 /**
  * @author stefan.illgen
@@ -81,26 +82,28 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 		// master 2 details: selection binding
 		masterTreeView.setCellFactory(treeView -> {
 			// on click on the master
-			final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
-			treeCell.setOnMouseClicked(event -> {
-				// get tree item and load details view with created
-				// grounding
-				try {
-					ReflectableTreeItem<? extends Node> item = (ReflectableTreeItem<? extends Node>) ((TreeCell<String>) event
-							.getSource()).getTreeItem();
-					
-					if(item.getGroundClass() == CircleCheckBox.class)
-						loadDetails(createCircleCheckBox());
-					else
-						loadDetails(item.createGround());
-				} catch (InstantiationException | IllegalAccessException
-						| ClassCastException e) {
-					e.printStackTrace();
-				}
-			});
+				final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
+				treeCell.setOnMouseClicked(event -> {
+					// get tree item and load details view with created
+					// grounding
+					try {
+						ReflectableTreeItem<? extends Node> item = (ReflectableTreeItem<? extends Node>) ((TreeCell<String>) event
+								.getSource()).getTreeItem();
 
-			return treeCell;
-		});
+						if (item.getGroundClass() == CircleCheckBox.class)
+							loadDetails(createCircleCheckBox());
+						else if (item.getGroundClass() == RotatableCheckBox.class)
+							loadDetails(createRotatableCheckBox());
+						else
+							loadDetails(item.createGround());
+					} catch (InstantiationException | IllegalAccessException
+							| ClassCastException e) {
+						e.printStackTrace();
+					}
+				});
+
+				return treeCell;
+			});
 
 	}
 
@@ -112,6 +115,7 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 				add(createTreeItem(ImageCropper.class));
 				add(createTreeItem(Aggregator.class));
 				add(createTreeItem(CircleCheckBox.class));
+				add(createTreeItem(RotatableCheckBox.class));
 			}
 		};
 	}
@@ -164,14 +168,21 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 		// }
 		// scTextArea.setText(code);
 	}
-	
+
 	private CircleCheckBox createCircleCheckBox() {
-		
+
 		CircleCheckBox ccb = new CircleCheckBox();
 		// set at runtime
 		ccb.setSkin(new CircleCheckBoxSkin(ccb));
-		
+
 		return ccb;
 	}
 
+	private RotatableCheckBox createRotatableCheckBox() {
+		
+		RotatableCheckBox rcb = new RotatableCheckBox();
+		rcb.setSkin(new RotatableCheckBoxSkin(rcb));
+		
+		return rcb;
+	}
 }

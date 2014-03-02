@@ -172,7 +172,6 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 	private CircleCheckBox createCircleCheckBox() {
 
 		CircleCheckBox ccb = new CircleCheckBox();
-		// set at runtime
 		ccb.setSkin(new CircleCheckBoxSkin(ccb));
 
 		return ccb;

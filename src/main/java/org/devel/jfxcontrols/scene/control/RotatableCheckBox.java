@@ -26,22 +26,31 @@ public class RotatableCheckBox extends CheckBox {
 
 	public RotatableCheckBox() {
 		super();
-		setupCSS();
-
+		initiate();		
 	}
 
 	public RotatableCheckBox(String text) {
 		super(text);
+		initiate();
+	}
+
+	private void initiate() {
 		setupCSS();
+		bind();
+		setNeedsLayout(true);
 	}
 
 	// ### Property Configuration
 
+	private void bind() {
+		 rotateProperty().bindBidirectional(rotate1Property());
+	}
+
 	private DoubleProperty rotate1;
 
 	public DoubleProperty rotate1Property() {
-		if (rotate1 == null)
-			rotate1 = new StyleableDoubleProperty(45d) {
+		if (rotate1 == null) {
+			rotate1 = new StyleableDoubleProperty(0d) {
 
 				@Override
 				public CssMetaData<? extends Styleable, Number> getCssMetaData() {
@@ -59,6 +68,7 @@ public class RotatableCheckBox extends CheckBox {
 				}
 
 			};
+		}
 		return rotate1;
 	}
 
@@ -90,10 +100,10 @@ public class RotatableCheckBox extends CheckBox {
 		getStyleClass().addAll(DEFAULT_STYLE_CLASS);
 	}
 
-//	@Override
-//	protected Skin<?> createDefaultSkin() {
-//		return new RotatableCheckBoxSkin(this);
-//	}
+	// @Override
+	// protected Skin<?> createDefaultSkin() {
+	// return new RotatableCheckBoxSkin(this);
+	// }
 
 	@Override
 	protected String getUserAgentStylesheet() {

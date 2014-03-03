@@ -18,6 +18,7 @@ import javafx.scene.control.Labeled;
 import com.sun.javafx.css.converters.SizeConverter;
 
 /**
+ * Example 4 the definition of stylable properties using the JavafX 8 CSS API.
  * 
  * @author stefan.illgen
  * 

@@ -118,11 +118,16 @@ Please customize this depending on your needs.
 
 ###Eclipsify the Project
 
+####Approach 1
+
 <pre>
 .. $ gradle eclipse
 </pre>
 
-No you're ready 4 import! Remembers me on SBT a bit :D
+No you're ready 4 import!
+
+####Approach 2
+Install eclipse gradle support!
 
 ###Testing
 And once again pretty simple:

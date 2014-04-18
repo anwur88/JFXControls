@@ -25,7 +25,6 @@ import org.devel.jfxcontrols.scene.control.skin.ExtandableTreeTableViewSkin;
 import org.devel.jfxcontrols.scene.control.skin.ExtendableFlow;
 import org.devel.jfxcontrols.scene.control.skin.FlowAdjuster;
 import org.devel.jfxcontrols.scene.control.skin.FlowExtension;
-import org.devel.jfxcontrols.scene.control.skin.FlowTreeExpander;
 
 /**
  * @author stefan.illgen
@@ -130,6 +129,11 @@ public class Main extends Application {
 		skin.addExtensions(new ArrayList<FlowExtension<String, TreeTableRow<String>>>() {
 			private static final long serialVersionUID = -3874572374641334976L;
 			{
+				ExtendableFlow<String, TreeTableRow<String>> extendableFlow = skin
+						.getExtendableFlow();
+				extendableFlow.fixedCellLengthProperty().bind(
+						ttv.fixedCellSizeProperty());
+
 				// obligatory entire ro adjustment
 				FlowAdjuster<String, TreeTableRow<String>> adjuster = new FlowAdjuster<String, TreeTableRow<String>>(
 						skin.getExtendableFlow());
@@ -138,19 +142,21 @@ public class Main extends Application {
 				adjuster.fixedCellSizeProperty().bindBidirectional(
 						skin.getExtendableFlow().fixedCellLengthProperty());
 
-				// obligatory expansion
-				FlowTreeExpander<String, TreeTableRow<String>> flowTreeExpander = new FlowTreeExpander<String, TreeTableRow<String>>(
-						skin.getExtendableFlow(), skin, adjuster);
-				//
-				// flowTreeExpander.singularProperty().bindBidirectional(
-				// singularProperty());
-				flowTreeExpander.rootProperty().bindBidirectional(
-						ttv.rootProperty());
-				flowTreeExpander.expandedItemCountProperty().bind(
-						ttv.expandedItemCountProperty());
-				flowTreeExpander.visibleSizeProperty().bind(
-						ttv.fixedCellSizeProperty().multiply(
-								ttv.visibleCellCountProperty()));
+				// // obligatory expansion
+				// FlowTreeExpander<String, TreeTableRow<String>>
+				// flowTreeExpander = new FlowTreeExpander<String,
+				// TreeTableRow<String>>(
+				// skin.getExtendableFlow(), skin, adjuster);
+				// //
+				// // flowTreeExpander.singularProperty().bindBidirectional(
+				// // singularProperty());
+				// flowTreeExpander.rootProperty().bindBidirectional(
+				// ttv.rootProperty());
+				// flowTreeExpander.expandedItemCountProperty().bind(
+				// ttv.expandedItemCountProperty());
+				// flowTreeExpander.visibleSizeProperty().bind(
+				// ttv.fixedCellSizeProperty().multiply(
+				// ttv.visibleCellCountProperty()));
 				//
 				// if (isFlingable()) {
 				// FlowFlinger<S, TreeTableRow<S>> flowFlinger = new
@@ -159,16 +165,9 @@ public class Main extends Application {
 				// flowFlinger.setEventHandling(getSkinnable());
 				// }
 
-				adjuster.setEventHandling(ttv);
+				// adjuster.setEventHandling(ttv);
 			}
 		});
-
-		ExtendableFlow<String, TreeTableRow<String>> extendableFlow = skin
-				.getExtendableFlow();
-		extendableFlow.fixedCellLengthProperty().bind(
-				ttv.fixedCellSizeProperty()
-						.multiply(ttv.visibleCellCountProperty())
-						.add(extendableFlow.hBarHeight()));
 
 		ttv.setSkin(skin);
 	}

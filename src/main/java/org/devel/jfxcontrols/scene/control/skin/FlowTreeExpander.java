@@ -63,11 +63,11 @@ public class FlowTreeExpander<M, I extends IndexedCell<M>> extends
 
 		initEventHandling();
 
-		setAdjuster(adjuster);
-		fixedCellSizeProperty().bindBidirectional(
-				adjuster.fixedCellSizeProperty());
-		adjuster.rowCountProperty().bindBidirectional(rowCountProperty());
-		selectionModelProperty().bind(adjuster.selectionModelProperty());
+		// setAdjuster(adjuster);
+		// fixedCellSizeProperty().bindBidirectional(
+		// adjuster.fixedCellSizeProperty());
+		// adjuster.rowCountProperty().bindBidirectional(rowCountProperty());
+		// selectionModelProperty().bind(adjuster.selectionModelProperty());
 	}
 
 	private int countExpandedItems(TreeItem<M> treeItem) {
@@ -103,7 +103,7 @@ public class FlowTreeExpander<M, I extends IndexedCell<M>> extends
 
 	public ObjectProperty<TreeItem<M>> rootProperty() {
 		if (root == null) {
-			root = new SimpleObjectProperty<>();
+			root = new SimpleObjectProperty<TreeItem<M>>();
 		}
 		return root;
 	}

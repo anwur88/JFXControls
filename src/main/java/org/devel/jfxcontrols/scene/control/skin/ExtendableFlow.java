@@ -29,16 +29,17 @@ import com.sun.javafx.scene.control.skin.VirtualFlow;
  */
 public class ExtendableFlow<M, I extends IndexedCell<M>> extends VirtualFlow<I> {
 
-	private SimpleDoubleProperty visibleCellLength;
-
 	public ExtendableFlow() {
 		super();
 		getHbar().setVisible(false);
+		visibleHeightProperty().bind(
+				fixedCellLengthProperty().multiply(visibleCellCountProperty())
+						.add(hBarHeight()));
 	}
 
 	@Override
 	public void resize(double width, double height) {
-		super.resize(width, getFixedCellLength());
+		super.resize(width, getVisibleHeight());
 	}
 
 	// ###############extensions #################
@@ -108,6 +109,7 @@ public class ExtendableFlow<M, I extends IndexedCell<M>> extends VirtualFlow<I> 
 
 	private IntegerProperty selectedCellIndex;
 	private SimpleDoubleProperty fixedCellLength;
+	private SimpleDoubleProperty visibleHeight;
 
 	public IntegerProperty firstVisibleCellIndexProperty() {
 		if (selectedCellIndex == null)
@@ -135,6 +137,20 @@ public class ExtendableFlow<M, I extends IndexedCell<M>> extends VirtualFlow<I> 
 
 	public void setFixedCellLength(double fixedCellLength) {
 		fixedCellLengthProperty().set(fixedCellLength);
+	}
+
+	public DoubleProperty visibleHeightProperty() {
+		if (visibleHeight != null)
+			visibleHeight = new SimpleDoubleProperty(0);
+		return visibleHeight;
+	}
+
+	public double getVisibleHeight() {
+		return visibleHeightProperty().get();
+	}
+
+	public void setVisibleHeight(double visibleHeight) {
+		visibleHeightProperty().set(visibleHeight);
 	}
 
 }

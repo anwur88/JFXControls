@@ -28,10 +28,11 @@ public class FlowAdjuster<M, I extends IndexedCell<M>> extends
 
 	private EntireRowAdjuster<M, I> adjuster;
 	private VelocityTracker velocityTracker;
-	private double pressedY;
-	private double draggedY;
+	private double startY;
+	private double currentY;
+	private boolean isAdjusting;
 
-	public FlowAdjuster(ExtensibleFlow<M, I> extensibleFlow) {
+	public FlowAdjuster(ExtendableFlow<M, I> extensibleFlow) {
 		super(extensibleFlow);
 	}
 
@@ -69,34 +70,47 @@ public class FlowAdjuster<M, I extends IndexedCell<M>> extends
 					@Override
 					public void handle(MouseEvent event) {
 						getAdjuster().stop();
-						draggedY = pressedY = event.getY();
+						isAdjusting = false;
+						currentY = startY = event.getY();
 						getVelocityTracker().clear();
-						getVelocityTracker().addPoint(0.0f, (float) draggedY,
+						getVelocityTracker().addPoint(0.0f, (float) currentY,
 								System.currentTimeMillis());
 						event.consume();
 					}
 				});
 				put(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+
 					@Override
 					public void handle(MouseEvent event) {
-						double deltaY = draggedY - event.getY();
+						isAdjusting = true;
+						double deltaY = currentY - event.getY();
 						// if (yDelta != 0.0) {
 						// if (getExtensibleFlow() != null) {
 						adjustDiff(deltaY, false);
-						draggedY = event.getY();
-						getVelocityTracker().addPoint(0.0f, (float) draggedY,
+						currentY = event.getY();
+						getVelocityTracker().addPoint(0.0f, (float) currentY,
 								System.currentTimeMillis());
 						// }
+						event.consume();
 					}
 				});
 
 				put(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent event) {
-						adjustDiff(computeDiffEntireRow(), false);
+						if (isAdjusting()) {
+							adjustDiff(computeDiffEntireRow(), false);
+							isAdjusting = false;
+							event.consume();
+						} else {
+							event.getY();
+						}
 					}
 				});
 
+				put(MouseEvent.MOUSE_CLICKED, (event) -> {
+					event.consume();
+				});
 				put(MouseEvent.MOUSE_MOVED, (event) -> {
 					event.consume();
 				});
@@ -134,6 +148,25 @@ public class FlowAdjuster<M, I extends IndexedCell<M>> extends
 		adjustDiff(computeDiffEntireRow(), animate);
 	}
 
+	public void adjustEntireRow(I cell, boolean animate) {
+		getExtensibleFlow().positionCell(cell, computeDiffEntireRow1(cell));
+	}
+
+	private double computeDiffEntireRow1(I cell) {
+		double cellPosition = getExtensibleFlow().getPosition(cell);
+		double sizeDelta = cellPosition % getFixedCellSize();
+		double diff = sizeDelta > 0 ? (Math.abs(sizeDelta) < getFixedCellSize() / 2 ? -sizeDelta
+				: getFixedCellSize() - sizeDelta)
+				: (Math.abs(sizeDelta) < getFixedCellSize() / 2 ? -sizeDelta
+						: -(getFixedCellSize() + sizeDelta));
+		return cellPosition + diff;
+	}
+
+	private double computeDiffEntireRow1() {
+
+		return 0;
+	}
+
 	/*
 	 * Computes the difference needed for adjusting the {@link VirtualFlow} on
 	 * entire cell sizes (i.e. row height or column width). If the dragged
@@ -146,7 +179,7 @@ public class FlowAdjuster<M, I extends IndexedCell<M>> extends
 	 * entire cell sizes
 	 */
 	private double computeDiffEntireRow() {
-		double totalDeltaY = -(draggedY - pressedY);
+		double totalDeltaY = -(currentY - startY);
 		double rowDeltaY = totalDeltaY % getFixedCellSize();
 		double maxY = getFixedCellSize();
 		double computeDiff2EntireFirstCell = rowDeltaY > 0 ? (Math
@@ -191,6 +224,10 @@ public class FlowAdjuster<M, I extends IndexedCell<M>> extends
 
 	public boolean isScrollDown() {
 		return getVelocityTracker().getYVelocity() < 0.0;
+	}
+
+	public boolean isAdjusting() {
+		return isAdjusting;
 	}
 
 	public double getCurrentPosition() {

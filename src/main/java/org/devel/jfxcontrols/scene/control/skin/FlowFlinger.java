@@ -27,7 +27,7 @@ public class FlowFlinger<M, I extends IndexedCell<M>> extends FlowExtension<M, I
 	private Flinger<M, I> flinger;
 	private double dragY;
 
-	public FlowFlinger(ExtensibleFlow<M, I> extensibleFlow, FlowAdjuster<M, I> adjuster) {
+	public FlowFlinger(ExtendableFlow<M, I> extensibleFlow, FlowAdjuster<M, I> adjuster) {
 		super(extensibleFlow);
 		// initEventHandling();
 		addChildren(adjuster);

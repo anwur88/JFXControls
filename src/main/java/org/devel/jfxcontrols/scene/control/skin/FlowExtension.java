@@ -16,38 +16,33 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.scene.control.Control;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TreeItem;
-import javafx.util.Callback;
-
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+import javafx.scene.layout.Region;
 
 /**
  * @author stefan.illgen
  *
  */
-@SuppressWarnings({
-	"rawtypes", "unchecked"
-})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class FlowExtension<M, I extends IndexedCell<M>> {
 
-	private ExtensibleFlow<M, I> extensibleFlow;
+	private ExtendableFlow<M, I> extensibleFlow;
 	private ObjectProperty<SelectionModel<TreeItem<M>>> selectionModel;
 	private SimpleDoubleProperty fixedCellSize;
 	private SimpleIntegerProperty rowCount;
 	private List<FlowExtension<M, I>> children;
 
-	public FlowExtension(ExtensibleFlow<M, I> extensibleFlow) {
+	public FlowExtension(ExtendableFlow<M, I> extensibleFlow) {
 		this.extensibleFlow = extensibleFlow;
 	}
 
-	public ExtensibleFlow<M, I> getExtensibleFlow() {
+	public ExtendableFlow<M, I> getExtensibleFlow() {
 		return extensibleFlow;
 	}
 
-	public void setExtensibleFlow(ExtensibleFlow<M, I> extensibleFlow) {
+	public void setExtensibleFlow(ExtendableFlow<M, I> extensibleFlow) {
 		this.extensibleFlow = extensibleFlow;
 	}
 
@@ -111,33 +106,37 @@ public abstract class FlowExtension<M, I extends IndexedCell<M>> {
 		getChildren().remove(child);
 	}
 
-	public <E extends Event> void setEventHandling(Control control) {
+	public <E extends Event> void setEventHandling(Region region) {
 		// handler
 		Map<EventType<E>, EventHandler<E>> typedEventHandlers = createTypedEventHandlers();
 		for (EventType eventType : typedEventHandlers.keySet()) {
-			control.addEventHandler(eventType, typedEventHandlers.get(eventType));
+			region.addEventHandler(eventType, typedEventHandlers.get(eventType));
 		}
 		// filter
 		Map<EventType<E>, EventHandler<E>> typedEventFilters = createTypedEventFilters();
 		for (EventType eventType : typedEventFilters.keySet()) {
-			control.addEventFilter(eventType, typedEventFilters.get(eventType));
+			region.addEventFilter(eventType, typedEventFilters.get(eventType));
 		}
 	}
 
 	protected final void initEventHandling() {
-		final Callback<VirtualFlow, I> createCell = getExtensibleFlow().getCreateCell();
-		getExtensibleFlow().setCreateCell(new Callback<VirtualFlow, I>() {
-			@Override
-			public I call(VirtualFlow flow) {
-				I cell = createCell.call(getExtensibleFlow());
-				setEventHandling(cell);
-				return cell;
-			}
-		});
+		// ########### accessing row example ###########
+		// final Callback<VirtualFlow, I> createCell = getExtensibleFlow()
+		// .getCreateCell();
+		// getExtensibleFlow().setCreateCell(new Callback<VirtualFlow, I>() {
+		// @Override
+		// public I call(VirtualFlow flow) {
+		// I cell = createCell.call(getExtensibleFlow());
+		// setEventHandling(cell);
+		// return cell;
+		// }
+		// });
+
 	}
 
 	protected final double computeDiff2FirstVisibleCell(I selectedCell) {
-		I firstVisibleCell = getExtensibleFlow().getFirstVisibleCellWithinViewPort();
+		I firstVisibleCell = getExtensibleFlow()
+				.getFirstVisibleCellWithinViewPort();
 
 		// System.out.println("BRRR: "
 		// + Double.valueOf(-selectedCell.getLayoutY() +
@@ -147,8 +146,8 @@ public abstract class FlowExtension<M, I extends IndexedCell<M>> {
 		// return -selectedCell.getLayoutY();
 
 		return -((selectedCell.getIndex() - firstVisibleCell.getIndex())
-			* getFixedCellSize() + firstVisibleCell.getLayoutY());// : //
-																  // getFixedCellSize()
+				* getFixedCellSize() + firstVisibleCell.getLayoutY());// : //
+																		// getFixedCellSize()
 		// +
 		// firstVisibleCell.getLayoutY()
 		// -selectedCell.getLayoutY() + firstVisibleCell.getLayoutY();
@@ -156,7 +155,8 @@ public abstract class FlowExtension<M, I extends IndexedCell<M>> {
 	}
 
 	protected final double computeDiff2LastVisibleCell(I selectedCell) {
-		I lastVisibleCell = getExtensibleFlow().getLastVisibleCellWithinViewPort();
+		I lastVisibleCell = getExtensibleFlow()
+				.getLastVisibleCellWithinViewPort();
 
 		// System.out.println("BRRR: "
 		// + Double.valueOf(-selectedCell.getLayoutY() +
@@ -178,26 +178,24 @@ public abstract class FlowExtension<M, I extends IndexedCell<M>> {
 	}
 
 	protected final double computeDiff2EntireFirstCell() {
-		I firstVisibleCell = getExtensibleFlow().getFirstVisibleCellWithinViewPort();
-		return (Math.abs(firstVisibleCell.getLayoutY()) < getFixedCellSize() / 2)
-			? -firstVisibleCell.getLayoutY()
-			: -getFixedCellSize() - firstVisibleCell.getLayoutY();
+		I firstVisibleCell = getExtensibleFlow()
+				.getFirstVisibleCellWithinViewPort();
+		return (Math.abs(firstVisibleCell.getLayoutY()) < getFixedCellSize() / 2) ? -firstVisibleCell
+				.getLayoutY() : -getFixedCellSize()
+				- firstVisibleCell.getLayoutY();
 	}
 
 	protected final double computeDiff2EntireRow() {
-		I firstVisibleCell = getExtensibleFlow().getFirstVisibleCellWithinViewPort();
-		return (Math.abs(firstVisibleCell.getLayoutY()) < getFixedCellSize())
-			? -firstVisibleCell.getLayoutY()
-			: -getFixedCellSize() - firstVisibleCell.getLayoutY();
+		I firstVisibleCell = getExtensibleFlow()
+				.getFirstVisibleCellWithinViewPort();
+		return (Math.abs(firstVisibleCell.getLayoutY()) < getFixedCellSize()) ? -firstVisibleCell
+				.getLayoutY() : -getFixedCellSize()
+				- firstVisibleCell.getLayoutY();
 	}
 
-	abstract <E extends Event>
-		Map<EventType<E>, EventHandler<E>>
-		createTypedEventHandlers();
+	abstract <E extends Event> Map<EventType<E>, EventHandler<E>> createTypedEventHandlers();
 
-	abstract <E extends Event>
-		Map<EventType<E>, EventHandler<E>>
-		createTypedEventFilters();
+	abstract <E extends Event> Map<EventType<E>, EventHandler<E>> createTypedEventFilters();
 
 	// Map<EventType<E>, EventHandler<E>> createTypedEventHandlers();
 

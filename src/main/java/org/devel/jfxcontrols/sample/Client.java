@@ -30,12 +30,12 @@ import org.devel.jfxcontrols.scene.control.skin.FlowExtension;
  * @author stefan.illgen
  *
  */
-public class Main extends Application {
+public class Client extends Application {
 
 	/**
 	 * 
 	 */
-	public Main() {
+	public Client() {
 		// TODO Auto-generated constructor stub
 	}
 

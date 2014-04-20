@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.animation;
+package org.devel.jfxcontrols.scene.control.treetableview.command;
 
 import javafx.animation.Transition;
 
@@ -14,7 +14,7 @@ public class Fling extends Transition implements Command<Fling.Action, Flingable
 	public enum Action implements Command.Action<Fling.Action> {
 		PRESS, DRAG, RELEASE;
 
-		private double mouseY;
+		private double y;
 		private boolean animate;
 
 		@Override
@@ -28,39 +28,32 @@ public class Fling extends Transition implements Command<Fling.Action, Flingable
 			return animate;
 		}
 
-		public Action mouseY(double mouseY) {
-			this.mouseY = mouseY;
+		@Override
+		public Action y(double y) {
+			this.y = y;
 			return this;
 		}
 
-		public double mouseY() {
-			return mouseY;
+		@Override
+		public double y() {
+			return y;
 		}
 
 	}
 
 	private Flingable flingable;
 
-	/**
-	 * 
-	 */
 	public Fling(Flingable flingable) {
 		this.flingable = flingable;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.animation.Transition#interpolate(double)
-	 */
 	@Override
 	protected void interpolate(double frac) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean execute(Fling.Action action) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 

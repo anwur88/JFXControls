@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.animation;
+package org.devel.jfxcontrols.scene.control.treetableview.command;
 
 /**
  * @author stefan.illgen

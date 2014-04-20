@@ -1,4 +1,4 @@
-package org.devel.jfxcontrols.animation;
+package org.devel.jfxcontrols.scene.control.treetableview.command;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TreeItem;

@@ -4,24 +4,31 @@
 package org.devel.jfxcontrols.sample;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.TreeTableRow;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import org.devel.jfxcontrols.conf.Properties;
 import org.devel.jfxcontrols.resource.ImageRegistry;
-import org.devel.jfxcontrols.scene.control.FixedTreeTableView;
-import org.devel.jfxcontrols.scene.control.TTTVCell;
-import org.devel.jfxcontrols.scene.control.tv.TreeTableViewSkin;
+import org.devel.jfxcontrols.scene.control.treetableview.ExpandableCell;
+import org.devel.jfxcontrols.scene.control.treetableview.command.Adjustable;
+import org.devel.jfxcontrols.scene.control.treetableview.command.EventMapper;
+import org.devel.jfxcontrols.scene.control.treetableview.command.Expand;
+import org.devel.jfxcontrols.scene.control.treetableview.command.RowAdjust;
+import org.devel.jfxcontrols.scene.control.treetableview.command.RowAdjust.Action;
+import org.devel.jfxcontrols.scene.control.treetableview.skin.TreeTableViewSkin;
 
 /**
  * @author stefan.illgen
@@ -55,7 +62,11 @@ public class Client1 extends Application {
 		firstCol.setCellValueFactory((item) -> (new ReadOnlyObjectWrapper<String>(item.getValue()
 																					  .getValue())));
 		firstCol.setCellFactory((column) -> {
-			return new TTTVCell();
+			ExpandableCell eCell = new ExpandableCell();
+			eCell.setCommandFactory((expandable) -> {
+				return new Expand<>(expandable);
+			});
+			return eCell;
 		});
 
 		// column
@@ -63,10 +74,10 @@ public class Client1 extends Application {
 		secondCol.setCellValueFactory((item) -> (new ReadOnlyObjectWrapper<String>(item.getValue()
 																					   .getValue())));
 		secondCol.setCellFactory((column) -> {
-			return new TTTVCell();
+			return new ExpandableCell();
 		});
 
-		TreeTableView<String> ttv = new FixedTreeTableView<String>();
+		org.devel.jfxcontrols.scene.control.treetableview.TreeTableView<String, Adjustable<String, TreeTableRow<String>>> ttv = new org.devel.jfxcontrols.scene.control.treetableview.TreeTableView<String, Adjustable<String, TreeTableRow<String>>>();
 		secondCol.prefWidthProperty().bind(ttv.widthProperty()
 											  .subtract(firstCol.widthProperty()));
 		ttv.setFixedCellSize(50.0);
@@ -81,8 +92,28 @@ public class Client1 extends Application {
 		});
 
 		// skin
-		TreeTableViewSkin<String> skin = new TreeTableViewSkin<String>(ttv);
-		ttv.setSkin(skin);
+		ttv.setSkin(new TreeTableViewSkin<String>(ttv));
+
+		ttv.setCommandFactory((adjustable) -> {
+			RowAdjust<String, TreeTableRow<String>> rowAdjust = new RowAdjust<String, TreeTableRow<String>>(adjustable);
+			EventMapper<RowAdjust<String, TreeTableRow<String>>, Action, Adjustable<String, TreeTableRow<String>>> mapper = new EventMapper<>(ttv,
+																																			  rowAdjust);
+			mapper.addMouseFilters(new HashMap<EventType<MouseEvent>, RowAdjust.Action>() {
+				private static final long serialVersionUID = -9005856313771120088L;
+				{
+					put(MouseEvent.MOUSE_PRESSED, RowAdjust.Action.PRESS.animate(true));
+					put(MouseEvent.MOUSE_DRAGGED, RowAdjust.Action.DRAG);
+					put(MouseEvent.MOUSE_RELEASED, RowAdjust.Action.RELEASE.animate(true));
+					put(MouseEvent.MOUSE_CLICKED, RowAdjust.Action.CONSUME);
+					put(MouseEvent.MOUSE_MOVED, RowAdjust.Action.CONSUME);
+					put(MouseEvent.MOUSE_ENTERED, RowAdjust.Action.CONSUME);
+					put(MouseEvent.MOUSE_EXITED, RowAdjust.Action.CONSUME);
+					put(MouseEvent.MOUSE_ENTERED_TARGET, RowAdjust.Action.CONSUME);
+					put(MouseEvent.MOUSE_EXITED_TARGET, RowAdjust.Action.CONSUME);
+				}
+			});
+			return rowAdjust;
+		});
 
 		// tree items
 		TreeItem<String> treeRootItem = new TreeItem<String>("root");

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.animation;
+package org.devel.jfxcontrols.scene.control.treetableview.command;
 
 import javafx.animation.Transition;
 
@@ -16,7 +16,7 @@ public class Expand<T> extends Transition
 	public enum Action implements Command.Action<Expand.Action> {
 		PRESS, DRAG, RELEASE;
 
-		private double mouseY;
+		private double y;
 		private boolean animate;
 
 		@Override
@@ -30,13 +30,15 @@ public class Expand<T> extends Transition
 			return animate;
 		}
 
-		public Action mouseY(double mouseY) {
-			this.mouseY = mouseY;
+		@Override
+		public Action y(double y) {
+			this.y = y;
 			return this;
 		}
 
-		public double mouseY() {
-			return mouseY;
+		@Override
+		public double y() {
+			return y;
 		}
 
 	}

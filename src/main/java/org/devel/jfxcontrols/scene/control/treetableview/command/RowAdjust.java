@@ -1,14 +1,12 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.animation;
+package org.devel.jfxcontrols.scene.control.treetableview.command;
 
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.scene.control.IndexedCell;
 import javafx.util.Duration;
-
-import org.devel.jfxcontrols.scene.control.skin.animation.VelocityTracker;
 
 /**
  * @author stefan.illgen
@@ -23,16 +21,15 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 	private double totalYAdjustForAnimation;
 	private double alreadyYAdjustForAnimation;
-	private double startMouseY;
 	private double currentMouseY;
-	private VelocityTracker velocityTracker;
+	// private VelocityTracker velocityTracker;
 	private boolean dragging;
 	private final Adjustable<T, I> receiver;
 
 	public enum Action implements Command.Action<RowAdjust.Action> {
-		PRESS, DRAG, RELEASE;
+		PRESS, DRAG, RELEASE, CONSUME;
 
-		private double mouseY;
+		private double y = 0.0d;;
 		private boolean animate;
 
 		@Override
@@ -46,15 +43,14 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 			return animate;
 		}
 
-		public Action mouseY(double mouseY) {
-			this.mouseY = mouseY;
+		public Action y(double y) {
+			this.y = y;
 			return this;
 		}
 
-		public double mouseY() {
-			return mouseY;
+		public double y() {
+			return y;
 		}
-
 	}
 
 	public RowAdjust(Adjustable<T, I> receiver) {
@@ -73,23 +69,22 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 			stop();
 			dragging = false;
-			currentMouseY = startMouseY = action.mouseY();
-			getVelocityTracker().clear();
-			getVelocityTracker().addPoint(0.0f,
-										  (float) currentMouseY,
-										  System.currentTimeMillis());
+			currentMouseY = action.y();
+			// getVelocityTracker().clear();
+			// getVelocityTracker().addPoint(0.0f,
+			// (float) currentMouseY,
+			// System.currentTimeMillis());
 			return false;
 
 		case DRAG:
 			dragging = true;
-			double deltaY = currentMouseY - action.mouseY();
+			double deltaY = currentMouseY - action.y();
 			if (deltaY != 0) {
-				System.out.println("receiver.adjustPixels: "
-					+ receiver.adjustPixels(deltaY));
-				currentMouseY = action.mouseY();
-				getVelocityTracker().addPoint(0.0f,
-											  (float) currentMouseY,
-											  System.currentTimeMillis());
+				currentMouseY = action.y();
+				receiver.adjustPixels(deltaY);
+				// getVelocityTracker().addPoint(0.0f,
+				// (float) currentMouseY,
+				// System.currentTimeMillis());
 			}
 			return false;
 
@@ -101,36 +96,15 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 			}
 			break;
 
-		default:
-			break;
+		case CONSUME:
+			return false;
 		}
 
 		return true;
 	}
 
-	/*
-	 * Computes the difference needed for adjusting the {@link VirtualFlow} on
-	 * entire cell sizes (i.e. row height or column width). If the dragged
-	 * distance for one cell is lower than the half of the cells size, the
-	 * returned distance will adjust the {@link VirtualFlow} to show the lower
-	 * cell. If it is larger than the half size, the returned distance is meant
-	 * for summing it up to adjust on the next cell.
-	 * @return the difference needed for adjusting the {@link VirtualFlow} on
-	 * entire cell sizes
-	 */
-	private double computeDiffEntireRow(Adjustable<T, I> receiver) {
-		double totalDeltaY = -(currentMouseY - startMouseY);
-		double rowDeltaY = totalDeltaY % receiver.getFixedCellLength();
-		double maxY = receiver.getFixedCellLength();
-		double computeDiff2EntireFirstCell = rowDeltaY > 0
-			? (Math.abs(rowDeltaY) < maxY / 2 ? -rowDeltaY : maxY - rowDeltaY)
-			: (Math.abs(rowDeltaY) < maxY / 2 ? -rowDeltaY : -(maxY + rowDeltaY));
-		return computeDiff2EntireFirstCell;
-	}
-
 	private double adjustDiff(boolean animate) {
 		if (animate) {
-			// double absDelta1 = computeDiffEntireRow(receiver);
 			double absDelta2 = receiver.getEntireCellDelta();
 			double absDelta = absDelta2;
 			if (absDelta != 0) {
@@ -150,7 +124,6 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 		if (frac >= 1.0) {
 			receiver.adjustEntireCellDelta();
-			// receiver.adjustPixels(computeDiffEntireRow(receiver));
 			totalYAdjustForAnimation = 0;
 			alreadyYAdjustForAnimation = 0;
 		} else if (frac > 0.0) {
@@ -163,11 +136,11 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 	}
 
-	private VelocityTracker getVelocityTracker() {
-		if (velocityTracker == null)
-			velocityTracker = new VelocityTracker();
-		return velocityTracker;
-	}
+	// private VelocityTracker getVelocityTracker() {
+	// if (velocityTracker == null)
+	// velocityTracker = new VelocityTracker();
+	// return velocityTracker;
+	// }
 
 	@Override
 	public Adjustable<T, I> getReceiver() {

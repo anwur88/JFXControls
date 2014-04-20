@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.devel.jfxcontrols.scene.control.tv;
+package org.devel.jfxcontrols.scene.control.treetableview.skin;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,8 +24,8 @@ import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.IndexedCell;
 
-import org.devel.jfxcontrols.animation.Adjustable;
 import org.devel.jfxcontrols.lang.UnsupportedValueException;
+import org.devel.jfxcontrols.scene.control.treetableview.command.Adjustable;
 
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 

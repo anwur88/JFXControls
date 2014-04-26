@@ -5,6 +5,7 @@ package org.devel.jfxcontrols.scene.control.treetableview.command;
 
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.scene.control.IndexedCell;
 import javafx.util.Duration;
 
@@ -26,7 +27,6 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	private boolean dragging;
 	private Adjustable<T, I> adjustable;
 	private double intialFlowPosition;
-	private int intialFlowTotalHeight;
 
 	public enum Action implements Command.Action<RowAdjust.Action> {
 		INIT,
@@ -34,11 +34,15 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 		ADJUST_AFTER_DRAG,
 		CONSUME,
 		CONSUME_CLICKED,
-		ADJUST_AFTER_LAYOUT_CHANGE,
-		INIT_LAYOUT_CHANGE;
+		ADJUST_ROW_INDEX,
+		INIT_LAYOUT_CHANGE,
+		ADJUST_DELTA;
 
 		private double y = 0.0d;;
 		private boolean animate;
+		private double delta;
+		private int rowIndex;
+		private ReadOnlyBooleanProperty needsLayout;
 
 		@Override
 		public Action animate(boolean animate) {
@@ -58,6 +62,33 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 		public double y() {
 			return y;
+		}
+
+		public double delta() {
+			return delta;
+		}
+
+		public RowAdjust.Action delta(double delta) {
+			this.delta = delta;
+			return this;
+		}
+
+		public int rowIndex() {
+			return rowIndex;
+		}
+
+		public RowAdjust.Action rowIndex(int rowIndex) {
+			this.rowIndex = rowIndex;
+			return this;
+		}
+
+		public RowAdjust.Action needsLayoutProperty(ReadOnlyBooleanProperty needsLayout) {
+			this.needsLayout = needsLayout;
+			return this;
+		}
+
+		public ReadOnlyBooleanProperty needsLayoutProperty() {
+			return needsLayout;
 		}
 	}
 
@@ -82,7 +113,6 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 			case INIT:
 
 				stop();
-				dragging = false;
 				currentMouseY = action.y();
 				// getVelocityTracker().clear();
 				// getVelocityTracker().addPoint(0.0f,
@@ -93,7 +123,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 			case DRAG:
 				double deltaY = currentMouseY - action.y();
-				if (deltaY != 0) {
+				if (Math.abs(deltaY) > 5) {
 					dragging = true;
 					currentMouseY = action.y();
 					adjustable.adjustPixels(deltaY);
@@ -111,15 +141,6 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				}
 				break;
 
-			case INIT_LAYOUT_CHANGE:
-				intialFlowPosition = adjustable.getAbsPosition();
-				intialFlowTotalHeight = adjustable.getTotalHeight();
-				break;
-
-			case ADJUST_AFTER_LAYOUT_CHANGE:
-				// adjustable.layoutAdjustPixels(intialFlowPosition);
-				break;
-
 			case CONSUME_CLICKED:
 				if (dragging) {
 					dragging = false;
@@ -128,8 +149,22 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				}
 				break;
 
+			case INIT_LAYOUT_CHANGE:
+				intialFlowPosition = adjustable.getAbsPosition()
+					- (adjustable.getAbsPosition() % adjustable.getFixedCellLength());
+				break;
+
+			case ADJUST_ROW_INDEX:
+				adjustable.layoutAdjustPixels(action.rowIndex());
+				break;
+
 			case CONSUME:
 				return false;
+			case ADJUST_DELTA:
+				adjustable.adjustPixels(action.delta());
+				break;
+			default:
+				break;
 			}
 
 		} else {

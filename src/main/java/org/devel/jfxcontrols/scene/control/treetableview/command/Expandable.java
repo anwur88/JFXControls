@@ -1,6 +1,5 @@
 package org.devel.jfxcontrols.scene.control.treetableview.command;
 
-import javafx.scene.control.TreeItem;
 
 /**
  * 
@@ -9,6 +8,6 @@ import javafx.scene.control.TreeItem;
  */
 public interface Expandable<S> extends Receiver {
 
-	TreeItem<S> expand();
+	int expand();
 
 }

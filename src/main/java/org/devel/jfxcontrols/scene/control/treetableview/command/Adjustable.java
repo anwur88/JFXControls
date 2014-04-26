@@ -151,8 +151,9 @@ public interface Adjustable<T, I extends IndexedCell<T>> extends Receiver {
 	/**
 	 * Adjusts Pixels awaiting for the next layout pass.
 	 * 
+	 * @param readOnlyBooleanProperty
 	 * @param intialFlowPosition
 	 */
-	void layoutAdjustPixels(double intialFlowPosition);
+	void layoutAdjustPixels(int selectedIndex);
 
 }

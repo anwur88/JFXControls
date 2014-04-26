@@ -6,6 +6,9 @@ package org.devel.jfxcontrols.scene.control.treetableview.skin;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -20,8 +23,6 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.IndexedCell;
@@ -102,9 +103,59 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	}
 
 	public double adjustPixels(final double delta) {
-		double result = super.adjustPixels(delta);
-		setAbsPosition(getAbsPosition() + delta);
+		double result = 0.0d;
+		result = (delta < -getAbsPosition())
+			? super.adjustPixels(-getAbsPosition())
+			: super.adjustPixels(delta);
+		setAbsPosition(getAbsPosition() + result);
 		return result;
+	}
+
+	public double adjustIndexFirst(final int index) {
+		int currentIndex = getCurrentIndex();
+		System.out.println("absPosition: " + getAbsPosition());
+		System.out.println("curindex: " + currentIndex);
+		System.out.println("index: " + index);
+		System.out.println(getLayoutY());
+		System.out.println(getCell(index).getLayoutY());
+		System.out.println(getDeltaY(currentIndex, getCells()));
+
+		double result = (index - currentIndex) * getFixedCellLength();
+		// + getDeltaY(currentIndex, getCells()
+		System.out.println(result);
+		return adjustPixels(result);
+	}
+
+	private double getDeltaY(int currentIndex, List<? extends IndexedCell<?>> cells) {
+		for (IndexedCell<?> cell : cells) {
+			if (cell.getIndex() == currentIndex)
+				return cell.getLayoutY();
+
+			return getDeltaY(currentIndex,
+							 cell.getChildrenUnmodifiable()
+								 .filtered(new Predicate<Node>() {
+									 @Override
+									 public boolean test(Node t) {
+										 return t instanceof IndexedCell<?>;
+									 }
+								 })
+								 .stream()
+								 .map(new Function<Node, IndexedCell<?>>() {
+
+									 @Override
+									 public IndexedCell<?> apply(Node t) {
+										 return (IndexedCell<?>) t;
+									 }
+								 })
+								 .collect(Collectors.toList()));
+		}
+		return 0.0;
+	}
+
+	private int getCurrentIndex() {
+		return (int) Math.floor((getAbsPosition()) / getMaxPosition()
+			* getTotalCellCount());
+
 	}
 
 	@Override
@@ -163,12 +214,6 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	@Override
 	public void setAbsPosition(double absPosition) {
 		absPositionProperty().set(absPosition);
-	}
-
-	@Override
-	public void setPosition(double position) {
-		super.setPosition(position);
-		setAbsPosition(position * getMaxPosition());
 	}
 
 	@Override
@@ -276,39 +321,47 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		return Collections.unmodifiableList(visibleCellsProperty().get());
 	}
 
+	private boolean layoutAdjust;
+	private int selectedIndex;
+
 	@Override
-	protected void layoutChildren() {
+	public void layoutAdjustPixels(final int selectedIndex) {
 
-		double absPosition = getAbsPosition();
-		int totalHeight = getTotalHeight();
-		System.out.println("Before: ");
-		System.out.println("Position: " + absPosition + " px");
-		System.out.println("Total Height: " + totalHeight + " px");
+		layoutAdjust = true;
+		this.selectedIndex = selectedIndex;
+		System.out.println("selected index: " + selectedIndex);
+		// adjustIndexFirst(selectedIndex);
 
-		super.layoutChildren();
+		// requestCellLayout();
 
-		double positionDelta = getAbsPosition() - absPosition;
-		double heightDelta = getTotalHeight() - totalHeight;
+		// final double intialFlowPosition1 = intialFlowPosition
+		// - (intialFlowPosition % getFixedCellLength());
+		// double position2 = getPosition();
+		//
+		// needsLayoutProperty().addListener(new ChangeListener<Boolean>() {
+		// @Override
+		// public void changed(ObservableValue<? extends Boolean> observable,
+		// Boolean oldValue,
+		// Boolean newValue) {
+		// if (oldValue && !newValue)
+		// adjustIndexFirst(2);
+		// }
+		// });
 
-		// setPosition(getMaxPosition() / absPosition);
-
-		System.out.println("After: ");
-		System.out.println("Position: " + absPosition + " px");
-		System.out.println("Total Height: " + totalHeight + " px");
 	}
 
 	@Override
-	public void layoutAdjustPixels(double intialFlowPosition) {
-		needsLayoutProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> obs,
-								Boolean oldV,
-								Boolean newV) {
-				if (newV != null && !newV) {
-					obs.removeListener(this);
-					adjustPixels(getAbsPosition() - intialFlowPosition);
-				}
-			}
-		});
+	protected void layoutChildren() {
+
+		super.layoutChildren();
+		// if (isLayoutAdjust()) {
+		// System.out.println("adjust");
+		// adjustIndexFirst(selectedIndex);
+		// layoutAdjust = false;
+		// }
+	}
+
+	private boolean isLayoutAdjust() {
+		return layoutAdjust;
 	}
 }

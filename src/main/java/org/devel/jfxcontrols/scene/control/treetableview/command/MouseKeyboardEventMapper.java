@@ -28,15 +28,23 @@ public class MouseKeyboardEventMapper {
 		public Map<EventType<MouseEvent>, RowAdjust.Action> mouseFilter = new HashMap<EventType<MouseEvent>, RowAdjust.Action>() {
 			private static final long serialVersionUID = -9005856313771120088L;
 			{
+				put(MouseEvent.MOUSE_CLICKED, RowAdjust.Action.CONSUME_CLICKED);
+				// put(MouseEvent.MOUSE_MOVED, RowAdjust.Action.CONSUME);
+				// put(MouseEvent.MOUSE_ENTERED, RowAdjust.Action.CONSUME);
+				// put(MouseEvent.MOUSE_EXITED, RowAdjust.Action.CONSUME);
+				// put(MouseEvent.MOUSE_ENTERED_TARGET,
+				// RowAdjust.Action.CONSUME);
+				// put(MouseEvent.MOUSE_EXITED_TARGET,
+				// RowAdjust.Action.CONSUME);
+			}
+		};
+
+		public Map<EventType<MouseEvent>, RowAdjust.Action> mouseHandler = new HashMap<EventType<MouseEvent>, RowAdjust.Action>() {
+			private static final long serialVersionUID = -9005856313771120088L;
+			{
 				put(MouseEvent.MOUSE_PRESSED, RowAdjust.Action.INIT);
 				put(MouseEvent.MOUSE_DRAGGED, RowAdjust.Action.DRAG);
 				put(MouseEvent.MOUSE_RELEASED, RowAdjust.Action.ADJUST_AFTER_DRAG);
-				put(MouseEvent.MOUSE_CLICKED, RowAdjust.Action.CONSUME_CLICKED);
-				put(MouseEvent.MOUSE_MOVED, RowAdjust.Action.CONSUME);
-				put(MouseEvent.MOUSE_ENTERED, RowAdjust.Action.CONSUME);
-				put(MouseEvent.MOUSE_EXITED, RowAdjust.Action.CONSUME);
-				put(MouseEvent.MOUSE_ENTERED_TARGET, RowAdjust.Action.CONSUME);
-				put(MouseEvent.MOUSE_EXITED_TARGET, RowAdjust.Action.CONSUME);
 			}
 		};
 
@@ -63,6 +71,7 @@ public class MouseKeyboardEventMapper {
 		private RowAdjustEventMapper(Control source, RowAdjust<T, I> target) {
 			super(source, target);
 			addMouseFilter(mouseFilter);
+			addMouseHandler(mouseHandler);
 		}
 
 		@Override

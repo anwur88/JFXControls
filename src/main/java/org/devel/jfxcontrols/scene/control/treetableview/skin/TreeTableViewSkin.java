@@ -102,6 +102,49 @@ public class TreeTableViewSkin<T>
 			expand.setReceiver(this);
 		}
 		reloadExpandMapping();
+
+		// getSkinnable().expandedItemCountProperty()
+		// .addListener(new ChangeListener<Number>() {
+		// @Override
+		// public void changed(ObservableValue<? extends Number> obs,
+		// Number oldV,
+		// Number newV) {
+		// if (newV != null && oldV != null) {
+		// System.out.println(getNewPosition());
+		// System.out.println(getCurrentPosition());
+		// adjustableFlow.adjustPixels(getCurrentPosition()
+		// - getNewPosition());
+		// }
+		//
+		// }
+		//
+		// private double getNewPosition() {
+		// return getSelectionModel().getSelectedIndex()
+		// * adjustableFlow.getFixedCellLength();
+		// }
+		//
+		// private double getCurrentPosition() {
+		// return adjustableFlow.getPosition()
+		// * getSkinnable().getFixedCellSize()
+		// * getSkinnable().getExpandedItemCount();
+		// }
+		// });
+	}
+
+	@Override
+	protected void layoutChildren(double x, double y, double w, double h) {
+		super.layoutChildren(x, y, w, h);
+
+	}
+
+	private double getNewPosition() {
+		return getSelectionModel().getSelectedIndex()
+			* adjustableFlow.getFixedCellLength();
+	}
+
+	private double getCurrentPosition() {
+		return adjustableFlow.getPosition() * getSkinnable().getFixedCellSize()
+			* getSkinnable().getExpandedItemCount();
 	}
 
 	private void reloadExpandMapping() {
@@ -129,20 +172,30 @@ public class TreeTableViewSkin<T>
 	}
 
 	@Override
-	public TreeItem<T> expand() {
+	public int expand() {
+
 		TreeItem<T> selected = getSelectionModel().getSelectedItem();
 		if (!selected.isLeaf()) {
+
+			if (!selected.isExpanded()) {
+				collapseAll(getSkinnable().getRoot());
+			}
+
 			selected.setExpanded(!selected.isExpanded());
-			if (selected.isExpanded()) {
-				for (TreeItem<T> treeItem : selected.getParent().getChildren()) {
-					if (!treeItem.isLeaf() && treeItem.isExpanded()
-						&& !treeItem.equals(selected)) {
-						treeItem.setExpanded(false);
-					}
-				}
+		}
+
+		// adjustableFlow.adjustPixels(getCurrentPosition() - getNewPosition());
+
+		return getSelectionModel().getSelectedIndex();
+	}
+
+	private void collapseAll(TreeItem<T> root) {
+		for (TreeItem<T> item : root.getChildren()) {
+			if (!item.isLeaf()) {
+				item.setExpanded(false);
+				collapseAll(item);
 			}
 		}
-		return selected;
 	}
 
 	private org.devel.jfxcontrols.scene.control.treetableview.TreeTableView

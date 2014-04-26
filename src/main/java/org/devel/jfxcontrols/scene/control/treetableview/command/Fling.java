@@ -62,4 +62,10 @@ public class Fling extends Transition implements Command<Fling.Action, Flingable
 		return flingable;
 	}
 
+	@Override
+	public void setReceiver(Flingable receiver) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

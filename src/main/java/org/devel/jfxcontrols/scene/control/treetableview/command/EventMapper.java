@@ -3,11 +3,11 @@
  */
 package org.devel.jfxcontrols.scene.control.treetableview.command;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -21,46 +21,93 @@ import javafx.scene.input.ScrollEvent;
  * @param <A>
  * @param <R>
  */
-public class EventMapper<C extends Command<A, R>, A extends Command.Action<A>, R extends Receiver> {
+@SuppressWarnings({
+	"unchecked", "rawtypes"
+})
+public abstract class EventMapper<C extends Command<A, R>, A extends Command.Action<A>, R extends Receiver> {
 
 	private C command;
 	private Control control;
+	private Map<EventType, EventHandler> all;
 
 	public EventMapper(Control control, C command) {
 		this.control = control;
 		this.command = command;
 	}
 
-	public Map<EventType<? extends ScrollEvent>, EventHandler<? extends ScrollEvent>> scrollFilters = new HashMap<EventType<? extends ScrollEvent>, EventHandler<? extends ScrollEvent>>() {
-		private static final long serialVersionUID = -5431997953022846187L;
-		{
-			put(ScrollEvent.ANY, (event) -> {
-				event.consume();
-			});
-		}
-	};
+	public Node getSource() {
+		return control;
+	}
 
-	public Map<EventType<? extends KeyEvent>, EventHandler<? extends KeyEvent>> KeyFilters = new HashMap<EventType<? extends KeyEvent>, EventHandler<? extends KeyEvent>>() {
-		private static final long serialVersionUID = 660491684221683820L;
-		{
-			put(KeyEvent.ANY, (event) -> {
-				event.consume();
+	protected <E extends MouseEvent> void addMouseFilter(Map<EventType<E>, A> filter) {
+		for (EventType<E> eventType : filter.keySet()) {
+			control.addEventFilter(eventType, (E event) -> {
+				if (!command.execute(buildMouseAction(filter.get(eventType), event))) {
+					event.consume();
+				}
 			});
-		}
-	};
-
-	public <E extends MouseEvent> void addMouseFilters(Map<EventType<E>, A> filters) {
-		for (EventType<E> eventType : filters.keySet()) {
-			addMouseEventFilter(eventType, filters.get(eventType));
 		}
 	}
 
-	public <E extends MouseEvent> void addMouseEventFilter(EventType<E> eventType,
-														   A action) {
-		control.addEventFilter(eventType, (event) -> {
-			if (!command.execute(action.y(event.getY()))) {
-				event.consume();
-			}
-		});
+	protected <E extends MouseEvent> void addMouseHandler(Map<EventType<E>, A> handler) {
+		for (EventType<E> eventType : handler.keySet()) {
+			control.addEventHandler(eventType, (E event) -> {
+				if (!command.execute(buildMouseAction(handler.get(eventType), event))) {
+					event.consume();
+				}
+			});
+		}
 	}
+
+	protected void addScrollFilter(Map<EventType<ScrollEvent>, A> filter) {
+		for (EventType<ScrollEvent> eventType : filter.keySet()) {
+			control.addEventFilter(eventType, (ScrollEvent event) -> {
+				if (!command.execute(buildScrollAction(filter.get(eventType), event))) {
+					event.consume();
+				}
+			});
+		}
+	}
+
+	protected void addScrollHandler(Map<EventType<ScrollEvent>, A> handler) {
+		for (EventType<ScrollEvent> eventType : handler.keySet()) {
+			control.addEventHandler(eventType, (ScrollEvent event) -> {
+				if (!command.execute(buildScrollAction(handler.get(eventType), event))) {
+					event.consume();
+				}
+			});
+		}
+	}
+
+	protected void addKeyFilter(Map<EventType<KeyEvent>, A> keyFilter) {
+		for (EventType<KeyEvent> eventType : keyFilter.keySet()) {
+			control.addEventFilter(eventType, (KeyEvent event) -> {
+				if (!command.execute(buildKeyAction(keyFilter.get(eventType), event))) {
+					event.consume();
+				}
+			});
+		}
+	}
+
+	protected void addKeyHandler(Map<EventType<KeyEvent>, A> handler) {
+		for (EventType<KeyEvent> eventType : handler.keySet()) {
+			control.addEventHandler(eventType, (KeyEvent event) -> {
+				if (!command.execute(buildKeyAction(handler.get(eventType), event))) {
+					event.consume();
+				}
+			});
+		}
+	}
+
+	public void unregisterAll() {
+		for (EventType eventType : all.keySet()) {
+			control.removeEventFilter(eventType, all.get(eventType));
+		}
+	}
+
+	public abstract <E extends MouseEvent> A buildMouseAction(A action, E event);
+
+	public abstract A buildScrollAction(A action, ScrollEvent event);
+
+	public abstract A buildKeyAction(A action, KeyEvent event);
 }

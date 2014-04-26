@@ -16,6 +16,7 @@ public interface Command<A extends Command.Action<A>, R extends Receiver> {
 		A y(double y);
 
 		double y();
+
 	}
 
 	/**
@@ -26,6 +27,8 @@ public interface Command<A extends Command.Action<A>, R extends Receiver> {
 	 *         or false if no further action handling is required.
 	 */
 	boolean execute(A action);
+
+	void setReceiver(R receiver);
 
 	/**
 	 * 

@@ -32,9 +32,8 @@ public class ExtendableFlow<M, I extends IndexedCell<M>> extends VirtualFlow<I> 
 	public ExtendableFlow() {
 		super();
 		getHbar().setVisible(false);
-		visibleHeightProperty().bind(
-				fixedCellLengthProperty().multiply(visibleCellCountProperty())
-						.add(hBarHeight()));
+		visibleHeightProperty().bind(fixedCellLengthProperty().multiply(visibleCellCountProperty())
+															  .add(hBarHeight()));
 	}
 
 	@Override
@@ -48,8 +47,7 @@ public class ExtendableFlow<M, I extends IndexedCell<M>> extends VirtualFlow<I> 
 
 	public ObservableList<FlowExtension<M, I>> extensionsProperty() {
 		if (extensions == null)
-			extensions = FXCollections
-					.observableArrayList(new ArrayList<FlowExtension<M, I>>());
+			extensions = FXCollections.observableArrayList(new ArrayList<FlowExtension<M, I>>());
 		return extensions;
 	}
 

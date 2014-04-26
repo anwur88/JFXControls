@@ -3,9 +3,16 @@
  */
 package org.devel.jfxcontrols.scene.control.treetableview.skin;
 
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableRow;
 
 import org.devel.jfxcontrols.scene.control.treetableview.command.Adjustable;
+import org.devel.jfxcontrols.scene.control.treetableview.command.Expand;
+import org.devel.jfxcontrols.scene.control.treetableview.command.Expandable;
+import org.devel.jfxcontrols.scene.control.treetableview.command.MouseKeyboardEventMapper;
+import org.devel.jfxcontrols.scene.control.treetableview.command.MouseKeyboardEventMapper.ExpandEventMapper;
+import org.devel.jfxcontrols.scene.control.treetableview.command.MouseKeyboardEventMapper.RowAdjustEventMapper;
+import org.devel.jfxcontrols.scene.control.treetableview.command.RowAdjust;
 
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 
@@ -15,29 +22,133 @@ import com.sun.javafx.scene.control.skin.VirtualFlow;
  */
 public class TreeTableViewSkin<T>
 	extends
-		com.sun.javafx.scene.control.skin.TreeTableViewSkin<T> {
+		com.sun.javafx.scene.control.skin.TreeTableViewSkin<T> implements Expandable<T> {
 
-	private static final String COMMAND_FACTORY_PROPERTY = "COMMAND_FACTORY";
+	private static final String ROW_ADJUST = "ROW_ADJUST";
+	private static final String INPUT_MODE = "INPUT_MODE";
+	private static final String EXPAND = "EXPAND";
 
 	private AdjustableFlow<T, TreeTableRow<T>> adjustableFlow;
+	private RowAdjustEventMapper<T, TreeTableRow<T>> rowAdjustEventMapper;
+	private ExpandEventMapper<T, TreeTableRow<T>> expandEventMapper;
 
 	public TreeTableViewSkin(final org.devel.jfxcontrols.scene.control.treetableview.TreeTableView<T, Adjustable<T, TreeTableRow<T>>> treeTableView) {
 		super(treeTableView);
-		registerChangeListener(treeTableView.commandFactoryProperty(),
-							   COMMAND_FACTORY_PROPERTY);
+		registerChangeListener(treeTableView.rowAdjustProperty(), ROW_ADJUST);
+		registerChangeListener(treeTableView.inputModeProperty(), INPUT_MODE);
+		registerChangeListener(treeTableView.inputModeProperty(), EXPAND);
+		initRowAdjust();
+		initExpand();
 	}
 
-	@SuppressWarnings({
-		"rawtypes", "unchecked"
-	})
 	@Override
 	protected void handleControlPropertyChanged(String p) {
 		super.handleControlPropertyChanged(p);
 
-		if (COMMAND_FACTORY_PROPERTY.equals(p)) {
-			((org.devel.jfxcontrols.scene.control.treetableview.TreeTableView) getSkinnable()).getCommandFactory()
-																							  .call(adjustableFlow);
+		if (ROW_ADJUST.equals(p)) {
+			initRowAdjust();
+		} else if (INPUT_MODE.equals(p)) {
+			reloadEventMapping();
+		} else if (EXPAND.equals(p)) {
+			initExpand();
 		}
+	}
+
+	private void reloadEventMapping() {
+		reloadAdjustMapping();
+		reloadExpandMapping();
+	}
+
+	// ### row adjust ###
+
+	private void initRowAdjust() {
+		RowAdjust<T, TreeTableRow<T>> rowAdjust = getSkinnableC().getRowAdjust();
+		if (rowAdjust != null) {
+			rowAdjust.setReceiver(adjustableFlow);
+		}
+		reloadAdjustMapping();
+	}
+
+	private void reloadAdjustMapping() {
+		if (rowAdjustEventMapper != null) {
+			rowAdjustEventMapper.unregisterAll();
+		}
+
+		if (getSkinnableC().getInputMode() != null
+			&& getSkinnableC().getRowAdjust() != null) {
+
+			switch (getSkinnableC().getInputMode()) {
+			case MOUSE_KEYBOARD:
+				rowAdjustEventMapper = MouseKeyboardEventMapper.RowAdjustEventMapper.<T, TreeTableRow<T>> create(getSkinnableC(),
+																												 getSkinnableC().getRowAdjust());
+				break;
+			case TOUCH:
+				// rowAdjustEventMapper =
+				// TouchKeyboardEventMapper.RowAdjustEventMapper.<T,
+				// TreeTableRow<T>> create(getSkinnableC(),
+				// rowAdjust);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	// ### Expand ###
+
+	private void initExpand() {
+		Expand<T, TreeTableRow<T>> expand = getSkinnableC().getExpand();
+		if (expand != null) {
+			expand.setReceiver(this);
+		}
+		reloadExpandMapping();
+	}
+
+	private void reloadExpandMapping() {
+		if (expandEventMapper != null) {
+			expandEventMapper.unregisterAll();
+		}
+
+		if (getSkinnableC().getInputMode() != null && getSkinnableC().getExpand() != null) {
+
+			switch (getSkinnableC().getInputMode()) {
+			case MOUSE_KEYBOARD:
+				expandEventMapper = MouseKeyboardEventMapper.ExpandEventMapper.<T, TreeTableRow<T>> create(getSkinnableC(),
+																										   getSkinnableC().getExpand());
+				break;
+			case TOUCH:
+				// expandEventMapper =
+				// TouchKeyboardEventMapper.expandEventMapper.<T,
+				// TreeTableRow<T>> create(getSkinnableC(),
+				// expand);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	@Override
+	public TreeItem<T> expand() {
+		TreeItem<T> selected = getSelectionModel().getSelectedItem();
+		if (!selected.isLeaf()) {
+			selected.setExpanded(!selected.isExpanded());
+			if (selected.isExpanded()) {
+				for (TreeItem<T> treeItem : selected.getParent().getChildren()) {
+					if (!treeItem.isLeaf() && treeItem.isExpanded()
+						&& !treeItem.equals(selected)) {
+						treeItem.setExpanded(false);
+					}
+				}
+			}
+		}
+		return selected;
+	}
+
+	private org.devel.jfxcontrols.scene.control.treetableview.TreeTableView
+		getSkinnableC() {
+		org.devel.jfxcontrols.scene.control.treetableview.TreeTableView ttv = (org.devel.jfxcontrols.scene.control.treetableview.TreeTableView) getSkinnable();
+		return ttv;
 	}
 
 	/*

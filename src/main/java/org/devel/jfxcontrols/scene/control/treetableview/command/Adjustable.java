@@ -148,4 +148,11 @@ public interface Adjustable<T, I extends IndexedCell<T>> extends Receiver {
 	 */
 	public double adjustEntireCellDelta();
 
+	/**
+	 * Adjusts Pixels awaiting for the next layout pass.
+	 * 
+	 * @param intialFlowPosition
+	 */
+	void layoutAdjustPixels(double intialFlowPosition);
+
 }

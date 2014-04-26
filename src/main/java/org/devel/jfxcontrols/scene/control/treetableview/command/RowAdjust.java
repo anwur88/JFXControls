@@ -24,10 +24,18 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	private double currentMouseY;
 	// private VelocityTracker velocityTracker;
 	private boolean dragging;
-	private final Adjustable<T, I> receiver;
+	private Adjustable<T, I> adjustable;
+	private double intialFlowPosition;
+	private int intialFlowTotalHeight;
 
 	public enum Action implements Command.Action<RowAdjust.Action> {
-		PRESS, DRAG, RELEASE, CONSUME;
+		INIT,
+		DRAG,
+		ADJUST_AFTER_DRAG,
+		CONSUME,
+		CONSUME_CLICKED,
+		ADJUST_AFTER_LAYOUT_CHANGE,
+		INIT_LAYOUT_CHANGE;
 
 		private double y = 0.0d;;
 		private boolean animate;
@@ -53,51 +61,79 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 		}
 	}
 
-	public RowAdjust(Adjustable<T, I> receiver) {
+	public RowAdjust(Adjustable<T, I> adjustable) {
 		super();
-		this.receiver = receiver;
+		this.adjustable = adjustable;
 		setCycleDuration(DURATION_SCROLL_ADJUST_AFTER_DRAG);
 		setInterpolator(STRONG_EASE_OUT);
+	}
+
+	public RowAdjust() {
+		this(null);
 	}
 
 	@Override
 	public boolean execute(RowAdjust.Action action) {
 
-		switch (action) {
+		if (adjustable != null) {
 
-		case PRESS:
+			switch (action) {
 
-			stop();
-			dragging = false;
-			currentMouseY = action.y();
-			// getVelocityTracker().clear();
-			// getVelocityTracker().addPoint(0.0f,
-			// (float) currentMouseY,
-			// System.currentTimeMillis());
-			return false;
+			case INIT:
 
-		case DRAG:
-			dragging = true;
-			double deltaY = currentMouseY - action.y();
-			if (deltaY != 0) {
+				stop();
+				dragging = false;
 				currentMouseY = action.y();
-				receiver.adjustPixels(deltaY);
+				// getVelocityTracker().clear();
 				// getVelocityTracker().addPoint(0.0f,
 				// (float) currentMouseY,
 				// System.currentTimeMillis());
-			}
-			return false;
+				// return false;
+				break;
 
-		case RELEASE:
-			if (dragging) {
-				adjustDiff(action.animate());
-				dragging = false;
+			case DRAG:
+				double deltaY = currentMouseY - action.y();
+				if (deltaY != 0) {
+					dragging = true;
+					currentMouseY = action.y();
+					adjustable.adjustPixels(deltaY);
+					// getVelocityTracker().addPoint(0.0f,
+					// (float) currentMouseY,
+					// System.currentTimeMillis());
+				}
+				// return false;
+				break;
+			case ADJUST_AFTER_DRAG:
+				if (dragging) {
+					System.out.println("view relarrrrse");
+					adjustDiff(action.animate());
+					// return false;
+				}
+				break;
+
+			case INIT_LAYOUT_CHANGE:
+				intialFlowPosition = adjustable.getAbsPosition();
+				intialFlowTotalHeight = adjustable.getTotalHeight();
+				break;
+
+			case ADJUST_AFTER_LAYOUT_CHANGE:
+				// adjustable.layoutAdjustPixels(intialFlowPosition);
+				break;
+
+			case CONSUME_CLICKED:
+				if (dragging) {
+					dragging = false;
+					System.out.println("cl cons");
+					return false;
+				}
+				break;
+
+			case CONSUME:
 				return false;
 			}
-			break;
 
-		case CONSUME:
-			return false;
+		} else {
+			System.out.println("Adjustable must be set!");
 		}
 
 		return true;
@@ -105,8 +141,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 	private double adjustDiff(boolean animate) {
 		if (animate) {
-			double absDelta2 = receiver.getEntireCellDelta();
-			double absDelta = absDelta2;
+			double absDelta = adjustable.getEntireCellDelta();
 			if (absDelta != 0) {
 				stop();
 				totalYAdjustForAnimation = absDelta;
@@ -114,7 +149,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				play();
 			}
 		} else {
-			return receiver.adjustEntireCellDelta();
+			return adjustable.adjustEntireCellDelta();
 		}
 		return 0;
 	}
@@ -123,13 +158,13 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	protected void interpolate(double frac) {
 
 		if (frac >= 1.0) {
-			receiver.adjustEntireCellDelta();
+			adjustable.adjustEntireCellDelta();
 			totalYAdjustForAnimation = 0;
 			alreadyYAdjustForAnimation = 0;
 		} else if (frac > 0.0) {
 			double currentYAdjust = totalYAdjustForAnimation * frac;
 			if (currentYAdjust != alreadyYAdjustForAnimation) {
-				receiver.adjustPixels(currentYAdjust - alreadyYAdjustForAnimation);
+				adjustable.adjustPixels(currentYAdjust - alreadyYAdjustForAnimation);
 				alreadyYAdjustForAnimation = currentYAdjust;
 			}
 		}
@@ -144,7 +179,13 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 	@Override
 	public Adjustable<T, I> getReceiver() {
-		return receiver;
+		return adjustable;
+	}
+
+	@Override
+	public void setReceiver(Adjustable<T, I> receiver) {
+		this.adjustable = receiver;
+
 	}
 
 }

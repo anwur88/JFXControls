@@ -20,12 +20,16 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.IndexedCell;
+import javafx.scene.control.TreeTableRow;
 
 import org.devel.jfxcontrols.lang.UnsupportedValueException;
 import org.devel.jfxcontrols.scene.control.treetableview.command.Adjustable;
+import org.devel.jfxcontrols.scene.control.treetableview.command.RowAdjust;
 
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 
@@ -46,6 +50,7 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	private final ReadOnlyIntegerWrapper totalHeight = new ReadOnlyIntegerWrapper(0);
 	private final ReadOnlyListWrapper<I> visibleCells = new ReadOnlyListWrapper<I>(FXCollections.observableArrayList(new ArrayList<I>()));
 	private final ReadOnlyIntegerWrapper totalCellCount = new ReadOnlyIntegerWrapper(0);
+	private RowAdjust<String, TreeTableRow<String>> rowAdjust;
 
 	public AdjustableFlow(ReadOnlyIntegerProperty totalCellCount,
 		int visibleCellCount,
@@ -271,4 +276,39 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		return Collections.unmodifiableList(visibleCellsProperty().get());
 	}
 
+	@Override
+	protected void layoutChildren() {
+
+		double absPosition = getAbsPosition();
+		int totalHeight = getTotalHeight();
+		System.out.println("Before: ");
+		System.out.println("Position: " + absPosition + " px");
+		System.out.println("Total Height: " + totalHeight + " px");
+
+		super.layoutChildren();
+
+		double positionDelta = getAbsPosition() - absPosition;
+		double heightDelta = getTotalHeight() - totalHeight;
+
+		// setPosition(getMaxPosition() / absPosition);
+
+		System.out.println("After: ");
+		System.out.println("Position: " + absPosition + " px");
+		System.out.println("Total Height: " + totalHeight + " px");
+	}
+
+	@Override
+	public void layoutAdjustPixels(double intialFlowPosition) {
+		needsLayoutProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> obs,
+								Boolean oldV,
+								Boolean newV) {
+				if (newV != null && !newV) {
+					obs.removeListener(this);
+					adjustPixels(getAbsPosition() - intialFlowPosition);
+				}
+			}
+		});
+	}
 }

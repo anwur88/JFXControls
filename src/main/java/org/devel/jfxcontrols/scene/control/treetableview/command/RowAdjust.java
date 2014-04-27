@@ -119,7 +119,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				// (float) currentMouseY,
 				// System.currentTimeMillis());
 				// return false;
-				break;
+				return false;
 
 			case DRAG:
 				double deltaY = currentMouseY - action.y();
@@ -131,15 +131,14 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 					// (float) currentMouseY,
 					// System.currentTimeMillis());
 				}
-				// return false;
-				break;
+				return false;
 			case ADJUST_AFTER_DRAG:
 				if (dragging) {
 					System.out.println("view relarrrrse");
 					adjustDiff(action.animate());
 					// return false;
 				}
-				break;
+				return false;
 
 			case CONSUME_CLICKED:
 				if (dragging) {
@@ -193,7 +192,6 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	protected void interpolate(double frac) {
 
 		if (frac >= 1.0) {
-			adjustable.adjustEntireCellDelta();
 			totalYAdjustForAnimation = 0;
 			alreadyYAdjustForAnimation = 0;
 		} else if (frac > 0.0) {

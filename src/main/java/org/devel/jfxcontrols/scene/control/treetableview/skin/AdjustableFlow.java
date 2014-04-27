@@ -23,6 +23,8 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.IndexedCell;
@@ -102,14 +104,21 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		super.resize(width, getVisibleHeight());
 	}
 
-	public double adjustPixels(final double delta) {
-		double result = 0.0d;
-		result = (delta < -getAbsPosition())
-			? super.adjustPixels(-getAbsPosition())
-			: super.adjustPixels(delta);
-		setAbsPosition(getAbsPosition() + result);
-		return result;
+	@Override
+	public void setPosition(double newPosition) {
+		super.setPosition(newPosition);
+		setAbsPosition(newPosition
+			* (getTotalCellCount() * getFixedCellLength() - getVisibleHeight()));
 	}
+
+	// public double adjustPixels(final double delta) {
+	// double result = 0.0d;
+	// result = (delta < -getAbsPosition())
+	// ? super.adjustPixels(-getAbsPosition())
+	// : super.adjustPixels(delta);
+	// setAbsPosition(getAbsPosition() + result);
+	// return result;
+	// }
 
 	public double adjustIndexFirst(final int index) {
 		int currentIndex = getCurrentIndex();
@@ -122,7 +131,7 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 
 		double result = (index - currentIndex) * getFixedCellLength();
 		// + getDeltaY(currentIndex, getCells()
-		System.out.println(result);
+		System.out.println("result: " + result);
 		return adjustPixels(result);
 	}
 
@@ -153,6 +162,11 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	}
 
 	private int getCurrentIndex() {
+
+		System.out.println("P(abs): " + getAbsPosition());
+		System.out.println("P(max): " + getMaxPosition());
+		System.out.println("n(Zelle): " + getTotalCellCount());
+
 		return (int) Math.floor((getAbsPosition()) / getMaxPosition()
 			* getTotalCellCount());
 
@@ -160,6 +174,10 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 
 	@Override
 	public double adjustEntireCellDelta() {
+
+		System.out.println("###P(abs): " + getAbsPosition());
+		System.out.println("###Cell Delta" + getEntireCellDelta());
+
 		double absPositionError = (getAbsPosition() + getEntireCellDelta())
 			% getFixedCellLength();
 		double absDelta = getEntireCellDelta() - absPositionError;
@@ -338,15 +356,15 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		// - (intialFlowPosition % getFixedCellLength());
 		// double position2 = getPosition();
 		//
-		// needsLayoutProperty().addListener(new ChangeListener<Boolean>() {
-		// @Override
-		// public void changed(ObservableValue<? extends Boolean> observable,
-		// Boolean oldValue,
-		// Boolean newValue) {
-		// if (oldValue && !newValue)
-		// adjustIndexFirst(2);
-		// }
-		// });
+		needsLayoutProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+								Boolean oldValue,
+								Boolean newValue) {
+				// if (oldValue && !newValue)
+				adjustIndexFirst(2);
+			}
+		});
 
 	}
 

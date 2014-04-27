@@ -28,6 +28,9 @@ public class MouseKeyboardEventMapper {
 		public Map<EventType<MouseEvent>, RowAdjust.Action> mouseFilter = new HashMap<EventType<MouseEvent>, RowAdjust.Action>() {
 			private static final long serialVersionUID = -9005856313771120088L;
 			{
+				put(MouseEvent.MOUSE_PRESSED, RowAdjust.Action.INIT);
+				put(MouseEvent.MOUSE_DRAGGED, RowAdjust.Action.DRAG);
+				put(MouseEvent.MOUSE_RELEASED, RowAdjust.Action.ADJUST_AFTER_DRAG);
 				put(MouseEvent.MOUSE_CLICKED, RowAdjust.Action.CONSUME_CLICKED);
 				// put(MouseEvent.MOUSE_MOVED, RowAdjust.Action.CONSUME);
 				// put(MouseEvent.MOUSE_ENTERED, RowAdjust.Action.CONSUME);
@@ -42,9 +45,7 @@ public class MouseKeyboardEventMapper {
 		public Map<EventType<MouseEvent>, RowAdjust.Action> mouseHandler = new HashMap<EventType<MouseEvent>, RowAdjust.Action>() {
 			private static final long serialVersionUID = -9005856313771120088L;
 			{
-				put(MouseEvent.MOUSE_PRESSED, RowAdjust.Action.INIT);
-				put(MouseEvent.MOUSE_DRAGGED, RowAdjust.Action.DRAG);
-				put(MouseEvent.MOUSE_RELEASED, RowAdjust.Action.ADJUST_AFTER_DRAG);
+
 			}
 		};
 
@@ -105,29 +106,29 @@ public class MouseKeyboardEventMapper {
 		public Map<EventType<MouseEvent>, Expand.Action> mouseFilter = new HashMap<EventType<MouseEvent>, Expand.Action>() {
 			private static final long serialVersionUID = -9005856313771120088L;
 			{
-				// put(MouseEvent.MOUSE_PRESSED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_DRAGGED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_RELEASED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_CLICKED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_MOVED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_ENTERED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_EXITED, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_ENTERED_TARGET, Expand.Action.NONE);
-				// put(MouseEvent.MOUSE_EXITED_TARGET, Expand.Action.NONE);
+				put(MouseEvent.MOUSE_PRESSED, Expand.Action.NONE);
+				put(MouseEvent.MOUSE_DRAGGED, Expand.Action.NONE);
+				put(MouseEvent.MOUSE_RELEASED, Expand.Action.NONE);
+				put(MouseEvent.MOUSE_CLICKED, Expand.Action.CONSUME);
+				put(MouseEvent.MOUSE_MOVED, Expand.Action.CONSUME);
+				put(MouseEvent.MOUSE_ENTERED, Expand.Action.CONSUME);
+				put(MouseEvent.MOUSE_EXITED, Expand.Action.CONSUME);
+				put(MouseEvent.MOUSE_ENTERED_TARGET, Expand.Action.CONSUME);
+				put(MouseEvent.MOUSE_EXITED_TARGET, Expand.Action.CONSUME);
 			}
 		};
 
 		public Map<EventType<ScrollEvent>, Expand.Action> scrollFilter = new HashMap<EventType<ScrollEvent>, Expand.Action>() {
 			private static final long serialVersionUID = -5431997953022846187L;
 			{
-				// put(ScrollEvent.ANY, Expand.Action.NONE);
+				put(ScrollEvent.ANY, Expand.Action.CONSUME);
 			}
 		};
 
 		public Map<EventType<KeyEvent>, Expand.Action> keyFilter = new HashMap<EventType<KeyEvent>, Expand.Action>() {
 			private static final long serialVersionUID = 660491684221683820L;
 			{
-				// put(KeyEvent.ANY, Expand.Action.NONE);
+				put(KeyEvent.ANY, Expand.Action.CONSUME);
 			}
 		};
 

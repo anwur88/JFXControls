@@ -33,7 +33,6 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 		DRAG,
 		ADJUST_AFTER_DRAG,
 		CONSUME,
-		CONSUME_CLICKED,
 		ADJUST_ROW_INDEX,
 		INIT_LAYOUT_CHANGE,
 		ADJUST_DELTA;
@@ -119,7 +118,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				// (float) currentMouseY,
 				// System.currentTimeMillis());
 				// return false;
-				return false;
+				break;
 
 			case DRAG:
 				double deltaY = currentMouseY - action.y();
@@ -131,20 +130,12 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 					// (float) currentMouseY,
 					// System.currentTimeMillis());
 				}
-				return false;
+				break;
 			case ADJUST_AFTER_DRAG:
 				if (dragging) {
 					System.out.println("view relarrrrse");
 					adjustDiff(action.animate());
 					// return false;
-				}
-				return false;
-
-			case CONSUME_CLICKED:
-				if (dragging) {
-					dragging = false;
-					System.out.println("cl cons");
-					return false;
 				}
 				break;
 
@@ -219,6 +210,10 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	public void setReceiver(Adjustable<T, I> receiver) {
 		this.adjustable = receiver;
 
+	}
+
+	public boolean isDragging() {
+		return dragging;
 	}
 
 }

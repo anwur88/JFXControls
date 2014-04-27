@@ -31,7 +31,6 @@ public class MouseKeyboardEventMapper {
 				put(MouseEvent.MOUSE_PRESSED, RowAdjust.Action.INIT);
 				put(MouseEvent.MOUSE_DRAGGED, RowAdjust.Action.DRAG);
 				put(MouseEvent.MOUSE_RELEASED, RowAdjust.Action.ADJUST_AFTER_DRAG);
-				put(MouseEvent.MOUSE_CLICKED, RowAdjust.Action.CONSUME_CLICKED);
 				// put(MouseEvent.MOUSE_MOVED, RowAdjust.Action.CONSUME);
 				// put(MouseEvent.MOUSE_ENTERED, RowAdjust.Action.CONSUME);
 				// put(MouseEvent.MOUSE_EXITED, RowAdjust.Action.CONSUME);
@@ -109,7 +108,9 @@ public class MouseKeyboardEventMapper {
 				put(MouseEvent.MOUSE_PRESSED, Expand.Action.NONE);
 				put(MouseEvent.MOUSE_DRAGGED, Expand.Action.NONE);
 				put(MouseEvent.MOUSE_RELEASED, Expand.Action.NONE);
-				put(MouseEvent.MOUSE_CLICKED, Expand.Action.CONSUME);
+				// must be defined as filter so the selection model can be used
+				// (i.e. to access the cell index)
+				put(MouseEvent.MOUSE_CLICKED, Expand.Action.EXPAND);
 				put(MouseEvent.MOUSE_MOVED, Expand.Action.CONSUME);
 				put(MouseEvent.MOUSE_ENTERED, Expand.Action.CONSUME);
 				put(MouseEvent.MOUSE_EXITED, Expand.Action.CONSUME);
@@ -138,7 +139,6 @@ public class MouseKeyboardEventMapper {
 				// put(MouseEvent.MOUSE_PRESSED, Expand.Action.NONE);
 				// put(MouseEvent.MOUSE_DRAGGED, Expand.Action.NONE);
 				// put(MouseEvent.MOUSE_RELEASED, Expand.Action.NONE);
-				put(MouseEvent.MOUSE_CLICKED, Expand.Action.EXPAND);
 				// put(MouseEvent.MOUSE_MOVED, Expand.Action.NONE);
 				// put(MouseEvent.MOUSE_ENTERED, Expand.Action.NONE);
 				// put(MouseEvent.MOUSE_EXITED, Expand.Action.NONE);

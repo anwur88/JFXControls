@@ -113,9 +113,11 @@ public class Expand<T, A extends IndexedCell<T>> extends Transition
 			case EXPAND:
 				System.out.println("expands clicked");
 				if (action.getCount() == 1) {
-					rowAdjust.execute(RowAdjust.Action.INIT_LAYOUT_CHANGE);
-					rowAdjust.execute(RowAdjust.Action.ADJUST_ROW_INDEX.rowIndex(expandable.expand()));
-					// rowAdjust.execute(RowAdjust.Action.ADJUST_DELTA.delta(delta));
+					if (!rowAdjust.isDragging()) {
+						rowAdjust.execute(RowAdjust.Action.INIT_LAYOUT_CHANGE);
+						rowAdjust.execute(RowAdjust.Action.ADJUST_ROW_INDEX.rowIndex(expandable.expand()));
+						// rowAdjust.execute(RowAdjust.Action.ADJUST_DELTA.delta(delta));
+					}
 				}
 				return false;
 

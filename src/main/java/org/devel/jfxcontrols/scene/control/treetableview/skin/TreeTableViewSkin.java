@@ -175,18 +175,18 @@ public class TreeTableViewSkin<T>
 	public int expand() {
 
 		TreeItem<T> selected = getSelectionModel().getSelectedItem();
-		if (!selected.isLeaf()) {
+		int result = getSelectionModel().getSelectedIndex();
+		getSelectionModel().clearSelection();
 
+		if (!selected.isLeaf()) {
+			selected.setExpanded(!selected.isExpanded());
 			if (!selected.isExpanded()) {
-				collapseAll(getSkinnable().getRoot());
+				collapseAll(selected);
 			}
 
-			selected.setExpanded(!selected.isExpanded());
 		}
 
-		// adjustableFlow.adjustPixels(getCurrentPosition() - getNewPosition());
-
-		return getSelectionModel().getSelectedIndex();
+		return result;
 	}
 
 	private void collapseAll(TreeItem<T> root) {

@@ -35,6 +35,7 @@ public class Client1 extends Application {
 		setup(stage);
 
 		Scene scene = new Scene(createNodes());
+		// scene.setS
 		// scene.getStylesheets().add(getClass().getResource(".").toExternalForm()
 		// + getClass().getSimpleName() + ".css");
 		stage.setScene(scene);
@@ -42,8 +43,10 @@ public class Client1 extends Application {
 
 		stage.show();
 
-		stage.setMinWidth(600);
-		stage.setMinHeight(300);
+		stage.setMinWidth(800);
+		stage.setMinHeight(800);
+		stage.setX(800);
+		stage.setY(0);
 	}
 
 	private Parent createNodes() {
@@ -59,9 +62,9 @@ public class Client1 extends Application {
 
 		// column
 		TreeTableColumn<String, String> firstCol = new TreeTableColumn<String, String>();
-		firstCol.setMinWidth(150);
-		firstCol.setPrefWidth(150);
-		firstCol.setMaxWidth(150);
+		firstCol.setMinWidth(137);
+		firstCol.setPrefWidth(137);
+		firstCol.setMaxWidth(137);
 		firstCol.setCellValueFactory((item) -> (new ReadOnlyObjectWrapper<String>(item.getValue()
 																					  .getValue())));
 
@@ -107,7 +110,7 @@ public class Client1 extends Application {
 
 		for (int i = 0; i < 100; i++) {
 			TreeItem<String> childTreeItem = new TreeItem<String>("Child: " + i);
-			for (int j = 0; j < 20; j++) {
+			for (int j = 0; j < 5; j++) {
 				childTreeItem.getChildren().add(new TreeItem<String>("Child of Child: "
 					+ j));
 			}

@@ -9,4 +9,6 @@ public interface Expandable<S> extends Receiver {
 
 	int expand();
 
+	double getLength();
+
 }

@@ -81,6 +81,12 @@ public class ExpandableTreeTableCellSkin<S, T> extends TreeTableCellSkin<S, T>
 		return (ExpandableTreeTableCell<S, T>) getSkinnable();
 	}
 
+	@Override
+	public int expand() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	// @Override
 	// public void expand() {
 	// TreeItem<S> selected = getSkinnable().getTreeTableRow().getTreeItem();

@@ -25,6 +25,7 @@ public class ExpandableTreeTableCell<S, T> extends TreeTableCell<S, T> {
 		setStyle("-fx-border-color: red; -fx-border-width: 1px;");
 		bind();
 		requestLayout();
+		setSnapToPixel(true);
 	}
 
 	private void bind() {
@@ -50,5 +51,10 @@ public class ExpandableTreeTableCell<S, T> extends TreeTableCell<S, T> {
 		label.setText(item.toString());
 		rootContainer.setLeft(label);
 	}
+
+	// @Override
+	// public void resize(double width, double height) {
+	// super.resize(snapPosition(width), snapPosition(height));
+	// }
 
 }

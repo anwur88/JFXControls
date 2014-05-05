@@ -27,6 +27,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	private boolean dragging;
 	private Adjustable<T, I> adjustable;
 	private double intialFlowPosition;
+	private int selectedIndex = -1;
 
 	public enum Action implements Command.Action<RowAdjust.Action> {
 		INIT,
@@ -42,6 +43,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 		private double delta;
 		private int rowIndex;
 		private ReadOnlyBooleanProperty needsLayout;
+		private double length;
 
 		@Override
 		public Action animate(boolean animate) {
@@ -89,17 +91,29 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 		public ReadOnlyBooleanProperty needsLayoutProperty() {
 			return needsLayout;
 		}
+
+		public double length() {
+			return length;
+		}
+
+		public RowAdjust.Action length(double length) {
+			this.length = length;
+			return this;
+		}
 	}
 
 	public RowAdjust(Adjustable<T, I> adjustable) {
-		super();
-		this.adjustable = adjustable;
-		setCycleDuration(DURATION_SCROLL_ADJUST_AFTER_DRAG);
-		setInterpolator(STRONG_EASE_OUT);
+		this();
+		if (adjustable == null) {
+			throw new IllegalArgumentException("Parameter adjstable must not be null.");
+		}
+		setReceiver(adjustable);
 	}
 
 	public RowAdjust() {
-		this(null);
+		super();
+		setCycleDuration(DURATION_SCROLL_ADJUST_AFTER_DRAG);
+		setInterpolator(STRONG_EASE_OUT);
 	}
 
 	@Override
@@ -113,6 +127,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 				stop();
 				currentMouseY = action.y();
+				dragging = false;
 				// getVelocityTracker().clear();
 				// getVelocityTracker().addPoint(0.0f,
 				// (float) currentMouseY,
@@ -135,6 +150,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				if (dragging) {
 					System.out.println("view relarrrrse");
 					adjustDiff(action.animate());
+
 					// return false;
 				}
 				break;
@@ -145,8 +161,8 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 				break;
 
 			case ADJUST_ROW_INDEX:
-				adjustable.layoutAdjustPixels(action.rowIndex());
-				break;
+				adjustable.layoutAdjustPixels(action.rowIndex(), action.length());
+				return false;
 
 			case CONSUME:
 				return false;
@@ -166,7 +182,7 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 
 	private double adjustDiff(boolean animate) {
 		if (animate) {
-			double absDelta = adjustable.getEntireCellDelta();
+			double absDelta = adjustable.computeEntireCellDelta();
 			if (absDelta != 0) {
 				stop();
 				totalYAdjustForAnimation = absDelta;
@@ -207,9 +223,8 @@ public class RowAdjust<T, I extends IndexedCell<T>> extends Transition
 	}
 
 	@Override
-	public void setReceiver(Adjustable<T, I> receiver) {
-		this.adjustable = receiver;
-
+	public void setReceiver(Adjustable<T, I> adjustable) {
+		this.adjustable = adjustable;
 	}
 
 	public boolean isDragging() {

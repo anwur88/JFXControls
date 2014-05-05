@@ -3,14 +3,11 @@
  */
 package org.devel.jfxcontrols.scene.control.treetableview.command;
 
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyListProperty;
 import javafx.scene.control.IndexedCell;
 
 /**
@@ -41,7 +38,7 @@ public interface Adjustable<T, I extends IndexedCell<T>> extends Receiver {
 	 * 
 	 * @return the current position in pixels
 	 */
-	DoubleProperty absPositionProperty();
+	DoubleProperty positionProperty();
 
 	double getAbsPosition();
 
@@ -115,23 +112,25 @@ public interface Adjustable<T, I extends IndexedCell<T>> extends Receiver {
 
 	int getTotalHeight();
 
-	/**
-	 * ...
-	 * 
-	 * @return
-	 */
-	public ReadOnlyDoubleProperty entireCellDeltaProperty();
+	// /**
+	// * ...
+	// *
+	// * @return
+	// */
+	// public ReadOnlyDoubleProperty entireCellDeltaProperty();
+	//
+	// public double getEntireCellDelta();
 
-	public double getEntireCellDelta();
+	public double computeEntireCellDelta();
 
-	/**
-	 * Indexed List of visible rows.
-	 * 
-	 * @return
-	 */
-	ReadOnlyListProperty<I> visibleCellsProperty();
-
-	List<I> getVisibleCells();
+	// /**
+	// * Indexed List of visible rows.
+	// *
+	// * @return
+	// */
+	// ReadOnlyListProperty<I> visibleCellsProperty();
+	//
+	// List<I> getVisibleCells();
 
 	/**
 	 * Adjusts the {@link Adjustable} bei changing the position by the given
@@ -151,9 +150,11 @@ public interface Adjustable<T, I extends IndexedCell<T>> extends Receiver {
 	/**
 	 * Adjusts Pixels awaiting for the next layout pass.
 	 * 
+	 * @param selectedItemCount
+	 *
 	 * @param readOnlyBooleanProperty
 	 * @param intialFlowPosition
 	 */
-	void layoutAdjustPixels(int selectedIndex);
+	void layoutAdjustPixels(int selectedIndex, double selectedItemCount);
 
 }

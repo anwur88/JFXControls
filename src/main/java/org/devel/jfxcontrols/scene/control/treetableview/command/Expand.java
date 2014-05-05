@@ -115,7 +115,9 @@ public class Expand<T, A extends IndexedCell<T>> extends Transition
 				if (action.getCount() == 1) {
 					if (!rowAdjust.isDragging()) {
 						rowAdjust.execute(RowAdjust.Action.INIT_LAYOUT_CHANGE);
-						rowAdjust.execute(RowAdjust.Action.ADJUST_ROW_INDEX.rowIndex(expandable.expand()));
+						int selectedRowIndex = expandable.expand();
+						rowAdjust.execute(RowAdjust.Action.ADJUST_ROW_INDEX.rowIndex(selectedRowIndex)
+																		   .length(expandable.getLength()));
 						// rowAdjust.execute(RowAdjust.Action.ADJUST_DELTA.delta(delta));
 					}
 				}

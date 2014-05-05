@@ -4,36 +4,30 @@
 package org.devel.jfxcontrols.scene.control.treetableview.skin;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.IndexedCell;
-import javafx.scene.control.TreeTableRow;
 
-import org.devel.jfxcontrols.lang.UnsupportedValueException;
 import org.devel.jfxcontrols.scene.control.treetableview.command.Adjustable;
-import org.devel.jfxcontrols.scene.control.treetableview.command.RowAdjust;
 
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 
@@ -48,51 +42,56 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	private DoubleProperty absPosition;
 	private IntegerProperty visibleCellCount;
 	private SimpleDoubleProperty fixedCellLength;
-	private final ReadOnlyDoubleWrapper entireCellDelta = new ReadOnlyDoubleWrapper(0);
 	private final ReadOnlyDoubleWrapper maxPosition = new ReadOnlyDoubleWrapper(0);
 	private final ReadOnlyDoubleWrapper visibleHeight = new ReadOnlyDoubleWrapper(0);
 	private final ReadOnlyIntegerWrapper totalHeight = new ReadOnlyIntegerWrapper(0);
 	private final ReadOnlyListWrapper<I> visibleCells = new ReadOnlyListWrapper<I>(FXCollections.observableArrayList(new ArrayList<I>()));
 	private final ReadOnlyIntegerWrapper totalCellCount = new ReadOnlyIntegerWrapper(0);
-	private RowAdjust<String, TreeTableRow<String>> rowAdjust;
 	private int selectedIndex = -1;
+	private SimpleIntegerProperty firstCellIndex;
+	private ObjectProperty<I> firstVisibleCell;
+	private BooleanProperty cellCountChanged;
+	private int lastCellCount;
+	private double selectedItemCount = -1;
+	private double lastCellPosition;
 
-	public AdjustableFlow(ReadOnlyIntegerProperty totalCellCount,
+	private final ChangeListener<Boolean> needsLayoutListener = (obs, oldV, newV) -> {
+		if (oldV && !newV && selectedIndex != -1 && getVisibleCell(selectedIndex) != null) {
+			show(selectedIndex,
+				 selectedItemCount * getFixedCellLength(),
+				 getCellPosition(getVisibleCell(selectedIndex)));
+			lastCellPosition = -1;
+			selectedIndex = -1;
+			selectedItemCount = -1;
+		}
+	};
+	private T selectedItem;
+
+	public AdjustableFlow(ReadOnlyBooleanProperty needsLayout,
+		ReadOnlyIntegerProperty totalCellCount,
 		int visibleCellCount,
 		double fixedCellLength) {
 		super();
+
+		setSnapToPixel(true);
+
+		needsLayout.addListener(needsLayoutListener);
+
 		if (visibleCellCount < 0)
-			throw new UnsupportedValueException("The parameter visibleCellCount must be a non negative value.");
+			throw new IllegalArgumentException("The parameter visibleCellCount must be a non negative value.");
 		if (fixedCellLength < 0)
-			throw new UnsupportedValueException("The parameter fixedCellLength must be a non negative value.");
+			throw new IllegalArgumentException("The parameter fixedCellLength must be a non negative value.");
 		setVisibleCellCount(visibleCellCount);
 		setFixedCellLength(fixedCellLength);
 		bind(totalCellCount);
 
-		final ChangeListener<Boolean> cl = new ChangeListener<Boolean>() {
-			private boolean adjusted;
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-								Boolean oldValue,
-								Boolean newValue) {
-
-				if (selectedIndex != -1) {
-					Platform.runLater(() -> {
-						if (selectedIndex != -1) {
-							int cache = selectedIndex;
-							selectedIndex = -1;
-							adjustIndexFirst(cache);
-						}
-						requestCellLayout();
-					});
-				}
-			}
-		};
-		needsLayoutProperty().addListener(cl);
 	}
 
 	private void bind(ReadOnlyIntegerProperty totalCellCount2) {
+
+		totalCellCount2.addListener((obs) -> {
+			setCellCountChanged(true);
+		});
 
 		totalCellCount.bind(totalCellCount2);
 		totalHeight.bind(totalCellCount.multiply(fixedCellLengthProperty()));
@@ -100,23 +99,29 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 													 .add(getHbar().heightProperty()));
 		prefHeightProperty().bind(visibleHeight);
 		maxPosition.bind(totalHeightProperty().subtract(visibleCellCountProperty().multiply(fixedCellLengthProperty())));
-		entireCellDelta.bind(new DoubleBinding() {
-			{
-				super.bind(absPositionProperty(),
-						   fixedCellLengthProperty(),
-						   visibleCellCountProperty());
-			}
+		// entireCellDelta.bind(new DoubleBinding() {
+		// {
+		// super.bind(positionProperty(),
+		// fixedCellLengthProperty(),
+		// visibleCellCountProperty());
+		// }
+		//
+		// @Override
+		// protected double computeValue() {
+		// return computeEntireCellDelta();
+		// }
+		//
+		// });
 
-			@Override
-			protected double computeValue() {
-				double maxDelta = getFixedCellLength();
-				double delta = getAbsPosition() % maxDelta;
-				return delta > 0 ? (Math.abs(delta) < maxDelta / 2 ? -delta : maxDelta
-					- delta) : (Math.abs(delta) < maxDelta / 2
-					? -delta
-					: -(maxDelta + delta));
-			}
-		});
+	}
+
+	@Override
+	public double computeEntireCellDelta() {
+		double maxDelta = getFixedCellLength();
+		double delta = convertToAbsolutePosition(getPosition()) % maxDelta;
+		double result = delta > 0 ? (Math.abs(delta) < maxDelta / 2 ? -delta : maxDelta
+			- delta) : (Math.abs(delta) < maxDelta / 2 ? -delta : -(maxDelta + delta));
+		return result;
 	}
 
 	/*
@@ -128,101 +133,91 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		super.resize(width, getVisibleHeight());
 	}
 
-	@Override
-	public void setPosition(double newPosition) {
-		super.setPosition(newPosition);
-		System.out.println("set position...");
-		setAbsPosition(makePositionAbsolute(newPosition));
+	private double convertToAbsolutePosition(double relPosition) {
+		return snapPosition(relPosition
+			* ((getCellCount() * getFixedCellLength()) - getViewportLength()));
 	}
 
-	private double makePositionAbsolute(double newPosition) {
-		double absPosition = newPosition
-			* (getTotalCellCount() * getFixedCellLength() - getVisibleHeight());
-		// double correction = absPosition % getFixedCellLength();
-		// absPosition = (correction < (getFixedCellLength() / 2)) ? absPosition
-		// - correction : absPosition + (getFixedCellLength() - correction);
-		return absPosition;
+	private double convertToRelativePosition(double absPosition) {
+		return snapPosition(absPosition
+			/ (getTotalCellCount() * getFixedCellLength() - getVisibleHeight()));
 	}
 
-	// public double adjustPixels(final double delta) {
-	// double result = 0.0d;
-	// result = (delta < -getAbsPosition())
-	// ? super.adjustPixels(-getAbsPosition())
-	// : super.adjustPixels(delta);
-	// setAbsPosition(getAbsPosition() + result);
-	// return result;
-	// }
+	public double adjustFirst(final int index, double selectedItemCount2) {
 
-	public double adjustIndexFirst(final int index) {
-		int currentIndex = getCurrentIndex();
-		System.out.println("absPosition: " + getAbsPosition());
-		System.out.println("curindex: " + currentIndex);
-		System.out.println("index: " + index);
-		System.out.println(getLayoutY());
-		System.out.println(getCell(index).getLayoutY());
-		System.out.println(getDeltaY(currentIndex, getCells()));
-
-		double result = ((index - currentIndex) * getFixedCellLength())
-			- (makePositionAbsolute(getPosition()) % getFixedCellLength());
-		// + getDeltaY(currentIndex, getCells()
-		System.out.println("result: " + result);
-		return adjustPixels(result);
-	}
-
-	private double getDeltaY(int currentIndex, List<? extends IndexedCell<?>> cells) {
-		for (IndexedCell<?> cell : cells) {
-			if (cell.getIndex() == currentIndex)
-				return cell.getLayoutY();
-
-			return getDeltaY(currentIndex,
-							 cell.getChildrenUnmodifiable()
-								 .filtered(new Predicate<Node>() {
-									 @Override
-									 public boolean test(Node t) {
-										 return t instanceof IndexedCell<?>;
-									 }
-								 })
-								 .stream()
-								 .map(new Function<Node, IndexedCell<?>>() {
-
-									 @Override
-									 public IndexedCell<?> apply(Node t) {
-										 return (IndexedCell<?>) t;
-									 }
-								 })
-								 .collect(Collectors.toList()));
-		}
-		return 0.0;
-	}
-
-	private int getCurrentIndex() {
-
-		System.out.println("P(abs): " + getAbsPosition());
-		System.out.println("P(max): " + getMaxPosition());
-		System.out.println("n(Zelle): " + getTotalCellCount());
-
-		// setAbsPosition(makePositionAbsolute(getPosition()));
-
-		double makePositionAbsolute = makePositionAbsolute(getPosition());
-		System.out.println("makePositionAbsolute: " + makePositionAbsolute);
-
-		int result = (int) (makePositionAbsolute(getPosition()) / getFixedCellLength());
-		// getMaxPosition()
-		// *
-
+		double result = 0.0d;
+		setFirstVisibleCellIndex(index);
+		I visibleCell = getVisibleCell(index);
 		return result;
+	}
 
+	public void show(final int index, final double length, double oldStart) {
+
+		Platform.runLater(() -> {
+
+			System.out.println("index: " + index);
+			System.out.println("getCellPosition(getVisibleCell(index)): "
+				+ getCellPosition(getVisibleCell(index)));
+
+			final double start = getCellPosition(getCell(selectedItem));
+			final double end = start + length;
+			final double viewportLength = getViewportLength();
+			final double delta;
+
+			if (start < 0) {
+				delta = start;
+			} else if (end > viewportLength) {
+				delta = end - viewportLength;
+			} else {
+				delta = 0.0d;
+			}
+
+			System.out.println("aha");
+
+			adjustPixels(delta);
+		});
+	}
+
+	private I getCell(T item) {
+		for (int index = 0; index < getCellCount(); index++) {
+			I visibleCell = getVisibleCell(index);
+			if (visibleCell != null && visibleCell.getItem().equals(item))
+				return visibleCell;
+		}
+		return null;
+	}
+
+	public I getFirstVisibleCell() {
+		if (getCells().isEmpty() || getViewportLength() <= 0)
+			return null;
+		I cell = getCell(getFirstVisibleCellIndex());
+		return cell.isEmpty() ? null : cell;
+	}
+
+	public int getFirstVisibleCellIndex() {
+		return firstVisibleCellIndexProperty().get();
+	}
+
+	public void setFirstVisibleCellIndex(int index) {
+		firstVisibleCellIndexProperty().set(index);
+	}
+
+	private IntegerProperty firstVisibleCellIndexProperty() {
+		if (firstCellIndex == null) {
+			firstCellIndex = new SimpleIntegerProperty(0);
+		}
+		return firstCellIndex;
 	}
 
 	@Override
 	public double adjustEntireCellDelta() {
 
 		System.out.println("###P(abs): " + getAbsPosition());
-		System.out.println("###Cell Delta" + getEntireCellDelta());
+		System.out.println("###Cell Delta" + computeEntireCellDelta());
 
-		double absPositionError = (getAbsPosition() + getEntireCellDelta())
+		double absPositionError = (getAbsPosition() + computeEntireCellDelta())
 			% getFixedCellLength();
-		double absDelta = getEntireCellDelta() - absPositionError;
+		double absDelta = computeEntireCellDelta() - absPositionError;
 		double result = adjustPixels(absDelta);
 		return result;
 	}
@@ -235,7 +230,7 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	}
 
 	@Override
-	public DoubleProperty absPositionProperty() {
+	public DoubleProperty positionProperty() {
 		if (absPosition == null) {
 			absPosition = new SimpleDoubleProperty(0);
 			absPosition.addListener(new InvalidationListener() {
@@ -268,12 +263,13 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 
 	@Override
 	public double getAbsPosition() {
-		return absPositionProperty().get();
+		return positionProperty().get();
 	}
 
 	@Override
 	public void setAbsPosition(double absPosition) {
-		absPositionProperty().set(absPosition);
+		System.out.println("abs pos: " + absPosition);
+		positionProperty().set(absPosition);
 	}
 
 	@Override
@@ -363,27 +359,146 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		return totalHeightProperty().get();
 	}
 
-	public ReadOnlyDoubleProperty entireCellDeltaProperty() {
-		return entireCellDelta.getReadOnlyProperty();
+	// public ReadOnlyDoubleProperty entireCellDeltaProperty() {
+	// return entireCellDelta.getReadOnlyProperty();
+	// }
+	//
+	// public double getEntireCellDelta() {
+	// return entireCellDeltaProperty().get();
+	// }
+
+	// @Override
+	// public ReadOnlyListProperty<I> visibleCellsProperty() {
+	// return visibleCells.getReadOnlyProperty();
+	// }
+	//
+	// @Override
+	// public List<I> getVisibleCells() {
+	// return Collections.unmodifiableList(visibleCellsProperty().get());
+	// }
+
+	public BooleanProperty cellCountChangedProperty() {
+		if (cellCountChanged == null) {
+			cellCountChanged = new SimpleBooleanProperty(false);
+		}
+		return cellCountChanged;
 	}
 
-	public double getEntireCellDelta() {
-		return entireCellDeltaProperty().get();
+	public boolean getCellCountChanged() {
+		return cellCountChangedProperty().get();
+	}
+
+	public void setCellCountChanged(boolean value) {
+		cellCountChangedProperty().set(value);
 	}
 
 	@Override
-	public ReadOnlyListProperty<I> visibleCellsProperty() {
-		return visibleCells.getReadOnlyProperty();
+	protected void layoutChildren() {
+
+		super.layoutChildren();
+
+		// if (lastCellCount != getCellCount()) {
+		// lastCellPosition = getCellPosition(getVisibleCell(selectedIndex));
+		// lastCellCount = getCellCount();
+		// } else if (selectedIndex != -1 && lastCellCount == getCellCount()
+		// && getVisibleCell(selectedIndex) != null) {
+		// show(selectedIndex,
+		// selectedItemCount * getFixedCellLength(),
+		// lastCellPosition);
+		// lastCellPosition = -1;
+		// selectedIndex = -1;
+		// selectedItemCount = -1;
+		// }
+
+		// if (selectedIndex != -1) {
+		//
+		// double selectedCellPositionOld =
+		// getCellPosition(getVisibleCell(selectedIndex));
+		// super.layoutChildren();
+		// double selectedCellPositionNew =
+		// getCellPosition(getVisibleCell(selectedIndex));
+		// double selectedCellPositionDelta = selectedCellPositionNew
+		// - selectedCellPositionOld;
+		//
+		// System.out.println("selectedCellPositionDelta: " +
+		// selectedCellPositionDelta);
+		//
+		// lastCellCount = getCellCount();
+		//
+		// } else {
+		// super.layoutChildren();
+		// }
+
+		// final double oldAbsPosition = getAbsPosition();
+		// System.out.println("old abs pos: " + oldAbsPosition);
+
+		// final double newAbsPosition = getAbsPosition();
+		// System.out.println("new abs pos: " + newAbsPosition);
+
+		// if (lastCellCount != getCellCount() && selectedIndex != -1) {
+		// double selectedCellPositionNew =
+		// getCellPosition(getVisibleCell(selectedIndex));
+		// }
+		//
+		// if (lastCellCount != getCellCount() && lastSelectedIndex !=
+		// selectedIndex) {
+		// // adjust
+		// // adjustPixels(newAbsPosition - oldAbsPosition);
+		// if (lastSelectedIndex != selectedIndex) {
+		// adjustFirst(selectedIndex, selectedItemCount);
+		// lastSelectedIndex = selectedIndex;
+		// }
+		// // cache
+		// lastCellCount = getCellCount();
+		// }
+		// else
+		// if (lastCellCount != getCellCount() && lastSelectedIndex ==
+		// selectedIndex) {
+		// // adjust
+		// adjustPixels(newAbsPosition - oldAbsPosition);
+		// // adjustFirst(selectedIndex);
+		// // cache
+		// lastCellCount = getCellCount();
+		// // lastSelectedIndex = selectedIndex;
+		// }
+
+		// if (selectedIndex != -1) {
+		// adjustFirst(selectedIndex);
+		// }
+
+		// if (getCellCountChanged()) {
+		// setCellCountChanged(false);
+
+		// } else {
+		//
+		// }
 	}
 
 	@Override
-	public List<I> getVisibleCells() {
-		return Collections.unmodifiableList(visibleCellsProperty().get());
-	}
-
-	@Override
-	public void layoutAdjustPixels(final int selectedIndex) {
+	public void layoutAdjustPixels(final int selectedIndex, double selectedItemCount) {
+		lastCellCount = getCellCount();
+		selectedItem = getVisibleCell(selectedIndex).getItem();
+		lastCellPosition = getCellPosition(getCell(selectedItem));
 		this.selectedIndex = selectedIndex;
+		this.selectedItemCount = selectedItemCount;
+	}
+
+	public void dispose() {
+		// needsLayoutProperty().removeListener(needsLayoutListener);
+	}
+
+	// protected double snapSize(double value) {
+	// return isSnapToPixel() ? Math.round(value) : value;
+	// }
+
+	protected void positionCell(I cell, double position) {
+		if (isVertical()) {
+			cell.setLayoutX(0);
+			cell.setLayoutY(snapPosition(position));
+		} else {
+			cell.setLayoutX(snapPosition(position));
+			cell.setLayoutY(0);
+		}
 	}
 
 }

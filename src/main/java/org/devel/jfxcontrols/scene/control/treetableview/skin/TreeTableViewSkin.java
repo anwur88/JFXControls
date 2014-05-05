@@ -31,6 +31,7 @@ public class TreeTableViewSkin<T>
 	private AdjustableFlow<T, TreeTableRow<T>> adjustableFlow;
 	private RowAdjustEventMapper<T, TreeTableRow<T>> rowAdjustEventMapper;
 	private ExpandEventMapper<T, TreeTableRow<T>> expandEventMapper;
+	private TreeItem<T> selected;
 
 	public TreeTableViewSkin(final org.devel.jfxcontrols.scene.control.treetableview.TreeTableView<T, Adjustable<T, TreeTableRow<T>>> treeTableView) {
 		super(treeTableView);
@@ -174,28 +175,36 @@ public class TreeTableViewSkin<T>
 	@Override
 	public int expand() {
 
-		TreeItem<T> selected = getSelectionModel().getSelectedItem();
+		final TreeItem<T> currentSelected = getSelectionModel().getSelectedItem();
 		int result = getSelectionModel().getSelectedIndex();
 		getSelectionModel().clearSelection();
 
-		if (!selected.isLeaf()) {
-			selected.setExpanded(!selected.isExpanded());
-			if (!selected.isExpanded()) {
+		if (!currentSelected.isLeaf()) {
+			currentSelected.setExpanded(!currentSelected.isExpanded());
+			if (!currentSelected.isExpanded()) {
+				collapseAll(currentSelected);
+			}
+			if (selected != null && selected.isExpanded()) {
 				collapseAll(selected);
 			}
-
+			selected = currentSelected;
 		}
 
 		return result;
 	}
 
 	private void collapseAll(TreeItem<T> root) {
+		root.setExpanded(false);
 		for (TreeItem<T> item : root.getChildren()) {
 			if (!item.isLeaf()) {
-				item.setExpanded(false);
 				collapseAll(item);
 			}
 		}
+	}
+
+	@Override
+	public double getLength() {
+		return (selected.isExpanded()) ? selected.getChildren().size() + 1 : 1;
 	}
 
 	private org.devel.jfxcontrols.scene.control.treetableview.TreeTableView
@@ -209,7 +218,8 @@ public class TreeTableViewSkin<T>
 	 */
 	@Override
 	protected VirtualFlow<TreeTableRow<T>> createVirtualFlow() {
-		adjustableFlow = new AdjustableFlow<T, TreeTableRow<T>>(getSkinnable().expandedItemCountProperty(),
+		adjustableFlow = new AdjustableFlow<T, TreeTableRow<T>>(getSkinnable().needsLayoutProperty(),
+																getSkinnable().expandedItemCountProperty(),
 																10,
 																50);
 		return adjustableFlow;
@@ -230,6 +240,12 @@ public class TreeTableViewSkin<T>
 
 		cell.updateTreeTableView(getSkinnable());
 		return cell;
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		adjustableFlow.dispose();
 	}
 
 }

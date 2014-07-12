@@ -21,6 +21,7 @@ dependencies {
 	compile "commons-io:commons-io:2.4"	
 	testCompile "org.loadui:testFx:3.0.0"
 	testCompile "junit:junit:4.11"
+	runtime fileTree(dir: 'lib', include: '*.jar')
 }
 
 compileJava.options.encoding = 'UTF-8'

@@ -25,10 +25,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.control.IndexedCell;
 
 import org.devel.jfxcontrols.scene.control.treetableview.command.Adjustable;
 
+import com.sun.javafx.scene.control.skin.VirtualContainerBase;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 
 /**
@@ -56,15 +58,107 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 	private double lastCellPosition;
 
 	private final ChangeListener<Boolean> needsLayoutListener = (obs, oldV, newV) -> {
+		System.out.println("needs layout change listener called ..");
 		if (oldV && !newV && selectedIndex != -1 && getVisibleCell(selectedIndex) != null) {
+
+			System.out.println("selectedIndex: " + selectedIndex);
+			System.out.println("selectedItemCount: " + selectedItemCount);
+			System.out.println("getFixedCellLength(): " + getFixedCellLength());
+			System.out.println("getCellPosition(getVisibleCell(selectedIndex)): "
+				+ getCellPosition(getVisibleCell(selectedIndex)));
+
 			show(selectedIndex,
 				 selectedItemCount * getFixedCellLength(),
 				 getCellPosition(getVisibleCell(selectedIndex)));
+
 			lastCellPosition = -1;
 			selectedIndex = -1;
 			selectedItemCount = -1;
 		}
 	};
+
+	@Override
+	protected void layoutChildren() {
+
+		super.layoutChildren();
+
+		// if (lastCellCount != getCellCount()) {
+		// lastCellPosition = getCellPosition(getVisibleCell(selectedIndex));
+		// lastCellCount = getCellCount();
+		// } else if (selectedIndex != -1 && lastCellCount == getCellCount()
+		// && getVisibleCell(selectedIndex) != null) {
+		// show(selectedIndex,
+		// selectedItemCount * getFixedCellLength(),
+		// lastCellPosition);
+		// lastCellPosition = -1;
+		// selectedIndex = -1;
+		// selectedItemCount = -1;
+		// }
+
+		// if (selectedIndex != -1) {
+		//
+		// double selectedCellPositionOld =
+		// getCellPosition(getVisibleCell(selectedIndex));
+		// super.layoutChildren();
+		// double selectedCellPositionNew =
+		// getCellPosition(getVisibleCell(selectedIndex));
+		// double selectedCellPositionDelta = selectedCellPositionNew
+		// - selectedCellPositionOld;
+		//
+		// System.out.println("selectedCellPositionDelta: " +
+		// selectedCellPositionDelta);
+		//
+		// lastCellCount = getCellCount();
+		//
+		// } else {
+		// super.layoutChildren();
+		// }
+
+		// final double oldAbsPosition = getAbsPosition();
+		// System.out.println("old abs pos: " + oldAbsPosition);
+
+		// final double newAbsPosition = getAbsPosition();
+		// System.out.println("new abs pos: " + newAbsPosition);
+
+		// if (lastCellCount != getCellCount() && selectedIndex != -1) {
+		// double selectedCellPositionNew =
+		// getCellPosition(getVisibleCell(selectedIndex));
+		// }
+		//
+		// if (lastCellCount != getCellCount() && lastSelectedIndex !=
+		// selectedIndex) {
+		// // adjust
+		// // adjustPixels(newAbsPosition - oldAbsPosition);
+		// if (lastSelectedIndex != selectedIndex) {
+		// adjustFirst(selectedIndex, selectedItemCount);
+		// lastSelectedIndex = selectedIndex;
+		// }
+		// // cache
+		// lastCellCount = getCellCount();
+		// }
+		// else
+		// if (lastCellCount != getCellCount() && lastSelectedIndex ==
+		// selectedIndex) {
+		// // adjust
+		// adjustPixels(newAbsPosition - oldAbsPosition);
+		// // adjustFirst(selectedIndex);
+		// // cache
+		// lastCellCount = getCellCount();
+		// // lastSelectedIndex = selectedIndex;
+		// }
+
+		// if (selectedIndex != -1) {
+		// adjustFirst(selectedIndex);
+		// }
+
+		// if (getCellCountChanged()) {
+		// setCellCountChanged(false);
+
+		// } else {
+		//
+		// }
+	}
+
 	private T selectedItem;
 
 	public AdjustableFlow(ReadOnlyBooleanProperty needsLayout,
@@ -75,7 +169,7 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 
 		setSnapToPixel(true);
 
-		needsLayout.addListener(needsLayoutListener);
+		// needsLayout.addListener(needsLayoutListener);
 
 		if (visibleCellCount < 0)
 			throw new IllegalArgumentException("The parameter visibleCellCount must be a non negative value.");
@@ -151,31 +245,37 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 		return result;
 	}
 
-	public void show(final int index, final double length, double oldStart) {
+	public void show(final int selectedIndex, final double length, double topCellIndex) {
 
-		Platform.runLater(() -> {
+		// Platform.runLater(() -> {
 
-			System.out.println("index: " + index);
-			System.out.println("getCellPosition(getVisibleCell(index)): "
-				+ getCellPosition(getVisibleCell(index)));
+		System.out.println("index: " + selectedIndex);
+		System.out.println("getCellPosition(getVisibleCell(index)): "
+			+ getCellPosition(getVisibleCell(selectedIndex)));
 
-			final double start = getCellPosition(getCell(selectedItem));
-			final double end = start + length;
-			final double viewportLength = getViewportLength();
-			final double delta;
+		// final double start = getCellPosition(getCell(selectedItem));
+		final double start = getCellPosition(getCell(selectedIndex));
+		final double end = start + length;
+		final double viewportLength = getViewportLength();
+		final double delta;
 
-			if (start < 0) {
-				delta = start;
-			} else if (end > viewportLength) {
-				delta = end - viewportLength;
-			} else {
-				delta = 0.0d;
-			}
+		if (start < 0) {
+			delta = start;
+		} else if (end > viewportLength) {
+			delta = end - viewportLength;
+		} else {
+			delta = 0.0d;
+		}
 
-			System.out.println("aha");
+		System.out.println("aha");
 
-			adjustPixels(delta);
-		});
+		adjustPixels(delta);
+		// });
+	}
+
+	public void show(final int index, final double length, int topCellIndex) {
+
+		show(index, length, getCellPosition(getCell(topCellIndex)));
 	}
 
 	private I getCell(T item) {
@@ -390,88 +490,6 @@ public class AdjustableFlow<T, I extends IndexedCell<T>> extends VirtualFlow<I>
 
 	public void setCellCountChanged(boolean value) {
 		cellCountChangedProperty().set(value);
-	}
-
-	@Override
-	protected void layoutChildren() {
-
-		super.layoutChildren();
-
-		// if (lastCellCount != getCellCount()) {
-		// lastCellPosition = getCellPosition(getVisibleCell(selectedIndex));
-		// lastCellCount = getCellCount();
-		// } else if (selectedIndex != -1 && lastCellCount == getCellCount()
-		// && getVisibleCell(selectedIndex) != null) {
-		// show(selectedIndex,
-		// selectedItemCount * getFixedCellLength(),
-		// lastCellPosition);
-		// lastCellPosition = -1;
-		// selectedIndex = -1;
-		// selectedItemCount = -1;
-		// }
-
-		// if (selectedIndex != -1) {
-		//
-		// double selectedCellPositionOld =
-		// getCellPosition(getVisibleCell(selectedIndex));
-		// super.layoutChildren();
-		// double selectedCellPositionNew =
-		// getCellPosition(getVisibleCell(selectedIndex));
-		// double selectedCellPositionDelta = selectedCellPositionNew
-		// - selectedCellPositionOld;
-		//
-		// System.out.println("selectedCellPositionDelta: " +
-		// selectedCellPositionDelta);
-		//
-		// lastCellCount = getCellCount();
-		//
-		// } else {
-		// super.layoutChildren();
-		// }
-
-		// final double oldAbsPosition = getAbsPosition();
-		// System.out.println("old abs pos: " + oldAbsPosition);
-
-		// final double newAbsPosition = getAbsPosition();
-		// System.out.println("new abs pos: " + newAbsPosition);
-
-		// if (lastCellCount != getCellCount() && selectedIndex != -1) {
-		// double selectedCellPositionNew =
-		// getCellPosition(getVisibleCell(selectedIndex));
-		// }
-		//
-		// if (lastCellCount != getCellCount() && lastSelectedIndex !=
-		// selectedIndex) {
-		// // adjust
-		// // adjustPixels(newAbsPosition - oldAbsPosition);
-		// if (lastSelectedIndex != selectedIndex) {
-		// adjustFirst(selectedIndex, selectedItemCount);
-		// lastSelectedIndex = selectedIndex;
-		// }
-		// // cache
-		// lastCellCount = getCellCount();
-		// }
-		// else
-		// if (lastCellCount != getCellCount() && lastSelectedIndex ==
-		// selectedIndex) {
-		// // adjust
-		// adjustPixels(newAbsPosition - oldAbsPosition);
-		// // adjustFirst(selectedIndex);
-		// // cache
-		// lastCellCount = getCellCount();
-		// // lastSelectedIndex = selectedIndex;
-		// }
-
-		// if (selectedIndex != -1) {
-		// adjustFirst(selectedIndex);
-		// }
-
-		// if (getCellCountChanged()) {
-		// setCellCountChanged(false);
-
-		// } else {
-		//
-		// }
 	}
 
 	@Override

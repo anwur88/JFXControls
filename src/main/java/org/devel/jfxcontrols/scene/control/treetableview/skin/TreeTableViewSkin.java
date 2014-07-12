@@ -32,6 +32,7 @@ public class TreeTableViewSkin<T>
 	private RowAdjustEventMapper<T, TreeTableRow<T>> rowAdjustEventMapper;
 	private ExpandEventMapper<T, TreeTableRow<T>> expandEventMapper;
 	private TreeItem<T> selected;
+	private int cellCountBeforeExpand;
 
 	public TreeTableViewSkin(final org.devel.jfxcontrols.scene.control.treetableview.TreeTableView<T, Adjustable<T, TreeTableRow<T>>> treeTableView) {
 		super(treeTableView);
@@ -132,12 +133,6 @@ public class TreeTableViewSkin<T>
 		// });
 	}
 
-	@Override
-	protected void layoutChildren(double x, double y, double w, double h) {
-		super.layoutChildren(x, y, w, h);
-
-	}
-
 	private double getNewPosition() {
 		return getSelectionModel().getSelectedIndex()
 			* adjustableFlow.getFixedCellLength();
@@ -175,9 +170,11 @@ public class TreeTableViewSkin<T>
 	@Override
 	public int expand() {
 
+		cellCountBeforeExpand = adjustableFlow.getCellCount();
+
 		final TreeItem<T> currentSelected = getSelectionModel().getSelectedItem();
 		int result = getSelectionModel().getSelectedIndex();
-		getSelectionModel().clearSelection();
+		// getSelectionModel().clearSelection();
 
 		if (!currentSelected.isLeaf()) {
 			currentSelected.setExpanded(!currentSelected.isExpanded());
@@ -193,6 +190,40 @@ public class TreeTableViewSkin<T>
 		return result;
 	}
 
+	@Override
+	protected void layoutChildren(double x, double y, double w, double h) {
+
+		System.out.println("adjustableFlow.getFirstVisibleCell(): "
+			+ adjustableFlow.getFirstVisibleCell());
+		System.out.println("needCellsRebuilt: " + needCellsRebuilt);
+		System.out.println("needCellsReconfigured: " + needCellsReconfigured);
+		System.out.println("needCellsRecreated: " + needCellsRecreated);
+
+		boolean rowCountDirtyOld = false;
+		int oldStart = -1;
+		if (rowCountDirty && adjustableFlow != null) {
+			// && getSelectionModel().getSelectedIndex() != -1) {
+			System.out.println("layout");
+			rowCountDirtyOld = rowCountDirty;
+			oldStart = Math.toIntExact(Math.round(Math.floor((adjustableFlow.getPosition() * cellCountBeforeExpand))));
+		}
+
+		super.layoutChildren(x, y, w, h);
+
+		if (adjustableFlow != null && rowCountDirtyOld
+			&& oldStart != getSelectionModel().getSelectedIndex()) {
+			System.out.println("show");
+			System.out.println("getLength(selected): " + getLength(selected));
+			System.out.println("getSelectionModel().getSelectedIndex(): "
+				+ getSelectionModel().getSelectedIndex());
+			System.out.println("oldStart: " + oldStart);
+			adjustableFlow.show(getSelectionModel().getSelectedIndex(),
+								getLength(selected),
+								oldStart);
+		}
+
+	}
+
 	private void collapseAll(TreeItem<T> root) {
 		root.setExpanded(false);
 		for (TreeItem<T> item : root.getChildren()) {
@@ -204,7 +235,17 @@ public class TreeTableViewSkin<T>
 
 	@Override
 	public double getLength() {
-		return (selected.isExpanded()) ? selected.getChildren().size() + 1 : 1;
+		return (!selected.isLeaf() && selected.isExpanded()) ? selected.getChildren()
+																	   .size() + 1 : 1;
+	}
+
+	public double getLength(TreeItem<T> selected) {
+		return (!selected.isLeaf() && selected.isExpanded())
+			? selected.getChildren()
+					  .stream()
+					  .mapToDouble((value) -> getLength(value))
+					  .sum()
+			: 1;
 	}
 
 	private org.devel.jfxcontrols.scene.control.treetableview.TreeTableView

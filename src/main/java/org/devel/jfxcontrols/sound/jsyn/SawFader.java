@@ -30,6 +30,7 @@ public class SawFader extends Application {
     private static final double MINIMUM_FREQUENCY = 200;
     private static final double BANDWIDTH = 500.0;
     private static final double KNOB_RANGE_IN_DEGREE = 300;
+    private static final double DRAG_AREA_HEIGHT = 150;
 
     public static void main(String[] args) {
         launch(args);
@@ -44,8 +45,11 @@ public class SawFader extends Application {
     public void start(Stage primaryStage) {
         createSynth();
         primaryStage.setScene(new Scene(loadFXML(), 400.0, 400.0));
-        primaryStage.sizeToScene();
         primaryStage.show();
+        primaryStage.sizeToScene();
+        primaryStage.setOnCloseRequest(event -> {
+            synth.stop();
+        });
     }
 
     private Parent loadFXML() {
@@ -108,7 +112,7 @@ public class SawFader extends Application {
         void onMouseDragOver(MouseEvent event) {
             if (lastY != Double.NaN) {
                 final double y = event.getSceneY();
-                double newAngle = rotate.getAngle() + (lastY - y) / rotatePane.getHeight() * KNOB_RANGE_IN_DEGREE;
+                double newAngle = rotate.getAngle() + (lastY - y) / DRAG_AREA_HEIGHT * KNOB_RANGE_IN_DEGREE;
 
                 if (newAngle >= 0 && newAngle <= KNOB_RANGE_IN_DEGREE) {
                     rotate.setAngle(newAngle);
@@ -129,7 +133,7 @@ public class SawFader extends Application {
 
         @Override
         public void initialize(java.net.URL location, ResourceBundle resources) {
-            rotate = new Rotate(0, 100, 100);
+            rotate = new Rotate(0, 20, 20);
             rotatePane.getTransforms().add(rotate);
             rotateCircle.setRotate((360 - KNOB_RANGE_IN_DEGREE) / 2);
         }

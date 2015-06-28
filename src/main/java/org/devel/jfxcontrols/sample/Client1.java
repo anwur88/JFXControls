@@ -70,10 +70,6 @@ public class Client1 extends Application {
 
 		firstCol.setCellFactory((column) -> {
 			ExpandableTreeTableCell<String, String> eCell = new ExpandableTreeTableCell<String, String>();
-			// eCell.setExpand(new Expand<String,
-			// TreeTableRow<String>>(rowAdjust));
-			// eCell.setStyle("-fx-skin: \"org.devel.jfxcontrols.scene.control.treetableview.skin.ExpandableTreeTableCellSkin\";");
-			// eCell.setSkin(new ExpandableTreeTableCellSkin<>(eCell));
 			return eCell;
 		});
 
@@ -85,10 +81,6 @@ public class Client1 extends Application {
 																					   .getValue())));
 		secondCol.setCellFactory((column) -> {
 			ExpandableTreeTableCell<String, String> eCell = new ExpandableTreeTableCell<String, String>();
-			// eCell.setExpand(new Expand<String,
-			// TreeTableRow<String>>(rowAdjust));
-			// eCell.setStyle("-fx-skin: \"org.devel.jfxcontrols.scene.control.treetableview.skin.ExpandableTreeTableCellSkin\";");
-			// eCell.setSkin(new ExpandableTreeTableCellSkin<>(eCell));
 			return eCell;
 		});
 

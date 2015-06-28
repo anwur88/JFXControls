@@ -107,7 +107,7 @@ public class RotatableCheckBox extends CheckBox {
 	// }
 
 	@Override
-	protected String getUserAgentStylesheet() {
+	public String getUserAgentStylesheet() {
 		return getClass().getResource(this.getClass().getSimpleName() + ".css")
 				.toExternalForm();
 	}

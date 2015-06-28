@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.devel.jfxcontrols.sample;
 
@@ -14,61 +14,51 @@ import org.devel.jfxcontrols.conf.Properties;
 import org.devel.jfxcontrols.resource.ImageRegistry;
 
 /**
- * 
  * @author stefan.illgen
- * 
  */
 public class JFXControlsApp extends Application {
-	
-	@Override
-	public void start(Stage stage) throws Exception {
 
-		setup(stage);
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-		Scene scene = new Scene(getParent());
-		scene.getStylesheets().add(
-				getClass().getResource(".").toExternalForm()
-						+ getClass().getSimpleName() + ".css");
-		stage.setScene(scene);
-		stage.setTitle(getClass().getName());
+    @Override
+    public void start(Stage stage) throws Exception {
 
-		stage.show();
+        setup(stage);
 
-	}
+        Scene scene = new Scene(getParent());
+        scene.getStylesheets().add("/org/devel/jfxcontrols/sample/JFXControlsApp.css");
+        stage.setScene(scene);
+        stage.setTitle(getClass().getName());
 
-	private void setup(Stage stage) {
+        stage.show();
 
-		// conf
-		Properties.init();
+    }
 
-		// image registry
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent event) {
-				if (event.getEventType().equals(
-						WindowEvent.WINDOW_CLOSE_REQUEST)
-						&& event.getTarget().equals(stage)) {
-					stage.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
-							this);
-					ImageRegistry.instance().dispose();
-				}
+    private void setup(Stage stage) {
 
-			}
-		});
-	}
+        // conf
+        Properties.init();
 
-	private Parent getParent() {
-		// return new SearchRoutePane();
-		// return new Aggregator();
-		// return new ImageCropper();
-		return new JFXShowCase();
-	}
+        // image registry
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (event.getEventType().equals(
+                        WindowEvent.WINDOW_CLOSE_REQUEST)
+                        && event.getTarget().equals(stage)) {
+                    stage.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+                            this);
+                    ImageRegistry.instance().dispose();
+                }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		launch(args);
-	}
+            }
+        });
+    }
+
+    private Parent getParent() {
+        return new JFXShowCase();
+    }
 
 }

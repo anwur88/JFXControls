@@ -120,7 +120,7 @@ public class RouteMapView extends Control {
 	}
 
 	@Override
-	protected String getUserAgentStylesheet() {
+	public String getUserAgentStylesheet() {
 		return getClass().getResource("route-map-view.css").toExternalForm();
 	}
 

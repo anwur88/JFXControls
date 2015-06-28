@@ -17,7 +17,7 @@ public class Aggregator extends Control {
 	}
 
 	@Override
-	protected String getUserAgentStylesheet() {
+	public String getUserAgentStylesheet() {
 		return getClass().getResource(
 				"/org/devel/jfxcontrols/scene/control/"
 						+ getClass().getSimpleName() + ".css").toExternalForm();

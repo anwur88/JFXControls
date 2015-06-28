@@ -33,7 +33,7 @@ public class TappasCompass extends Control {
     }
 
     @Override
-    protected String getUserAgentStylesheet() {
+    public String getUserAgentStylesheet() {
         return getClass().getResource(this.getClass().getSimpleName() + ".css")
                          .toExternalForm();
     }

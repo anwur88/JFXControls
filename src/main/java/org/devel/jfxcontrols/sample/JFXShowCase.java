@@ -86,14 +86,21 @@ public class JFXShowCase extends AnchorPane implements Initializable {
               .getSource()).getTreeItem();
 
           if (Objects.equals(item.getGroundClass(), CircleCheckBox.class)) {
-            loadDetails(createCircleCheckBox());
+            final CircleCheckBox ccb = new CircleCheckBox();
+            ccb.setSkin(new CircleCheckBoxSkin(ccb));
+            loadDetails(ccb);
           } else if (Objects.equals(item.getGroundClass(), RotatableCheckBox.class)) {
-            loadDetails(createRotatableCheckBox());
+            final RotatableCheckBox rcb = new RotatableCheckBox();
+            rcb.setSkin(new RotatableCheckBoxSkin(rcb));
+            loadDetails(rcb);
+          } else if (Objects.equals(item.getGroundClass(), FilterableTableView.class)) {
+            final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/FilterableTableViewExample.fxml");
+            final Node filteredTableViewExample = FXMLLoader.load(url);
+            loadDetails(filteredTableViewExample);
           } else {
             loadDetails(item.createGround());
           }
-        } catch (InstantiationException | IllegalAccessException
-            | ClassCastException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassCastException | IOException e) {
           e.printStackTrace();
         }
       });
@@ -117,20 +124,20 @@ public class JFXShowCase extends AnchorPane implements Initializable {
   }
 
   private void loadFXML() {
-    URL url = getClass().getResource(getClass().getSimpleName() + ".fxml");
-    FXMLLoader fxmlLoader = new FXMLLoader(url);
+    final URL url = getClass().getResource(getClass().getSimpleName() + ".fxml");
+    final FXMLLoader fxmlLoader = new FXMLLoader(url);
 
     fxmlLoader.setRoot(this);
     fxmlLoader.setController(this);
 
     try {
       fxmlLoader.load();
-    } catch (IOException exception) {
+    } catch (final IOException exception) {
       throw new RuntimeException(exception);
     }
   }
 
-  private void loadDetails(Node node) {
+  private void loadDetails(final Node node) {
 
     // load example
     exampleContainer.getChildren().clear();
@@ -157,21 +164,5 @@ public class JFXShowCase extends AnchorPane implements Initializable {
     // code = e.getMessage();
     // }
     // scTextArea.setText(code);
-  }
-
-  private CircleCheckBox createCircleCheckBox() {
-
-    CircleCheckBox ccb = new CircleCheckBox();
-    ccb.setSkin(new CircleCheckBoxSkin(ccb));
-
-    return ccb;
-  }
-
-  private RotatableCheckBox createRotatableCheckBox() {
-
-    RotatableCheckBox rcb = new RotatableCheckBox();
-    rcb.setSkin(new RotatableCheckBoxSkin(rcb));
-
-    return rcb;
   }
 }

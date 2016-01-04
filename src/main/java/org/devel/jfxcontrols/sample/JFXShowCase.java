@@ -1,12 +1,25 @@
 /**
- * 
+ *
  */
 package org.devel.jfxcontrols.sample;
 
+import org.devel.jfxcontrols.resource.ImageRegistry;
+import org.devel.jfxcontrols.resource.Images;
+import org.devel.jfxcontrols.scene.control.Aggregator;
+import org.devel.jfxcontrols.scene.control.CircleCheckBox;
+import org.devel.jfxcontrols.scene.control.CircleCheckBoxSkin;
+import org.devel.jfxcontrols.scene.control.FilterableTableView;
+import org.devel.jfxcontrols.scene.control.ImageCropper;
+import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
+import org.devel.jfxcontrols.scene.control.RotatableCheckBox;
+import org.devel.jfxcontrols.scene.control.skin.RotatableCheckBoxSkin;
+import org.devel.jfxcontrols.scene.layout.Router;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -24,164 +37,141 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-import org.devel.jfxcontrols.resource.ImageRegistry;
-import org.devel.jfxcontrols.resource.Images;
-import org.devel.jfxcontrols.scene.control.Aggregator;
-import org.devel.jfxcontrols.scene.control.CircleCheckBox;
-import org.devel.jfxcontrols.scene.control.CircleCheckBoxSkin;
-import org.devel.jfxcontrols.scene.control.ImageCropper;
-import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
-import org.devel.jfxcontrols.scene.control.RotatableCheckBox;
-import org.devel.jfxcontrols.scene.control.skin.RotatableCheckBoxSkin;
-import org.devel.jfxcontrols.scene.layout.Router;
-
 /**
  * @author stefan.illgen
- * 
  */
 public class JFXShowCase extends AnchorPane implements Initializable {
 
-	@FXML
-	private ImageView logoImageView;
+  @FXML
+  private ImageView logoImageView;
 
-	@FXML
-	private Text logoText;
+  @FXML
+  private Text logoText;
 
-	@FXML
-	private Accordion detailsAccordeon;
+  @FXML
+  private Accordion detailsAccordeon;
 
-	@FXML
-	private TitledPane exampleTitledPane;
+  @FXML
+  private TitledPane exampleTitledPane;
 
-	@FXML
-	private TreeView<String> masterTreeView;
+  @FXML
+  private TreeView<String> masterTreeView;
 
-	@FXML
-	private TitledPane scTitledPane;
+  @FXML
+  private TitledPane scTitledPane;
 
-	@FXML
-	private AnchorPane exampleContainer;
+  @FXML
+  private AnchorPane exampleContainer;
 
-	@FXML
-	private TextArea scTextArea;
+  @FXML
+  private TextArea scTextArea;
 
-	public JFXShowCase() {
-		loadFXML();
-	}
+  public JFXShowCase() {
+    loadFXML();
+  }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void initialize(URL location, ResourceBundle resources) {
+  @Override
+  @SuppressWarnings("unchecked")
+  public void initialize(final URL location, final ResourceBundle resources) {
+    final TreeItem<String> root = new TreeItem<String>("All Controls",
+        ImageRegistry.getImageView(Images.LOGO_16));
+    masterTreeView.setRoot(root);
+    root.getChildren().addAll(getAllControls());
 
-		// root
-		TreeItem<String> root = new TreeItem<String>("All Controls",
-				ImageRegistry.getImageView(Images.LOGO_16));
-		masterTreeView.setRoot(root);
-		root.getChildren().addAll(getAllControls());
+    masterTreeView.setCellFactory(treeView -> {
+      final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
+      treeCell.setOnMouseClicked(event -> {
+        try {
+          final ReflectableTreeItem<? extends Node> item = (ReflectableTreeItem<? extends Node>)((TreeCell<String>)event
+              .getSource()).getTreeItem();
 
-		// master 2 details: selection binding
-		masterTreeView.setCellFactory(treeView -> {
-			// on click on the master
-				final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
-				treeCell.setOnMouseClicked(event -> {
-					// get tree item and load details view with created
-					// grounding
-					try {
-						ReflectableTreeItem<? extends Node> item = (ReflectableTreeItem<? extends Node>) ((TreeCell<String>) event
-								.getSource()).getTreeItem();
+          if (Objects.equals(item.getGroundClass(), CircleCheckBox.class)) {
+            loadDetails(createCircleCheckBox());
+          } else if (Objects.equals(item.getGroundClass(), RotatableCheckBox.class)) {
+            loadDetails(createRotatableCheckBox());
+          } else {
+            loadDetails(item.createGround());
+          }
+        } catch (InstantiationException | IllegalAccessException
+            | ClassCastException e) {
+          e.printStackTrace();
+        }
+      });
 
-						if (item.getGroundClass() == CircleCheckBox.class)
-							loadDetails(createCircleCheckBox());
-						else if (item.getGroundClass() == RotatableCheckBox.class)
-							loadDetails(createRotatableCheckBox());
-						else
-							loadDetails(item.createGround());
-					} catch (InstantiationException | IllegalAccessException
-							| ClassCastException e) {
-						e.printStackTrace();
-					}
-				});
+      return treeCell;
+    });
+  }
 
-				return treeCell;
-			});
+  private List<TreeItem<String>> getAllControls() {
+    return Arrays.asList(createTreeItem(Router.class),
+        createTreeItem(ImageCropper.class),
+        createTreeItem(Aggregator.class),
+        createTreeItem(CircleCheckBox.class),
+        createTreeItem(RotatableCheckBox.class),
+        createTreeItem(FilterableTableView.class));
+  }
 
-	}
+  private <T extends Node> TreeItem<String> createTreeItem(final Class<T> clazz) {
+    return new ReflectableTreeItem<T>(clazz.getSimpleName(),
+        ImageRegistry.getImageView(Images.LOGO_16), clazz);
+  }
 
-	private List<TreeItem<String>> getAllControls() {
-		return new ArrayList<TreeItem<String>>() {
-			private static final long serialVersionUID = -9213576968159746189L;
-			{
-				add(createTreeItem(Router.class));
-				add(createTreeItem(ImageCropper.class));
-				add(createTreeItem(Aggregator.class));
-				add(createTreeItem(CircleCheckBox.class));
-				add(createTreeItem(RotatableCheckBox.class));
-			}
-		};
-	}
+  private void loadFXML() {
+    URL url = getClass().getResource(getClass().getSimpleName() + ".fxml");
+    FXMLLoader fxmlLoader = new FXMLLoader(url);
 
-	private <T extends Node> TreeItem<String> createTreeItem(Class<T> clazz) {
-		return new ReflectableTreeItem<T>(clazz.getSimpleName(),
-				ImageRegistry.getImageView(Images.LOGO_16), clazz);
-	}
+    fxmlLoader.setRoot(this);
+    fxmlLoader.setController(this);
 
-	private void loadFXML() {
+    try {
+      fxmlLoader.load();
+    } catch (IOException exception) {
+      throw new RuntimeException(exception);
+    }
+  }
 
-		URL url = getClass().getResource(getClass().getSimpleName() + ".fxml");
-		FXMLLoader fxmlLoader = new FXMLLoader(url);
+  private void loadDetails(Node node) {
 
-		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(this);
+    // load example
+    exampleContainer.getChildren().clear();
+    exampleContainer.getChildren().add(node);
+    AnchorPane.clearConstraints(node);
+    AnchorPane.setTopAnchor(node, 0.0);
+    AnchorPane.setRightAnchor(node, 0.0);
+    AnchorPane.setLeftAnchor(node, 0.0);
+    AnchorPane.setBottomAnchor(node, 0.0);
+    exampleTitledPane.setExpanded(true);
 
-		try {
-			fxmlLoader.load();
-		} catch (IOException exception) {
-			throw new RuntimeException(exception);
-		}
-	}
+    // TODO stefan - load example instantiation code
+    // // reflect byte code
+    // String code = "";
+    // try {
+    // String clazzName = node.getClass().getSimpleName();
+    // URI fileURI = node.getClass().getResource("./" + clazzName +
+    // ".class").toURI();
+    // code = FileUtils.readFileToString(FileUtils.getFile(new
+    // File(fileURI)),
+    // Charset.forName("UTF-8"));
+    // } catch (IOException | URISyntaxException e) {
+    // e.printStackTrace();
+    // code = e.getMessage();
+    // }
+    // scTextArea.setText(code);
+  }
 
-	private void loadDetails(Node node) {
+  private CircleCheckBox createCircleCheckBox() {
 
-		// load example
-		exampleContainer.getChildren().clear();
-		exampleContainer.getChildren().add(node);
-		AnchorPane.clearConstraints(node);
-		AnchorPane.setTopAnchor(node, 0.0);
-		AnchorPane.setRightAnchor(node, 0.0);
-		AnchorPane.setLeftAnchor(node, 0.0);
-		AnchorPane.setBottomAnchor(node, 0.0);
-		exampleTitledPane.setExpanded(true);
+    CircleCheckBox ccb = new CircleCheckBox();
+    ccb.setSkin(new CircleCheckBoxSkin(ccb));
 
-		// TODO stefan - load example instantiation code
-		// // reflect byte code
-		// String code = "";
-		// try {
-		// String clazzName = node.getClass().getSimpleName();
-		// URI fileURI = node.getClass().getResource("./" + clazzName +
-		// ".class").toURI();
-		// code = FileUtils.readFileToString(FileUtils.getFile(new
-		// File(fileURI)),
-		// Charset.forName("UTF-8"));
-		// } catch (IOException | URISyntaxException e) {
-		// e.printStackTrace();
-		// code = e.getMessage();
-		// }
-		// scTextArea.setText(code);
-	}
+    return ccb;
+  }
 
-	private CircleCheckBox createCircleCheckBox() {
+  private RotatableCheckBox createRotatableCheckBox() {
 
-		CircleCheckBox ccb = new CircleCheckBox();
-		ccb.setSkin(new CircleCheckBoxSkin(ccb));
+    RotatableCheckBox rcb = new RotatableCheckBox();
+    rcb.setSkin(new RotatableCheckBoxSkin(rcb));
 
-		return ccb;
-	}
-
-	private RotatableCheckBox createRotatableCheckBox() {
-		
-		RotatableCheckBox rcb = new RotatableCheckBox();
-		rcb.setSkin(new RotatableCheckBoxSkin(rcb));
-		
-		return rcb;
-	}
+    return rcb;
+  }
 }

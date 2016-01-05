@@ -28,9 +28,12 @@ jar {
 
 dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
-    compile 'commons-io:commons-io:2.4'
-    testCompile 'org.loadui:testFx:3.0.0'
-    testCompile 'junit:junit:4.11'
+    compile "commons-io:commons-io:2.4"
+    compile "org.controlsfx:controlsfx:8.40.10"
+    compile "com.google.guava:guava:19.0"
+    compile "de.jensd:fontawesomefx:8.7"
+    testCompile "org.loadui:testFx:3.0.0"
+    testCompile "junit:junit:4.11"
 }
 
 test {

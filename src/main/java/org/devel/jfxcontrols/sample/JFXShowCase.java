@@ -3,6 +3,20 @@
  */
 package org.devel.jfxcontrols.sample;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import org.devel.jfxcontrols.resource.ImageRegistry;
 import org.devel.jfxcontrols.resource.Images;
 import org.devel.jfxcontrols.scene.control.Aggregator;
@@ -21,21 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
 
 /**
  * @author stefan.illgen
@@ -73,17 +72,12 @@ public class JFXShowCase extends AnchorPane implements Initializable {
   @Override
   @SuppressWarnings("unchecked")
   public void initialize(final URL location, final ResourceBundle resources) {
-    final TreeItem<String> root = new TreeItem<String>("All Controls",
-        ImageRegistry.getImageView(Images.LOGO_16));
-    masterTreeView.setRoot(root);
-    root.getChildren().addAll(getAllControls());
-
     masterTreeView.setCellFactory(treeView -> {
-      final TreeCell<String> treeCell = new TextFieldTreeCell<String>();
+      final TreeCell<String> treeCell = new TextFieldTreeCell<>();
       treeCell.setOnMouseClicked(event -> {
         try {
-          final ReflectableTreeItem<? extends Node> item = (ReflectableTreeItem<? extends Node>)((TreeCell<String>)event
-              .getSource()).getTreeItem();
+          final ReflectableTreeItem<? extends Node> item =
+              (ReflectableTreeItem<? extends Node>) ((TreeCell<String>) event.getSource()).getTreeItem();
 
           if (Objects.equals(item.getGroundClass(), CircleCheckBox.class)) {
             final CircleCheckBox ccb = new CircleCheckBox();
@@ -107,6 +101,11 @@ public class JFXShowCase extends AnchorPane implements Initializable {
 
       return treeCell;
     });
+
+    final TreeItem<String> root = new TreeItem<>("All Controls", ImageRegistry.getImageView(Images.LOGO_16));
+    root.setExpanded(true);
+    masterTreeView.setRoot(root);
+    root.getChildren().addAll(getAllControls());
   }
 
   private List<TreeItem<String>> getAllControls() {
@@ -119,8 +118,7 @@ public class JFXShowCase extends AnchorPane implements Initializable {
   }
 
   private <T extends Node> TreeItem<String> createTreeItem(final Class<T> clazz) {
-    return new ReflectableTreeItem<T>(clazz.getSimpleName(),
-        ImageRegistry.getImageView(Images.LOGO_16), clazz);
+    return new ReflectableTreeItem<T>(clazz.getSimpleName(), ImageRegistry.getImageView(Images.LOGO_16), clazz);
   }
 
   private void loadFXML() {

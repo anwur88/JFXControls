@@ -28,6 +28,8 @@ public class FilterableTableColumn<S, T> extends TableColumn<S, T> {
   private final TextField filterField;
 
   public FilterableTableColumn() {
+    getStyleClass().add("sx-filterable-table-column");
+
     filterField = new FilterTextField();
     final StackPane container = new StackPane(filterField);
     container.setPadding(new Insets(TOP_RIGHT_BOTTOM_LEFT));
@@ -49,4 +51,6 @@ public class FilterableTableColumn<S, T> extends TableColumn<S, T> {
   public TextField getFilterField() {
     return filterField;
   }
+
+
 }

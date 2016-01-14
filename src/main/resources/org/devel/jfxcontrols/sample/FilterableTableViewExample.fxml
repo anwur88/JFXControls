@@ -3,11 +3,14 @@
 <?import org.devel.jfxcontrols.scene.control.FilterableTableColumn?>
 <?import org.devel.jfxcontrols.scene.control.FilterableTableView?>
 <?import javafx.scene.layout.StackPane?>
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.devel.jfxcontrols.sample.FilterableTreeTableViewExample">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+           prefHeight="400.0" prefWidth="600.0"
+           xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.devel.jfxcontrols.sample.FilterableTreeTableViewExample">
    <children>
       <FilterableTableView>
          <columns>
-            <FilterableTableColumn text="Column X" />
+            <FilterableTableColumn text="Column X"/>
          </columns>
       </FilterableTableView>
    </children>

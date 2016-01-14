@@ -11,4 +11,10 @@ package org.devel.jfxcontrols.scene.control;
 import javafx.scene.control.TableView;
 
 public class FilterableTableView<S> extends TableView<S> {
+
+  @Override
+  public String getUserAgentStylesheet() {
+    return getClass().getResource("/org/devel/jfxcontrols/scene/control/"
+        + getClass().getSimpleName() + ".css").toExternalForm();
+  }
 }

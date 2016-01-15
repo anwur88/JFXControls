@@ -10,16 +10,24 @@ package org.devel.jfxcontrols.scene.control;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TableView;
 
 public class FilterableTableView<S> extends TableView<S> {
+
+  // filtered list are unmodifiable
+  private final FilteredList<S> filteredItems = getItems().filtered(s -> true);
 
   public FilterableTableView() {
     this(FXCollections.<S>observableArrayList());
   }
 
-  public FilterableTableView(ObservableList<S> items) {
+  public FilterableTableView(final ObservableList<S> items) {
     super(items);
+  }
+
+  public FilteredList<S> getFilteredItems() {
+    return filteredItems;
   }
 
   @Override

@@ -14,7 +14,7 @@ import javafx.fxml.FXML;
 import org.devel.jfxcontrols.scene.control.FilterableTableColumn;
 import org.devel.jfxcontrols.scene.control.FilterableTableView;
 
-public class FilterableTreeTableViewExample {
+public class FilterableTableViewExample {
 
   @FXML
   public FilterableTableColumn<String, String> ftcColumnX;

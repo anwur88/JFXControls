@@ -8,9 +8,19 @@
  */
 package org.devel.jfxcontrols.scene.control;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 
 public class FilterableTableView<S> extends TableView<S> {
+
+  public FilterableTableView() {
+    this(FXCollections.<S>observableArrayList());
+  }
+
+  public FilterableTableView(ObservableList<S> items) {
+    super(items);
+  }
 
   @Override
   public String getUserAgentStylesheet() {

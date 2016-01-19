@@ -18,6 +18,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
+
+import static javafx.beans.binding.Bindings.createObjectBinding;
+
 /**
  * A column for a TreeTable that has a filter text field on top that allows filtering of its content.
  *
@@ -51,14 +56,15 @@ public class FilterableTableColumn<S, T> extends TableColumn<S, T> {
       public void changed(ObservableValue<? extends TableView<S>> observable, TableView<S> oldValue, TableView<S> newValue) {
         if (newValue != null) {
           tableViewProperty().removeListener(this);
+
           // TODO Must make assumptions on table used? Better define the predicate outside of column?
           final FilterableTableView<S> tableView = (FilterableTableView) getTableView();
-          tableView.addFilter(filterTextProperty());
+          tableView.addFilterPredicate(createObjectBinding((Callable<Predicate<S>>) () -> s ->
+              getCellData(s).toString().contains(filterTextProperty().get()),
+              filterTextProperty()));
         }
       }
     });
-
-
   }
 
   public StringProperty filterTextProperty() {

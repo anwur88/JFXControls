@@ -8,6 +8,8 @@
  */
 package org.devel.jfxcontrols.scene.control;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -20,6 +22,7 @@ import java.util.function.Predicate;
 public class FilterableTableView<S> extends TableView<S> {
 
   private final ObservableList<StringProperty> filters = FXCollections.observableArrayList();
+  private final ObservableList<ObjectBinding<Predicate<S>>> filterPredicates = FXCollections.observableArrayList();
   // TODO Should not define contains predicate here (extensibility)!
   private final Predicate<S> filterPredicate = s -> true;
 
@@ -36,8 +39,21 @@ public class FilterableTableView<S> extends TableView<S> {
 
     // replace item list by filtered item list every time item list is reset
     itemsProperty().addListener(((observable1, oldValue1, newValue1) -> {
-      if(newValue1 != null) {
+      if (newValue1 != null) {
         filteredItems = newValue1.filtered(filterPredicate);
+        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(() -> {
+              return s -> {
+                final long result = filterPredicates.stream()
+                    .filter(predicateProperty -> {
+                      final boolean test = predicateProperty.get().test(s);
+                      return test;
+                    })
+                    .count();
+                return result == filterPredicates.size();
+              };
+            },
+            filterPredicates.toArray(new ObjectBinding[filterPredicates.size()])));
+
         setItems(filteredItems);
       } else {
         filteredItems = null;
@@ -49,15 +65,9 @@ public class FilterableTableView<S> extends TableView<S> {
     return filteredItems;
   }
 
-  public void addFilter(final StringProperty textProperty) {
-    filters.add(textProperty);
-
-    textProperty.addListener(((observable, oldValue, newValue) -> {
-      filteredItems.setPredicate(s ->
-          s.toString().contains(newValue));
-    }));
+  public void addFilterPredicate(ObjectBinding<Predicate<S>> predicate) {
+    filterPredicates.add(predicate);
   }
-
 
   @Override
   public String getUserAgentStylesheet() {

@@ -41,17 +41,13 @@ public class FilterableTableView<S> extends TableView<S> {
     itemsProperty().addListener(((observable1, oldValue1, newValue1) -> {
       if (newValue1 != null) {
         filteredItems = newValue1.filtered(filterPredicate);
-        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(() -> {
-              return s -> {
-                final long result = filterPredicates.stream()
-                    .filter(predicateProperty -> {
-                      final boolean test = predicateProperty.get().test(s);
-                      return test;
-                    })
-                    .count();
-                return result == filterPredicates.size();
-              };
-            },
+        // rebind predicates (AND)
+        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(() -> s -> {
+          final long result = filterPredicates.stream()
+              .filter(predicateProperty -> predicateProperty.get().test(s))
+              .count();
+          return result == filterPredicates.size();
+        },
             filterPredicates.toArray(new ObjectBinding[filterPredicates.size()])));
 
         setItems(filteredItems);

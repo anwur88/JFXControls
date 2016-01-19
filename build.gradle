@@ -32,6 +32,7 @@ dependencies {
     compile "org.controlsfx:controlsfx:8.40.10"
     compile "com.google.guava:guava:19.0"
     compile "de.jensd:fontawesomefx:8.7"
+    compile "org.controlsfx:controlsfx:8.40.10"
     testCompile "org.loadui:testFx:3.0.0"
     testCompile "junit:junit:4.11"
 }

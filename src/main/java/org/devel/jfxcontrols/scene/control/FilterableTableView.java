@@ -8,15 +8,24 @@
  */
 package org.devel.jfxcontrols.scene.control;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TableView;
 
+import java.util.function.Predicate;
+
 public class FilterableTableView<S> extends TableView<S> {
 
-  // filtered list are unmodifiable
-  private final FilteredList<S> filteredItems = getItems().filtered(s -> true);
+  private final ObservableList<StringProperty> filters = FXCollections.observableArrayList();
+  // TODO Should not define contains predicate here (extensibility)!
+  private final Predicate<S> filterPredicate = s -> true;
+
+  private final ReadOnlyObjectWrapper<Predicate<S>> predicate = new ReadOnlyObjectWrapper<>(filterPredicate);
+  // filtered list is already unmodifiable
+  private FilteredList<S> filteredItems;
 
   public FilterableTableView() {
     this(FXCollections.<S>observableArrayList());
@@ -24,11 +33,31 @@ public class FilterableTableView<S> extends TableView<S> {
 
   public FilterableTableView(final ObservableList<S> items) {
     super(items);
+
+    // replace item list by filtered item list every time item list is reset
+    itemsProperty().addListener(((observable1, oldValue1, newValue1) -> {
+      if(newValue1 != null) {
+        filteredItems = newValue1.filtered(filterPredicate);
+        setItems(filteredItems);
+      } else {
+        filteredItems = null;
+      }
+    }));
   }
 
   public FilteredList<S> getFilteredItems() {
     return filteredItems;
   }
+
+  public void addFilter(final StringProperty textProperty) {
+    filters.add(textProperty);
+
+    textProperty.addListener(((observable, oldValue, newValue) -> {
+      filteredItems.setPredicate(s ->
+          s.toString().contains(newValue));
+    }));
+  }
+
 
   @Override
   public String getUserAgentStylesheet() {

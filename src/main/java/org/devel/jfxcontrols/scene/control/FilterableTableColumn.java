@@ -10,8 +10,11 @@ package org.devel.jfxcontrols.scene.control;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 
@@ -42,6 +45,20 @@ public class FilterableTableColumn<S, T> extends TableColumn<S, T> {
     filterField.minWidthProperty().bind(width);
     filterField.prefWidthProperty().bind(width);
     filterField.maxWidthProperty().bind(width);
+
+    tableViewProperty().addListener(new ChangeListener<TableView<S>>() {
+      @Override
+      public void changed(ObservableValue<? extends TableView<S>> observable, TableView<S> oldValue, TableView<S> newValue) {
+        if (newValue != null) {
+          tableViewProperty().removeListener(this);
+          // TODO Must make assumptions on table used? Better define the predicate outside of column?
+          final FilterableTableView<S> tableView = (FilterableTableView) getTableView();
+          tableView.addFilter(filterTextProperty());
+        }
+      }
+    });
+
+
   }
 
   public StringProperty filterTextProperty() {

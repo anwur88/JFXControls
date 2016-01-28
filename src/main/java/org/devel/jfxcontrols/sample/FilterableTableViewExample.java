@@ -35,18 +35,11 @@ public class FilterableTableViewExample {
     ftcColumnY.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getAge()));
     ftcColumnZ.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPlace()));
 
-    fttvTable.addFilterPredicate((Person s) ->
-            // TODO Move empty evaluation into table column, because this is default behavior!
-            ftcColumnX.getFilterText().trim().isEmpty()
-                || ftcColumnX.getCellData(s).contains(ftcColumnX.getFilterText().trim()),
+    fttvTable.addFilterPredicate((Person s) -> ftcColumnX.getCellData(s).contains(ftcColumnX.getFilterText().trim()),
         ftcColumnX.filterTextProperty());
-    fttvTable.addFilterPredicate((Person s) ->
-            ftcColumnX.getFilterText().trim().isEmpty()
-                || ftcColumnY.getCellData(s).contains(ftcColumnY.getFilterText().trim()),
+    fttvTable.addFilterPredicate((Person s) -> ftcColumnY.getCellData(s).contains(ftcColumnY.getFilterText().trim()),
         ftcColumnY.filterTextProperty());
-    fttvTable.addFilterPredicate((Person s) ->
-            ftcColumnX.getFilterText().trim().isEmpty()
-                || ftcColumnZ.getCellData(s).contains(ftcColumnZ.getFilterText().trim()),
+    fttvTable.addFilterPredicate((Person s) -> ftcColumnZ.getCellData(s).contains(ftcColumnZ.getFilterText().trim()),
         ftcColumnZ.filterTextProperty());
 
     fttvTable.setItems(FXCollections.observableArrayList(

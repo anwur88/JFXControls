@@ -50,8 +50,10 @@ public class FilterableTableView<S> extends TableView<S> {
     return filteredItems;
   }
 
-  public void addFilterPredicate(final Predicate<S> predicate, final ReadOnlyStringProperty property) {
-    filterPredicates.add(Bindings.createObjectBinding(() -> predicate, property));
+  public void addFilterPredicate(final Predicate<S> predicate, final ReadOnlyStringProperty textProperty) {
+    filterPredicates.add(Bindings.createObjectBinding(() ->
+            ((Predicate<S>) s -> textProperty.get().trim().isEmpty()).or(predicate),
+        textProperty));
   }
 
   @Override

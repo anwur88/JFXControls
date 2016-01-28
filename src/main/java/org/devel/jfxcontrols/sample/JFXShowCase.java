@@ -22,6 +22,7 @@ import org.devel.jfxcontrols.resource.Images;
 import org.devel.jfxcontrols.scene.control.Aggregator;
 import org.devel.jfxcontrols.scene.control.CircleCheckBox;
 import org.devel.jfxcontrols.scene.control.CircleCheckBoxSkin;
+import org.devel.jfxcontrols.scene.control.FileSelectionDropArea;
 import org.devel.jfxcontrols.scene.control.FilterableTableView;
 import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
@@ -91,6 +92,16 @@ public class JFXShowCase extends AnchorPane implements Initializable {
             final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/FilterableTableViewExample.fxml");
             final Node filteredTableViewExample = FXMLLoader.load(url);
             loadDetails(filteredTableViewExample);
+//          } else if(Objects.equals(item.getGroundClass(), SvgIconButton.class)) {
+//
+//          } else if(Objects.equals(item.getGroundClass(), SvgIconRadioButton.class)) {
+//
+//          } else if(Objects.equals(item.getGroundClass(), SvgIconToggleButton.class)) {
+//
+          } else if(Objects.equals(item.getGroundClass(), FileSelectionDropArea.class)) {
+            final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/FileSelectionDropAreaExample.fxml");
+            final Node fileSelectionDropAreaExample = FXMLLoader.load(url);
+            loadDetails(fileSelectionDropAreaExample);
           } else {
             loadDetails(item.createGround());
           }
@@ -114,7 +125,8 @@ public class JFXShowCase extends AnchorPane implements Initializable {
         createTreeItem(Aggregator.class),
         createTreeItem(CircleCheckBox.class),
         createTreeItem(RotatableCheckBox.class),
-        createTreeItem(FilterableTableView.class));
+        createTreeItem(FilterableTableView.class),
+        createTreeItem(FileSelectionDropArea.class));
   }
 
   private <T extends Node> TreeItem<String> createTreeItem(final Class<T> clazz) {
@@ -136,8 +148,6 @@ public class JFXShowCase extends AnchorPane implements Initializable {
   }
 
   private void loadDetails(final Node node) {
-
-    // load example
     exampleContainer.getChildren().clear();
     exampleContainer.getChildren().add(node);
     AnchorPane.clearConstraints(node);
@@ -146,21 +156,5 @@ public class JFXShowCase extends AnchorPane implements Initializable {
     AnchorPane.setLeftAnchor(node, 0.0);
     AnchorPane.setBottomAnchor(node, 0.0);
     exampleTitledPane.setExpanded(true);
-
-    // TODO stefan - load example instantiation code
-    // // reflect byte code
-    // String code = "";
-    // try {
-    // String clazzName = node.getClass().getSimpleName();
-    // URI fileURI = node.getClass().getResource("./" + clazzName +
-    // ".class").toURI();
-    // code = FileUtils.readFileToString(FileUtils.getFile(new
-    // File(fileURI)),
-    // Charset.forName("UTF-8"));
-    // } catch (IOException | URISyntaxException e) {
-    // e.printStackTrace();
-    // code = e.getMessage();
-    // }
-    // scTextArea.setText(code);
   }
 }

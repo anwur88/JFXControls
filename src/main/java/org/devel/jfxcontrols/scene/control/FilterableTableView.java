@@ -10,25 +10,32 @@ package org.devel.jfxcontrols.scene.control;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TableView;
 
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class FilterableTableView<S> extends TableView<S> {
 
-  private final ObservableList<StringProperty> filters = FXCollections.observableArrayList();
+  public enum PredicateJoinPolicies {
+    ALL_MATCH, ANY_MATCH;
+  }
+
+  public static final PredicateJoinPolicies DEFAULT_PREDICATE_JOIN_POLICY = PredicateJoinPolicies.ALL_MATCH;
+
+  // leave it in a list so we can switch predicate join policy at runtime
   private final ObservableList<ObjectBinding<Predicate<S>>> filterPredicates = FXCollections.observableArrayList();
   private final Predicate<S> filterPredicate = s -> true;
-
-  private final ReadOnlyObjectWrapper<Predicate<S>> predicate = new ReadOnlyObjectWrapper<>(filterPredicate);
   // filtered list is already unmodifiable
   private FilteredList<S> filteredItems;
+
+  private ObjectProperty<PredicateJoinPolicies> predicateJoinPolicy;
 
   public FilterableTableView() {
     this(FXCollections.<S>observableArrayList());
@@ -43,12 +50,18 @@ public class FilterableTableView<S> extends TableView<S> {
         filteredItems = newItems.filtered(filterPredicate);
         // rebind predicates (AND)
         filteredItems.predicateProperty().bind(Bindings.createObjectBinding(() -> s -> {
-          final long result = filterPredicates.stream()
-              .filter(predicateProperty -> predicateProperty.get().test(s))
-              .count();
-          return result == filterPredicates.size();
-        },
-            filterPredicates.toArray(new ObjectBinding[filterPredicates.size()])));
+          final Stream<Predicate<S>> predicateStream = filterPredicates.stream()
+              .map(ObjectBinding::get);
+          final Predicate<Predicate<S>> predicate = p -> p.test(s);
+
+          switch (getPredicateJoinPolicy()) {
+            case ANY_MATCH:
+              return predicateStream.anyMatch(predicate);
+            case ALL_MATCH:
+            default:
+              return predicateStream.allMatch(predicate);
+          }
+        }, filterPredicates.toArray(new ObjectBinding[filterPredicates.size()])));
 
         setItems(filteredItems);
       } else {
@@ -57,12 +70,24 @@ public class FilterableTableView<S> extends TableView<S> {
     }));
   }
 
-  public FilteredList<S> getFilteredItems() {
-    return filteredItems;
+  public ObjectProperty<PredicateJoinPolicies> predicateJoinPolicyProperty() {
+    if (predicateJoinPolicy == null) {
+      // TODO add pseudo class state
+      predicateJoinPolicy = new SimpleObjectProperty<>(DEFAULT_PREDICATE_JOIN_POLICY);
+    }
+    return predicateJoinPolicy;
   }
 
-  public void addFilterPredicate(ObjectBinding<Predicate<S>> predicate) {
-    filterPredicates.add(predicate);
+  public void setPredicateJoinPolicy(PredicateJoinPolicies predicateJoinPolicy) {
+    predicateJoinPolicyProperty().set(predicateJoinPolicy);
+  }
+
+  public final PredicateJoinPolicies getPredicateJoinPolicy() {
+    return predicateJoinPolicy == null ? DEFAULT_PREDICATE_JOIN_POLICY : predicateJoinPolicy.get();
+  }
+
+  public FilteredList<S> getFilteredItems() {
+    return filteredItems;
   }
 
   public void addFilterPredicate(final Predicate<S> predicate, final ReadOnlyStringProperty property) {

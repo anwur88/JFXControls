@@ -8,6 +8,7 @@
  */
 package org.devel.jfxcontrols.sample;
 
+import com.google.common.base.MoreObjects;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -65,6 +66,15 @@ public class FilterableTableViewExample {
 
     public String getPlace() {
       return place;
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("name", name)
+          .add("age", age)
+          .add("place", place)
+          .toString();
     }
   }
 }

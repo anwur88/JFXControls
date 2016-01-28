@@ -24,7 +24,6 @@ public class FilterableTableView<S> extends TableView<S> {
 
   private final ObservableList<StringProperty> filters = FXCollections.observableArrayList();
   private final ObservableList<ObjectBinding<Predicate<S>>> filterPredicates = FXCollections.observableArrayList();
-  // TODO Should not define contains predicate here (extensibility)!
   private final Predicate<S> filterPredicate = s -> true;
 
   private final ReadOnlyObjectWrapper<Predicate<S>> predicate = new ReadOnlyObjectWrapper<>(filterPredicate);
@@ -39,9 +38,9 @@ public class FilterableTableView<S> extends TableView<S> {
     super(items);
 
     // replace item list by filtered item list every time item list is reset
-    itemsProperty().addListener(((observable1, oldValue1, newValue1) -> {
-      if (newValue1 != null) {
-        filteredItems = newValue1.filtered(filterPredicate);
+    itemsProperty().addListener(((itemsValue, oldItems, newItems) -> {
+      if (newItems != null) {
+        filteredItems = newItems.filtered(filterPredicate);
         // rebind predicates (AND)
         filteredItems.predicateProperty().bind(Bindings.createObjectBinding(() -> s -> {
           final long result = filterPredicates.stream()

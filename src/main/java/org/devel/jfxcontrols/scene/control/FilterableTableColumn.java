@@ -18,8 +18,7 @@ import javafx.scene.layout.StackPane;
 /**
  * A column for a TreeTable that has a filter text field on top that allows filtering of its content.
  *
- * @param <S>
- * @param <T>
+ * @see TableColumn
  */
 public class FilterableTableColumn<S, T> extends TableColumn<S, T> {
 

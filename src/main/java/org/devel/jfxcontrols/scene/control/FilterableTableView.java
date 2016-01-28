@@ -23,19 +23,17 @@ import java.util.stream.Stream;
 
 public class FilterableTableView<S> extends TableView<S> {
 
-  public enum PredicateJoinPolicies {
-    ALL_MATCH, ANY_MATCH;
-  }
-
+  public enum PredicateJoinPolicies {ALL_MATCH, ANY_MATCH}
   public static final PredicateJoinPolicies DEFAULT_PREDICATE_JOIN_POLICY = PredicateJoinPolicies.ALL_MATCH;
 
-  // leave it in a list so we can switch predicate join policy at runtime
+  private final ObjectProperty<PredicateJoinPolicies> predicateJoinPolicy =
+      // TODO add pseudo class state
+      new SimpleObjectProperty<>(DEFAULT_PREDICATE_JOIN_POLICY);
+
   private final ObservableList<ObjectBinding<Predicate<S>>> filterPredicates = FXCollections.observableArrayList();
   private final Predicate<S> filterPredicate = s -> true;
-  // filtered list is already unmodifiable
-  private FilteredList<S> filteredItems;
 
-  private ObjectProperty<PredicateJoinPolicies> predicateJoinPolicy;
+  private FilteredList<S> filteredItems;
 
   public FilterableTableView() {
     this(FXCollections.<S>observableArrayList());
@@ -48,8 +46,7 @@ public class FilterableTableView<S> extends TableView<S> {
     itemsProperty().addListener(((itemsValue, oldItems, newItems) -> {
       if (newItems != null) {
         filteredItems = newItems.filtered(filterPredicate);
-        // rebind predicates (AND)
-        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(() -> s -> {
+        final ObjectBinding<Predicate<? super S>> filterPredicatesBinding = Bindings.createObjectBinding(() -> s -> {
           final Stream<Predicate<S>> predicateStream = filterPredicates.stream()
               .map(ObjectBinding::get);
           final Predicate<Predicate<S>> predicate = p -> p.test(s);
@@ -61,7 +58,11 @@ public class FilterableTableView<S> extends TableView<S> {
             default:
               return predicateStream.allMatch(predicate);
           }
-        }, filterPredicates.toArray(new ObjectBinding[filterPredicates.size()])));
+        }, filterPredicates.toArray(new ObjectBinding[filterPredicates.size()]));
+        filteredItems.predicateProperty().bind(filterPredicatesBinding);
+        // TODO Is this the right way to let the predicate join policy influence the filtered items?
+        predicateJoinPolicyProperty().addListener((observable, oldValue, newValue) ->
+            filterPredicatesBinding.invalidate());
 
         setItems(filteredItems);
       } else {
@@ -70,15 +71,11 @@ public class FilterableTableView<S> extends TableView<S> {
     }));
   }
 
-  public ObjectProperty<PredicateJoinPolicies> predicateJoinPolicyProperty() {
-    if (predicateJoinPolicy == null) {
-      // TODO add pseudo class state
-      predicateJoinPolicy = new SimpleObjectProperty<>(DEFAULT_PREDICATE_JOIN_POLICY);
-    }
+  public final ObjectProperty<PredicateJoinPolicies> predicateJoinPolicyProperty() {
     return predicateJoinPolicy;
   }
 
-  public void setPredicateJoinPolicy(PredicateJoinPolicies predicateJoinPolicy) {
+  public final void setPredicateJoinPolicy(final PredicateJoinPolicies predicateJoinPolicy) {
     predicateJoinPolicyProperty().set(predicateJoinPolicy);
   }
 

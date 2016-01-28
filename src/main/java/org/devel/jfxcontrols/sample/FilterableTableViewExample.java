@@ -31,6 +31,13 @@ public class FilterableTableViewExample {
     ftcColumnY.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getAge()));
     ftcColumnZ.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPlace()));
 
+    fttvTable.addFilterPredicate((Person s) ->
+        ftcColumnX.getCellData(s).contains(ftcColumnX.getFilterText()), ftcColumnX.filterTextProperty());
+    fttvTable.addFilterPredicate((Person s) ->
+        ftcColumnY.getCellData(s).contains(ftcColumnY.getFilterText()), ftcColumnY.filterTextProperty());
+    fttvTable.addFilterPredicate((Person s) ->
+        ftcColumnZ.getCellData(s).contains(ftcColumnZ.getFilterText()), ftcColumnZ.filterTextProperty());
+
     fttvTable.setItems(FXCollections.observableArrayList(
         new Person("stefan", "33", "dresden"),
         new Person("henk", "35", "ebenheit"),

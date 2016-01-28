@@ -11,6 +11,7 @@ package org.devel.jfxcontrols.scene.control;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -63,6 +64,10 @@ public class FilterableTableView<S> extends TableView<S> {
 
   public void addFilterPredicate(ObjectBinding<Predicate<S>> predicate) {
     filterPredicates.add(predicate);
+  }
+
+  public void addFilterPredicate(final Predicate<S> predicate, final ReadOnlyStringProperty property) {
+    filterPredicates.add(Bindings.createObjectBinding(() -> predicate, property));
   }
 
   @Override

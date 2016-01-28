@@ -233,4 +233,10 @@ public class FileSelectionDropArea extends Control {
   public void setDirectorySelection(final boolean directorySelection) {
     this.directorySelection.set(directorySelection);
   }
+
+  @Override
+  public String getUserAgentStylesheet() {
+    return getClass().getResource("/org/devel/jfxcontrols/scene/control/"
+        + getClass().getSimpleName() + ".css").toExternalForm();
+  }
 }

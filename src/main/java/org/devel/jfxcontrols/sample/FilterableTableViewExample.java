@@ -12,7 +12,6 @@ import com.google.common.base.MoreObjects;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import org.devel.jfxcontrols.scene.control.FilterableTableColumn;
 import org.devel.jfxcontrols.scene.control.FilterableTableView;
 
@@ -24,8 +23,6 @@ public class FilterableTableViewExample {
   public FilterableTableColumn<Person, String> ftcColumnY;
   @FXML
   public FilterableTableColumn<Person, String> ftcColumnZ;
-  @FXML
-  public ComboBox<String> cbPredicateJoinPolicy;
   @FXML
   private FilterableTableView<Person> fttvTable;
 

@@ -4,13 +4,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.devel.jfxcontrols.scene.control.FilterableTableColumn?>
 <?import org.devel.jfxcontrols.scene.control.FilterableTableView?>
-<?import javafx.scene.control.ComboBox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.devel.jfxcontrols.sample.FilterableTableViewExample">
+<?import javafx.scene.layout.StackPane?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+           prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.devel.jfxcontrols.sample.FilterableTableViewExample">
   <children>
-    <ComboBox fx:id="cbPredicateJoinPolicy" />
-    <FilterableTableView fx:id="fttvTable" predicateJoinPolicy="ALL_MATCH">
+    <FilterableTableView fx:id="fttvTable">
       <columns>
         <FilterableTableColumn fx:id="ftcColumnX" minWidth="40.0" text="Name"/>
         <FilterableTableColumn fx:id="ftcColumnY" minWidth="40.0" text="Age"/>
@@ -21,4 +20,4 @@
       </columnResizePolicy>
     </FilterableTableView>
   </children>
-</VBox>
+</StackPane>

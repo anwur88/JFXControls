@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import org.devel.jfxcontrols.scene.control.FilterableTableColumn;
 import org.devel.jfxcontrols.scene.control.FilterableTableView;
-import org.devel.jfxcontrols.scene.control.FilterableTableView.PredicateJoinPolicies;
 
 public class FilterableTableViewExample {
 
@@ -54,13 +53,6 @@ public class FilterableTableViewExample {
         new Person("stefan", "33", "dresden"),
         new Person("henk", "35", "ebenheit"),
         new Person("karin", "60", "ebenheit")));
-
-    cbPredicateJoinPolicy.setItems(FXCollections.observableArrayList(
-        PredicateJoinPolicies.ALL_MATCH.toString(),
-        PredicateJoinPolicies.ANY_MATCH.toString()));
-    cbPredicateJoinPolicy.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) ->
-        fttvTable.setPredicateJoinPolicy(PredicateJoinPolicies.valueOf(newValue))));
-    cbPredicateJoinPolicy.getSelectionModel().select(0);
   }
 
   public class Person {

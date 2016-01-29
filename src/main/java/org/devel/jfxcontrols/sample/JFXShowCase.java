@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.devel.jfxcontrols.sample;
 
 import javafx.fxml.FXML;

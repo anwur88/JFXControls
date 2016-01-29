@@ -134,8 +134,10 @@ public class FileSelectionDropAreaSkin extends SkinBase<FileSelectionDropArea> {
   }
 
   private Node getFileGlyph() {
-    final Node fileGlyph = new FontAwesomeIconView(FontAwesomeIcon.FILE);
+    final FontAwesomeIconView fileGlyph = new FontAwesomeIconView(FontAwesomeIcon.FILE);
     fileGlyph.setId("fileGlyph");
+    /* TODO: define size of glyph via css */
+    fileGlyph.setGlyphSize(30.0);
     return fileGlyph;
   }
 

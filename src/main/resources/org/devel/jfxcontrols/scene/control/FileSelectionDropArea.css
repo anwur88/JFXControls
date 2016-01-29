@@ -22,10 +22,13 @@
   -fx-max-width: 100px;
 }
 
-/* #fileGlyph { */
+#fileGlyph,
 .root.glyph-icon {
-  glyphSize: 60px;
-  -fx-font-size: 60px;
+/* TODO: define size of glyph via css (see also FileSelectionDropAreaSkin.java) */
+/* glyphSize: 60px; */
   -fx-font-family: FontAwesome;
-  -fx-fill: red;
+  -fx-font-size: 32px;
+  -fx-effect: innershadow( three-pass-box , derive(red,-70%) , 0.1em, 0.0 , 0.07em, 0.07em );
+  -fx-fill: linear-gradient(to bottom, derive(red,20%) 10%, derive(red,-40%) 80%);
 }
+

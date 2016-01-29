@@ -25,6 +25,9 @@ import org.devel.jfxcontrols.scene.control.ImageCropper;
 import org.devel.jfxcontrols.scene.control.ReflectableTreeItem;
 import org.devel.jfxcontrols.scene.control.RotatableCheckBox;
 import org.devel.jfxcontrols.scene.control.skin.RotatableCheckBoxSkin;
+import org.devel.jfxcontrols.scene.control.svg.SvgIconButton;
+import org.devel.jfxcontrols.scene.control.svg.SvgIconRadioButton;
+import org.devel.jfxcontrols.scene.control.svg.SvgIconToggleButton;
 import org.devel.jfxcontrols.scene.layout.Router;
 
 import java.io.IOException;
@@ -89,13 +92,19 @@ public class JFXShowCase extends AnchorPane implements Initializable {
             final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/FilterableTableViewExample.fxml");
             final Node filteredTableViewExample = FXMLLoader.load(url);
             loadDetails(filteredTableViewExample);
-//          } else if(Objects.equals(item.getGroundClass(), SvgIconButton.class)) {
-//
-//          } else if(Objects.equals(item.getGroundClass(), SvgIconRadioButton.class)) {
-//
-//          } else if(Objects.equals(item.getGroundClass(), SvgIconToggleButton.class)) {
-//
-          } else if(Objects.equals(item.getGroundClass(), FileSelectionDropArea.class)) {
+          } else if (Objects.equals(item.getGroundClass(), SvgIconButton.class)) {
+            final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/SvgIconButtonExample.fxml");
+            final Node example = FXMLLoader.load(url);
+            loadDetails(example);
+          } else if (Objects.equals(item.getGroundClass(), SvgIconRadioButton.class)) {
+            final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/SvgIconRadioButtonExample.fxml");
+            final Node example = FXMLLoader.load(url);
+            loadDetails(example);
+          } else if (Objects.equals(item.getGroundClass(), SvgIconToggleButton.class)) {
+            final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/SvgIconToggleButtonExample.fxml");
+            final Node example = FXMLLoader.load(url);
+            loadDetails(example);
+          } else if (Objects.equals(item.getGroundClass(), FileSelectionDropArea.class)) {
             final URL url = getClass().getResource("/org/devel/jfxcontrols/sample/FileSelectionDropAreaExample.fxml");
             final Node fileSelectionDropAreaExample = FXMLLoader.load(url);
             loadDetails(fileSelectionDropAreaExample);
@@ -123,7 +132,10 @@ public class JFXShowCase extends AnchorPane implements Initializable {
         createTreeItem(CircleCheckBox.class),
         createTreeItem(RotatableCheckBox.class),
         createTreeItem(FilterableTableView.class),
-        createTreeItem(FileSelectionDropArea.class));
+        createTreeItem(FileSelectionDropArea.class),
+        createTreeItem(SvgIconRadioButton.class),
+        createTreeItem(SvgIconButton.class),
+        createTreeItem(SvgIconToggleButton.class));
   }
 
   private <T extends Node> TreeItem<String> createTreeItem(final Class<T> clazz) {
